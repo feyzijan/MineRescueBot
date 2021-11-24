@@ -2,6 +2,8 @@
 #include "color.h"
 #include "i2c.h"
 
+// testing commit
+
 void color_click_init(void)
 {   
     //setup colour sensor via i2c interface
