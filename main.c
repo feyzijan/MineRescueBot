@@ -9,14 +9,30 @@
 #include "i2c.h"
 #include "color.h"
 #include "dc_motor.h"
+#include "serial.h"
+#include "timers.h"
+#include "interrupts.h"
+#include <stdio.h>
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 
 void main(void){
-    //color_click_init();
+    initUSART4();
+    Interrupts_init();
+    Timer0_init();
     
+    color_click_init();
+    
+    unsigned int colorRed;
+    unsigned int colorGreen;
+    unsigned int colorBlue;
+    
+    char buf1[] = {0x00};
+    char buf2[] = {0x00};
+    char buf3[] = {0x00};
     // clicker board LEDs
+    /*
     LATDbits.LATD7 = 1;
     LATHbits.LATH3 = 1;
     TRISDbits.TRISD7 = 0;
@@ -42,6 +58,7 @@ void main(void){
     // BATV-Sense - Not Tested
     //TRISFbits.TRISF6 = 1;
     
+    */
     
     // COLOR CLICK RGB LEDs
     
@@ -64,5 +81,31 @@ void main(void){
     
 
     while(1){
+        
+        //Edit for Color
+        
+        if(timer_flag) { //1 second has passed 
+            colorRed = color_read_Red(); //read red color
+            colorGreen = color_read_Green(); //read green color
+            colorBlue = color_read_Blue(); //read blue color
+
+            sprintf(buf1,"%d",colorRed);
+            
+            
+            
+            //__debug_break();
+            TxBufferedString("       RED: "); // writes string to buffer
+            TxBufferedString(buf1); 
+            sprintf(buf2,"%d",colorGreen);
+            TxBufferedString("       GREEN: "); // writes string to buffer
+            TxBufferedString(buf2); 
+            sprintf(buf3,"%d",colorBlue);
+            TxBufferedString("       BLUE: "); // writes string to buffer
+            TxBufferedString(buf3); 
+            sendTxBuf(); //interrupt will handle the rest
+            
+            timer_flag =0;
+            //__delay_ms(1000);
+        }
     }    
 }

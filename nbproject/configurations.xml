@@ -19,6 +19,14 @@
       <itemPath>dc_motor.c</itemPath>
       <itemPath>dc_motor.h</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>ADC.c</itemPath>
+      <itemPath>ADC.h</itemPath>
+      <itemPath>interrupts.c</itemPath>
+      <itemPath>interrupts.h</itemPath>
+      <itemPath>serial.c</itemPath>
+      <itemPath>serial.h</itemPath>
+      <itemPath>timers.c</itemPath>
+      <itemPath>timers.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
