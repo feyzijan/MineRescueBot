@@ -5,78 +5,27 @@
 
 #define _XTAL_FREQ 64000000
 
-/********************  Temporarily Storing the LED/Lamp codes here *********/
+// Define all LED pins for ease of reference
+#define RedLight LATGbits.LATG0
+#define BlueLight LATEbits.LATE7
+#define GreenLight LATAbits.LATA3
+#define LED1 LATDbits.LATD7 
+#define LED2 LATHbits.LATH3
+#define HeadLamp LATHbits.LATH1
+#define MainBeam LATDbits.LATD3
+#define BrakeLight LATDbits.LATD4 
+#define LeftLamp LATFbits.LATF0 
+#define RightLamp LATHbits.LATH0 
 
-/*
-//LEDs for debugging:
-TRISDbits.TRISD7 = 0;
-LATDbits.LATD7 = 0; 
 
-TRISHbits.TRISH3 = 0; 
-LATHbits.LATH3 = 0;
+/* Set all LED pins as output and set output to zero*/
+void LEDsInit(void);
 
- 
- * 
+/* Toggle front white light with RGB LEDs*/
+void LightToggle(void);
 
-//Head Lamps - Not Working
-TRISHbits.TRISH1 = 0; 
-//ANSELDbits.ANSELD0 = 0
-LATHbits.LATH1 = 1;
+/*Test that LEDs work - will not be in final version*/
+void LEDTest(void);
 
-// Main Beam - Not Working
-TRISDbits.TRISD3 = 0; 
-LATDbits.LATD3 = 0;
 
-// Brake Lights - Not Working
-TRISDbits.TRISD4 = 0; 
-LATDbits.LATD4 = 0;
-
-// Right Lamps - Not Working
-TRISHbits.TRISH0 = 0; 
-LATHbits.LATH0 = 0;
-
-// Left Lamps - Working
-TRISFbits.TRISF0 = 0; 
-LATFbits.LATF0 = 0;
-
-// BATV-Sense - Not Tested
-TRISFbits.TRISF6 = 1; 
-
-// Red Led - Working
-TRISGbits.TRISG0 = 0; 
-LATGbits.LATG0 = 0;
-
-// Blue Led - Working
-TRISEbits.TRISE7 = 0; 
-LATEbits.LATE7 = 0;
-
-// Green Led - Working
-TRISAbits.TRISA3 = 0; 
-LATAbits.LATA3 = 0;
-
- */
-
-/*
- // Testing if LEDs and Lamps work one at a time
-        LATGbits.LATG0 = ! LATGbits.LATG0; // Red
-        LATEbits.LATE7 = ! LATEbits.LATE7; // Blue
-        LATAbits.LATA3 = ! LATAbits.LATA3; // Green
-        
-        //Head Lamps - Not Working
-        LATHbits.LATH1 = !LATHbits.LATH1;
-
-        // Main Beam - Not Working
-        LATDbits.LATD3 = !LATDbits.LATD3;
-
-        // Brake Lights - Not Working
-        LATDbits.LATD4 = !LATDbits.LATD4;
-
-        // Right Lamps - Not Working
-        LATHbits.LATH0 = !LATHbits.LATH0 ;
-
-        // Left Lamps - Working
-        LATFbits.LATF0 = !LATFbits.LATF0;
- 
-        __delay_ms(250);
- */
 #endif

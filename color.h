@@ -31,4 +31,9 @@ void color_writetoaddr(char address, char value);
  ***********************************************/
 unsigned int color_read_Red(void);
 
+
+/********************************************//**
+ *  Function to convert colour reading to string
+ ***********************************************/
+void Color2String(char *ptr, unsigned int color);
 #endif

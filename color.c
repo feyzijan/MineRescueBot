@@ -1,6 +1,7 @@
 #include <xc.h>
 #include "color.h"
 #include "i2c.h"
+#include <stdio.h>
 
 void color_click_init(void)
 {   
@@ -50,5 +51,9 @@ unsigned int color_read_Red(void)
     //__debug_break();
 }
 
+
+void Color2String(char *ptr, unsigned int color){
+    sprintf(ptr," %05d", color);
+}
 
 
