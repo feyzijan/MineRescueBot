@@ -6,6 +6,13 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 
+
+struct RGB_val { 
+	unsigned int R;
+	unsigned int G;
+	unsigned int B;
+};
+
 /********************************************//**
  *  Function to initialise the colour click module using I2C
  ***********************************************/

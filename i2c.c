@@ -1,11 +1,12 @@
 #include <xc.h>
 #include "i2c.h"
 
+
 void I2C_2_Master_Init(void)
 {
-  //i2c config  
-  SSP2CON1bits.SSPM= 0b1000;    // i2c master mode
-  SSP2CON1bits.SSPEN = 1;       //enable i2c
+  //I2C configurations  
+  SSP2CON1bits.SSPM= 0b1000;    // I2C master mode
+  SSP2CON1bits.SSPEN = 1;       // Enable I2C
   SSP2ADD = (_XTAL_FREQ/(4*_I2C_CLOCK))-1; //Baud rate divider bits (in master mode)
   
   //pin configuration for i2c  
@@ -19,34 +20,40 @@ void I2C_2_Master_Init(void)
   RD6PPS=0x1B;      //clock output
 }
 
+
 void I2C_2_Master_Idle(void)
 {
-  while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); // wait until bus is idle
+  while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); 
 }
+
 
 void I2C_2_Master_Start(void)
 {
   I2C_2_Master_Idle();    
-  SSP2CON2bits.SEN = 1;             //Initiate start condition
+  SSP2CON2bits.SEN = 1;           
 }
+
 
 void I2C_2_Master_RepStart(void)
 {
   I2C_2_Master_Idle();
-  SSP2CON2bits.RSEN = 1;           //Initiate repeated start condition
+  SSP2CON2bits.RSEN = 1;          
 }
+
 
 void I2C_2_Master_Stop()
 {
   I2C_2_Master_Idle();
-  SSP2CON2bits.PEN = 1;           //Initiate stop condition
+  SSP2CON2bits.PEN = 1;          
 }
+
 
 void I2C_2_Master_Write(unsigned char data_byte)
 {
   I2C_2_Master_Idle();
-  SSP2BUF = data_byte;         //Write data to SSPBUF
+  SSP2BUF = data_byte;        
 }
+
 
 unsigned char I2C_2_Master_Read(unsigned char ack)
 {
@@ -60,3 +67,5 @@ unsigned char I2C_2_Master_Read(unsigned char ack)
   SSP2CON2bits.ACKEN = 1;        //start acknowledge sequence
   return tmp;
 }
+
+//Note: Why is the ack passed to this function?
