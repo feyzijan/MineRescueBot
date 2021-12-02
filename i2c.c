@@ -1,6 +1,8 @@
 #include <xc.h>
 #include "i2c.h"
 
+unsigned char check1;
+unsigned char check2;
 
 void I2C_2_Master_Init(void)
 {
@@ -23,7 +25,11 @@ void I2C_2_Master_Init(void)
 
 void I2C_2_Master_Idle(void)
 {
-  while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); 
+    //check1 = SSP2STAT & 0x04;
+    //check2 = SSP2CON2 & 0x1F; // this one fails
+    
+    //while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); 
+    while ((SSP2STAT & 0x04)); 
 }
 
 

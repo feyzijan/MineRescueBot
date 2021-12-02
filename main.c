@@ -23,27 +23,29 @@ void main(void){
     Interrupts_init();
     Timer0_init();
     
-    //color_click_init();
+    color_click_init();
     
+    
+    unsigned int color;
+    //color = color_read_Red();
+    
+
     while(1){
         
         //Edit for Colour
-        //send voltage readings every second
         
         if(timer_flag) { //1 second has passed 
-            //voltage = ADC_getval(); //read voltage
+            color = color_read_Red(); //read color
             
+            __debug_break();
             TxBufferedString(" test "); // writes string to buffer
             sendTxBuf(); //interrupt will handle the rest
             
             timer_flag =0;
+            //__delay_ms(1000);
         }
-         
         
-        
-        
-
-        
+          
     }    
 }
 
