@@ -2,7 +2,7 @@
 #include "color.h"
 #include "i2c.h"
 #include <stdio.h>
-
+#include "serial.h"
 void color_click_init(void)
 {   
     I2C_2_Master_Init();//Initialise i2c Master
@@ -31,29 +31,57 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Stop();          //Stop condition
 }
 
-unsigned int color_read_Red(void)
+unsigned int color_read(unsigned char address)
 {  
-    //__debug_break();
 	unsigned int tmp;
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
-	
-    // Edit line below to read different channels
-    I2C_2_Master_Write(0xA0 | 0x16);    //command (auto-increment protocol transaction) + start at RED low register
-	
+
+    I2C_2_Master_Write(0xA0 | address);    //command (auto-increment protocol transaction) + start at a colour's low register
+
     I2C_2_Master_RepStart();			// start a repeated transmission
-	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
-	
+    I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
+
     tmp=I2C_2_Master_Read(1);			//read the Red LSB
-	tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the Red MSB (don't acknowledge as this is the last read)
-	I2C_2_Master_Stop();          //Stop condition
-	return tmp;
-    //__debug_break();
+    tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the Red MSB (don't acknowledge as this is the last read)
+    I2C_2_Master_Stop();          //Stop condition
+    return tmp;
 }
 
 
-void Color2String(char *ptr, unsigned int color){
-    sprintf(ptr," %05d", color);
+void Color2String(char *ptr, unsigned int *pval){
+    sprintf(ptr,"  %05d ", *pval);
 }
 
+//TODO: Modify below function to read all colors at one go 
 
+void SendColorReadings(void){
+    char colorstring[8];
+
+    putCharToTxBuf(' ');
+    
+    //putCharToTxBuf('R');
+    sprintf(colorstring," R%05d ", red);
+    TxBufferedString(colorstring); 
+    
+    //putCharToTxBuf('G');
+    sprintf(colorstring," G%05d ", green);
+    TxBufferedString(colorstring); 
+    
+    //putCharToTxBuf('B');
+    sprintf(colorstring," B%05d ", blue);
+    TxBufferedString(colorstring); 
+    
+    //putCharToTxBuf('C');
+    sprintf(colorstring," C%05d ", clear);
+    TxBufferedString(colorstring);
+
+    sendTxBuf(); //interrupt will handle the rest
+}
+
+void read_All_Colors(void){
+    red = color_read(0x16); 
+    green = color_read(0x18); 
+    blue = color_read(0x1A); 
+    clear = color_read(0x14); 
+}
