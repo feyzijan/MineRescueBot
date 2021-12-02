@@ -28,8 +28,8 @@ void I2C_2_Master_Idle(void)
     //check1 = SSP2STAT & 0x04;
     //check2 = SSP2CON2 & 0x1F; // this one fails
     
-    //while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); 
-    while ((SSP2STAT & 0x04)); 
+    while ((SSP2STAT & 0x04) || (SSP2CON2 & 0x1F)); 
+    //while ((SSP2STAT & 0x04)); 
 }
 
 

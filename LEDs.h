@@ -9,24 +9,31 @@
 
 /*
 //LEDs for debugging:
-LATDbits.LATD7 = LATHbits.LATH3 = 1; // set initial value
-TRISDbits.TRISD7 = TRISHbits.TRISH3 = 0;  //set pins as output (0)
+TRISDbits.TRISD7 = 0;
+LATDbits.LATD7 = 0; 
+
+TRISHbits.TRISH3 = 0; 
+LATHbits.LATH3 = 0;
+
+ 
+ * 
 
 //Head Lamps - Not Working
-TRISDbits.TRISD0 = 0; 
-LATDbits.LATD0 = 1;
+TRISHbits.TRISH1 = 0; 
+//ANSELDbits.ANSELD0 = 0
+LATHbits.LATH1 = 1;
 
 // Main Beam - Not Working
-TRISCbits.TRISC5 = 0; 
-LATCbits.LATC5 = 0;
+TRISDbits.TRISD3 = 0; 
+LATDbits.LATD3 = 0;
 
 // Brake Lights - Not Working
-TRISAbits.TRISA0 = 0; 
-LATAbits.LATA0 = 0;
+TRISDbits.TRISD4 = 0; 
+LATDbits.LATD4 = 0;
 
 // Right Lamps - Not Working
-TRISGbits.TRISG3 = 0; 
-LATGbits.LATG3 = 0;
+TRISHbits.TRISH0 = 0; 
+LATHbits.LATH0 = 0;
 
 // Left Lamps - Working
 TRISFbits.TRISF0 = 0; 
@@ -36,30 +43,40 @@ LATFbits.LATF0 = 0;
 TRISFbits.TRISF6 = 1; 
 
 // Red Led - Working
-TRISGbits.TRISG1 = 0; 
-LATGbits.LATG1 = 0;
+TRISGbits.TRISG0 = 0; 
+LATGbits.LATG0 = 0;
 
 // Blue Led - Working
-TRISFbits.TRISF7 = 0; 
-LATFbits.LATF7 = 0;
+TRISEbits.TRISE7 = 0; 
+LATEbits.LATE7 = 0;
 
 // Green Led - Working
-TRISAbits.TRISA4 = 0; 
-LATAbits.LATA4 = 0;
+TRISAbits.TRISA3 = 0; 
+LATAbits.LATA3 = 0;
 
  */
 
 /*
  // Testing if LEDs and Lamps work one at a time
-        LATGbits.LATG1 = ! LATGbits.LATG1; // Red
-        LATAbits.LATA4 = ! LATAbits.LATA4; // Green
-        LATFbits.LATF7 = ! LATFbits.LATF7; // Blue
+        LATGbits.LATG0 = ! LATGbits.LATG0; // Red
+        LATEbits.LATE7 = ! LATEbits.LATE7; // Blue
+        LATAbits.LATA3 = ! LATAbits.LATA3; // Green
         
-        LATDbits.LATD0 = !LATDbits.LATD0; // Head Lamps
-        LATAbits.LATA0 = !LATAbits.LATA0; // Brake Lamps
-        LATFbits.LATF0 = !LATFbits.LATF0; // Left Lamps
-        LATGbits.LATG3 = !LATGbits.LATG3; // Right Lamps
-        LATCbits.LATC5 = !LATCbits.LATC5; // Main Beam
+        //Head Lamps - Not Working
+        LATHbits.LATH1 = !LATHbits.LATH1;
+
+        // Main Beam - Not Working
+        LATDbits.LATD3 = !LATDbits.LATD3;
+
+        // Brake Lights - Not Working
+        LATDbits.LATD4 = !LATDbits.LATD4;
+
+        // Right Lamps - Not Working
+        LATHbits.LATH0 = !LATHbits.LATH0 ;
+
+        // Left Lamps - Working
+        LATFbits.LATF0 = !LATFbits.LATF0;
+ 
         __delay_ms(250);
  */
 #endif

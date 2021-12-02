@@ -17,34 +17,33 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
+unsigned int color = 0;
 
 void main(void){
+    
+    //Inits
     initUSART4();
     Interrupts_init();
     Timer0_init();
-    
     color_click_init();
     
+    //LEDs for Debugging
+    TRISHbits.TRISH3 = 0; 
+    LATHbits.LATH3 = 0;
+    //LATHbits.LATH3 = !LATHbits.LATH3 ;
     
-    unsigned int color;
-    //color = color_read_Red();
     
-
     while(1){
-        
-        //Edit for Colour
-        
+
         if(timer_flag) { //1 second has passed 
             color = color_read_Red(); //read color
-            
-            __debug_break();
+
             TxBufferedString(" test "); // writes string to buffer
             sendTxBuf(); //interrupt will handle the rest
             
-            timer_flag =0;
+            //timer_flag =0;
             //__delay_ms(1000);
-        }
-        
+        } 
           
     }    
 }
