@@ -15,7 +15,7 @@ void color_click_init(void)
 	color_writetoaddr(0x00, 0x03);
 
     //set integration time
-	color_writetoaddr(0x01, 0xD5);
+	color_writetoaddr(0x01, 0xFF); // trying different integration times to calibrate colour readings
 }
 
 void color_writetoaddr(char address, char value){

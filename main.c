@@ -64,19 +64,19 @@ void main(void){
     
     // Red Led (G0 for MB1 G1 for MB2)
     TRISGbits.TRISG0 = 0; 
-    LATGbits.LATG0 = 0;
+    LATGbits.LATG0 = 1;
     ANSELGbits.ANSELG0=0;
     
     // Blue Led (A3 for MB1 F7 for MB2)
     
     TRISAbits.TRISA3 = 0; 
-    LATAbits.LATA3 = 0;
+    LATAbits.LATA3 = 1;
     ANSELAbits.ANSELA3=0;
     
     
     // Green Led (A3 for MB1 F6 for MB2)
     TRISEbits.TRISE7 = 0; 
-    LATEbits.LATE7 = 0;
+    LATEbits.LATE7 = 1;
     ANSELEbits.ANSELE7=0;
     
 
