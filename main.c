@@ -17,21 +17,25 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
+char checker;
 
 void main(void){
     
     //Inits
-    initUSART4();
+    initUSART4(); 
+    color_click_init();
     Interrupts_init();
     Timer0_init();
-    color_click_init();
-
+    
     LEDsInit();
+    //LED1 = !LED1;
     //LightToggle();
     
+    checker = PORTBbits.RB0;
     while(1){
 
-        if(timer_flag) { //1 second has passed 
+        // Once every second
+        if(timer_flag) { 
             
             read_All_Colors();
             SendColorReadings();

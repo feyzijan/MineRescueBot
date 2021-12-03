@@ -51,3 +51,5 @@ void Color2String(char *ptr, unsigned int *pval);
 void read_All_Colors(void);
 
 void SendColorReadings(void);
+
+void color_click_interrupt_init(void);

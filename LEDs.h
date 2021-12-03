@@ -1,5 +1,5 @@
-#ifndef _LEDS_H
-#define _LEDS_H
+#ifndef _LEDs_H
+#define _LEDs_H
 
 #include <xc.h>
 

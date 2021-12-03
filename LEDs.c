@@ -34,7 +34,7 @@ void LightToggle(void){
 }
 
 void LEDtest(void){
-    for(char i=0; i <20;i++){
+    for(char i=0; i <4;i++){
         RedLight = !RedLight;
         BlueLight = !BlueLight;
         GreenLight = !GreenLight;
