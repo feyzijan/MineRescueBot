@@ -19,21 +19,9 @@ void color_click_init(void)
     color_writetoaddr(0x03, 0x00); // Wait time register: 256
     
     color_writetoaddr(0x0F, 0x01); // Gain: 4X
-}
-
-
-void color_click_interrupt_init(void){
-     
-        color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
-        // Configure interrupt threshold values for RGBC clear channel
-        // Low threshold: 200, Upper threshold:400
-        color_writetoaddr(0x04, 0b11001000); // low threshold lower byte : 
-        color_writetoaddr(0x05, 0b00000000); // low threshold upper byte : 
-        color_writetoaddr(0x06, 0b11110100); // upper threshold lower byte : 
-        color_writetoaddr(0x07, 0b00000001); // upper threshold higher byte : 
-        // Configure Persistence Register 
-        color_writetoaddr(0x0C, 1); // 1 clear channel value outside of range
-}
+    
+    color_writetoaddr(0x0C, 0x00);
+}   
 
 
 void color_writetoaddr(char address, char value){
@@ -43,6 +31,7 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Write(value);    
     I2C_2_Master_Stop();          //Stop condition
 }
+
 
 unsigned int color_read(unsigned char address)
 {  
@@ -59,6 +48,26 @@ unsigned int color_read(unsigned char address)
     tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the MSB (don't acknowledge as this is the last read)
     I2C_2_Master_Stop();      
     return tmp;
+}
+
+//Note: This function unnecessarily checks register 0x12(device id) as well
+// Modifying the code to read one register gave some errors so this is temporary
+unsigned char get_int_status(void)
+{  
+    //__debug_break();
+	unsigned int tmp;
+	I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
+
+    I2C_2_Master_Write(0xA0 | 0x12);//command (auto-increment protocol transaction) + start at a colour's low register
+
+    I2C_2_Master_RepStart();// start a repeated transmission
+    I2C_2_Master_Write(0x52 | 0x01);//7 bit address + Read (1) mode
+
+    tmp=I2C_2_Master_Read(1);//read the  LSB
+    I2C_2_Master_Read(0); //read the MSB (don't acknowledge as this is the last read)
+    I2C_2_Master_Stop();      
+    return tmp>>4;
 }
 
 
@@ -99,3 +108,5 @@ void read_All_Colors(void){
     blue = color_read(0x1A); 
     clear = color_read(0x14); 
 }
+
+

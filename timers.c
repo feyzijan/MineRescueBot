@@ -8,7 +8,7 @@ void Timer0_init()
 {
     T0CON1bits.T0CS=0b100; // LFINTOSC = 31Khz
     T0CON1bits.T0ASYNC=1; 
-    T0CON1bits.T0CKPS=0b1000 ; // Pre-scaler 1:256 - overflow in 2 s
+    T0CON1bits.T0CKPS=0b0111 ; // Pre-scaler 1:128 - overflow in 1s
 
     T0CON0bits.T016BIT=0; //16bit mode	  
     TMR0L = 0b00001000;

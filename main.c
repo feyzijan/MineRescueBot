@@ -17,29 +17,36 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-char checker;
+unsigned char intstatus;
 
 void main(void){
     
-    //Inits
+    //Initialisations
     initUSART4(); 
     color_click_init();
+    LEDsInit();
     Interrupts_init();
     Timer0_init();
     
-    LEDsInit();
-    //LED1 = !LED1;
     //LightToggle();
     
-    checker = PORTBbits.RB0;
+    
+    // Button RF2 - for debugging
+    TRISFbits.TRISF2=1; //set TRIS value for pin (input)
+    ANSELFbits.ANSELF2=0; //turn off analogue input on pin  
+    
+    
+    
     while(1){
-
+        if (!PORTFbits.RF2) {
+            LATBbits.LATB0 = 1; //Attempted to use button to trigger interrupt - doesn't work
+        } 
+        
         // Once every second
         if(timer_flag) { 
-            
-            read_All_Colors();
-            SendColorReadings();
-           
+            read_All_Colors(); // Read RGBC values
+            intstatus = get_int_status(); // for debugging: check interrupt status at 0x13: appears always on
+            SendColorReadings(); // Send all color readings over Serial Port
             timer_flag =0;   
         } 
     }    
