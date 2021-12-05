@@ -19,9 +19,9 @@ void Interrupts_init(void)
     TRISBbits.TRISB0 = 1; //RB0 as input
     ANSELBbits.ANSELB0 = 0; // RB0 as digital input
     
+    // Configure INT0IE interrupt
     PIE0bits.INT0IE = 1; //Enable INT0IE interrupt
     PIR0bits.INT0IF = 0; // Turn off Interrupt Flag initially
-    
     INTCONbits.INT0EDG = 1; // Interrupt on rising edge 
     IPR0bits.INT0IP = 1; // High Priority
     
@@ -31,11 +31,9 @@ void Interrupts_init(void)
     //INLVLBbits.INLVLB0 = 1; //1 = ST, 0=TTL? - Tried both ways - doesn't work
  
     color_click_interrupt_init();
-    
     INTCONbits.PEIE = 1; // Toggle peripheral interrupts
     INTCONbits.GIE = 1; //Toggle interrupts Globally
 }
-
 void color_click_interrupt_init(void){
     //__debug_break();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
@@ -54,7 +52,6 @@ void color_click_interrupt_init(void){
  * Serial transmission 
  * Clicker Interrupt
  ************************************/
-
 void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt

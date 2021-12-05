@@ -3,7 +3,7 @@
 
 void initUSART4(void) {
 	//code to set up USART4 for Reception and Transmission =
-	//see readme for detials
+	//see readme for details
     RC0PPS = 0x12; // Map EUSART4 TX to RC0
     RX4PPS = 0x11; // RX is RC1  - output
     

@@ -14,10 +14,19 @@
 #include "serial.h"
 #include "timers.h"
 #include "interrupts.h"
+#include "CardMoves.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 unsigned char intstatus;
+
+
+char moves[30];
+
+char *pmoves = &moves;
+
+
+char color;
 
 void main(void){
     
@@ -27,15 +36,33 @@ void main(void){
     LEDsInit();
     Interrupts_init();
     Timer0_init();
+    initDCmotorsPWM(199); 
+    
+    // Motor Initialisation
+    //Initialise Motor structs
+    struct DC_motor motorL, motorR; // declare two DC_motor structures 
+    motorL.power=0; 				
+    motorL.direction=1; // forward
+    motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); // store address of PWM duty high byte
+    motorL.dir_LAT=(unsigned char *)(&LATE); 	// store address of LAT
+    motorL.dir_pin=4; 	// pin RE4 controls direction
+    motorL.PWMperiod=199; // store PWMperiod for motor
+
+    //same for motorR but different PWM register, LAT and direction pin
+    motorR.power=0; 						
+    motorR.direction=1; 					
+    motorR.dutyHighByte=(unsigned char *)(&PWM7DCH);	
+    motorR.dir_LAT=(unsigned char *)(&LATG); 		
+    motorR.dir_pin=6; 						//pin RG6 controls direction
+    motorR.PWMperiod=199; 		
+
     
     //LightToggle();
-    
     
     // Button RF2 - for debugging
     TRISFbits.TRISF2=1; //set TRIS value for pin (input)
     ANSELFbits.ANSELF2=0; //turn off analogue input on pin  
-    
-    
+   
     
     while(1){
         if (!PORTFbits.RF2) {
@@ -50,5 +77,10 @@ void main(void){
             timer_flag =0;   
         } 
     }    
+    
+    
+    stop(&motorL,&motorR);
+    pick_move(color, *pmoves, &motorL,&motorR);
+    pmoves = pmoves + 7; //move to the next char 
+    
 }
-

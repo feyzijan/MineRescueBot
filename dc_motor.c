@@ -1,6 +1,10 @@
 #include <xc.h>
 #include "dc_motor.h"
 
+
+
+    
+
 /* Function initialise T2 and PWM for DC motor control */
 void initDCmotorsPWM(int PWMperiod){
 	//initialise your TRIS and LAT registers for PWM
@@ -32,6 +36,7 @@ void initDCmotorsPWM(int PWMperiod){
     
     PWM6CONbits.EN = 1;
     PWM7CONbits.EN = 1;
+    
 }
 
 /* Function to set PWM output from the values in the motor structure
@@ -157,8 +162,7 @@ void fullTurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 
 /*Function to make a stationary robot do a full right turn quickly  
  * Reduce power on right-side wheels to 0
- * Increase power on left-side wheels to 100
- */ 
+ * Increase power on left-side wheels to 100 */ 
 void fullTurnRight(struct DC_motor *mL, struct DC_motor *mR)
 {
     //set right motors to zero and right motors to full power 
