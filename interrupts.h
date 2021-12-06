@@ -5,19 +5,23 @@
 
 #define _XTAL_FREQ 64000000
 
-char timer_flag; // variable to check readings are taken every second
+/* TODO: 
+ * 
+ */
+
+// Variable to check readings are taken every second - remove after testing
+char timer_flag; 
+
 
 /**********************************************
  *  Function to initialise all interrupts
  ***********************************************/
 void Interrupts_init(void);
 
+
 /**********************************************
- *  Function to write necessary bytes via I2C to clicker for interrupt
+ *  High Priority Interrupt Routine
  ***********************************************/
-void color_click_interrupt_init(void);
-
 void __interrupt(high_priority) HighISR();
-
 
 #endif

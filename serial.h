@@ -7,6 +7,11 @@
 
 #define TX_BUF_SIZE 60
 
+
+/* TODO: serial.c/h are for testing only, remove before final build
+ *
+ */
+
 volatile char EUSART4TXbuf[TX_BUF_SIZE];
 volatile char TxBufWriteCnt=0;
 volatile char TxBufReadCnt=0;

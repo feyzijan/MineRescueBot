@@ -5,6 +5,11 @@
 
 #define _XTAL_FREQ 64000000
 
+/* TODO: 
+ * 
+ */
+
+
 // Define all LED pins for ease of reference
 #define RedLight LATGbits.LATG0
 #define BlueLight LATEbits.LATE7
@@ -18,13 +23,24 @@
 #define RightLamp LATHbits.LATH0 
 
 
-/* Set all LED pins as output and set output to zero*/
+/***************************************
+ * Function to set all LED pins as output and set output to zero
+ *************************************/
 void LEDsInit(void);
 
-/* Toggle front white light with RGB LEDs*/
+/***************************************
+ * Function to toggle front white light with RGB LEDs
+ *************************************/
 void LightToggle(void);
 
-/*Test that LEDs work - will not be in final version*/
+
+
+/****** Functions for Testing Purposes - Will be removed from final build *****/
+
+
+/***************************************
+ * Function to test that LEDs work 
+ *************************************/
 void LEDTest(void);
 
 

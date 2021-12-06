@@ -22,34 +22,18 @@ void Interrupts_init(void)
     // Configure INT0IE interrupt
     PIE0bits.INT0IE = 1; //Enable INT0IE interrupt
     PIR0bits.INT0IF = 0; // Turn off Interrupt Flag initially
-    INTCONbits.INT0EDG = 1; // Interrupt on rising edge 
+    INTCONbits.INT0EDG = 0; // Interrupt on falling edge 
     IPR0bits.INT0IP = 1; // High Priority
     
-    //Not sure if I need these parameters (tried with these on and off)
-    WPUBbits.WPUB0 = 1; // Enable weak pull up resistor?
-    ODCONBbits.ODCB0 = 1; // Open-drain enabled?
-    //INLVLBbits.INLVLB0 = 1; //1 = ST, 0=TTL? - Tried both ways - doesn't work
- 
     color_click_interrupt_init();
-    INTCONbits.PEIE = 1; // Toggle peripheral interrupts
+    //INTCONbits.PEIE = 1; // Toggle peripheral interrupts - appears unnecessary
     INTCONbits.GIE = 1; //Toggle interrupts Globally
-}
-void color_click_interrupt_init(void){
-    //__debug_break();
-    color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
-    //Configure interrupt thresholds RGBC clear channel: Low 256 High: 500
-    color_writetoaddr(0x04, 0xFF); 
-    color_writetoaddr(0x05, 0x00);  
-    color_writetoaddr(0x06, 0x00); 
-    color_writetoaddr(0x07, 0x02); 
-    
-    color_writetoaddr(0x0C, 0x01); // Persistence register = 1( 0x00 doesn't trigger as well)
 }
 
 /************************************
  * High priority interrupt service routine for:
- * TMR0 overflows(1s)
- * Serial transmission 
+ * TMR0 overflows(1s) (For Testing)
+ * Serial transmission (For Testing)
  * Clicker Interrupt
  ************************************/
 void __interrupt(high_priority) HighISR()
@@ -58,8 +42,10 @@ void __interrupt(high_priority) HighISR()
     // NOTE: Flag is not raised when I manually set LATB0 to 1
     if(PIR0bits.INT0IF){
         //__debug_break();
+        color_int_clear();
         PIR0bits.INT0IF = 0;// Flag
-        //I2C_2_Master_Write(0b11100110); // clear RGBC interrupt in Clicker - 
+        HeadLamp = !HeadLamp;
+        
     }
 
     // Interrupt for transmitting data- For Testing only
@@ -77,32 +63,3 @@ void __interrupt(high_priority) HighISR()
             PIR0bits.TMR0IF = 0; // clear flag
         }
 }
-
-
-
-
-
-
-
-
-//Timer 0 Low priority interrupt //
-/*
-void __interrupt(low_priority) LOWISR(){ 
-    sendCharSerial4('j');
-    
-    if(PIR0bits.TMR0IF == 1) { // check interrupt flag
-            TMR0H = 0;    
-            TMR0L = 0;  
-            PIR0bits.TMR0IF = 0; // clear interrupt flag
-       }  
-}
- */
-
-/*
- * Possible Interrupt Codes to Try*
- * Interrupt on change
- PIE0bits.IOCIE = 1; // Enable interrupt on change
- IOCBPbits.IOCBP0 = 1;// Interrupt on change positive edge enable   
- IOCBFbits.IOCBF0 = 0; // Clear flag     
- 
- */

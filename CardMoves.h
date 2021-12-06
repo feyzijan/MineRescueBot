@@ -6,6 +6,14 @@
 
 #define _XTAL_FREQ 64000000
 
+// Variables that will be used to keep track of previous moves and revert back to start
+char moves[30];
+char move_times[30];
+char *pmoves = &moves;
+char *pmove_times[30];
+
+
+
 /************Function prototypes for color cards*****************************/
 
 /*******************************************************************
@@ -35,10 +43,9 @@ void orange_move(struct DC_motor *mL, struct DC_motor *mR);
 /********** LightBlue Card: Turn Left 135° ****************/
 void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
 
-/********** White Card: Finish - execute reverse instructions ***************/
-/* This function loops backwards through the list of colors stored in move_list 
- * to get back to the start condition
- */
+/**********  White Card: Go back to Start ***************/
+/* This function loops backwards through the list of colours stored in move_list 
+ * to get back to the start condition */
 void white_move(char *move_list, struct DC_motor *mL, struct DC_motor *mR);
 
 /********** Black Card: Maze Wall - do nothing****************/

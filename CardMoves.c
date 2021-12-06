@@ -4,7 +4,6 @@
 
 
 
-
 void pick_move(char color, char *move_list, struct DC_motor *mL, struct DC_motor *mR){
     
     if (color == 'w'){
@@ -84,4 +83,3 @@ void white_move(char *move_list, struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-// [ r, b, o , g, ]

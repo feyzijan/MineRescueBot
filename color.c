@@ -23,6 +23,20 @@ void color_click_init(void)
     color_writetoaddr(0x0C, 0x00);
 }   
 
+void color_click_interrupt_init(void){
+    //__debug_break();
+    color_int_clear();
+    color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
+    //Configure interrupt thresholds RGBC clear channel: Low 300 High: 1250
+    color_writetoaddr(0x04, 0x2C); 
+    color_writetoaddr(0x05, 0x01); 
+    color_writetoaddr(0x06, 0xE2); 
+    color_writetoaddr(0x07, 0x04); 
+    
+    color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
+    color_int_clear();
+}
+
 
 void color_writetoaddr(char address, char value){
     I2C_2_Master_Start();         //Start condition
@@ -32,6 +46,11 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Stop();          //Stop condition
 }
 
+void color_int_clear(void){
+    I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
+    I2C_2_Master_Write(0xE6); // Clear RGBC interrupt
+}
 
 unsigned int color_read(unsigned char address)
 {  
@@ -50,24 +69,29 @@ unsigned int color_read(unsigned char address)
     return tmp;
 }
 
-//Note: This function unnecessarily checks register 0x12(device id) as well
-// Modifying the code to read one register gave some errors so this is temporary
-unsigned char get_int_status(void)
+/*Send the interrupt status over the Serial port
+ Function for debugging purposes only - delete later*/ 
+void get_int_status(void)
 {  
     //__debug_break();
-	unsigned int tmp;
+	unsigned char tmp;
+    unsigned char intstatus[9];
+    unsigned char throw;
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
 
-    I2C_2_Master_Write(0xA0 | 0x12);//command (auto-increment protocol transaction) + start at a colour's low register
+    I2C_2_Master_Write(0xA0 | 0x13);//command (auto-increment protocol transaction) + start at a colour's low register
 
     I2C_2_Master_RepStart();// start a repeated transmission
     I2C_2_Master_Write(0x52 | 0x01);//7 bit address + Read (1) mode
 
-    tmp=I2C_2_Master_Read(1);//read the  LSB
-    I2C_2_Master_Read(0); //read the MSB (don't acknowledge as this is the last read)
-    I2C_2_Master_Stop();      
-    return tmp>>4;
+    tmp = I2C_2_Master_Read(1);//read the  LSB
+    throw = I2C_2_Master_Read(0); //read the MSB (don't acknowledge as this is the last read)
+    I2C_2_Master_Stop();
+    tmp = tmp >>4;
+    sprintf(intstatus, "  INT:%d  ",tmp );
+    TxBufferedString(intstatus);
+    sendTxBuf();
 }
 
 

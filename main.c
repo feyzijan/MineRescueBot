@@ -18,46 +18,38 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-unsigned char intstatus;
-
-
-char moves[30];
-
-char *pmoves = &moves;
-
-
-char color;
 
 void main(void){
     
     //Initialisations
-    initUSART4(); 
+    initUSART4();
     color_click_init();
     LEDsInit();
     Interrupts_init();
     Timer0_init();
     initDCmotorsPWM(199); 
+
+    char color;
     
     // Motor Initialisation
     //Initialise Motor structs
-    struct DC_motor motorL, motorR; // declare two DC_motor structures 
+    struct DC_motor motorL, motorR; 
     motorL.power=0; 				
-    motorL.direction=1; // forward
-    motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); // store address of PWM duty high byte
-    motorL.dir_LAT=(unsigned char *)(&LATE); 	// store address of LAT
-    motorL.dir_pin=4; 	// pin RE4 controls direction
-    motorL.PWMperiod=199; // store PWMperiod for motor
-
-    //same for motorR but different PWM register, LAT and direction pin
+    motorL.direction=1; 
+    motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); 
+    motorL.dir_LAT=(unsigned char *)(&LATE); 	
+    motorL.dir_pin=4; 	/
+    motorL.PWMperiod=199; 
+    
     motorR.power=0; 						
     motorR.direction=1; 					
     motorR.dutyHighByte=(unsigned char *)(&PWM7DCH);	
     motorR.dir_LAT=(unsigned char *)(&LATG); 		
-    motorR.dir_pin=6; 						//pin RG6 controls direction
+    motorR.dir_pin=6;
     motorR.PWMperiod=199; 		
-
     
-    //LightToggle();
+    
+    //LightToggle(); // Test LED operations
     
     // Button RF2 - for debugging
     TRISFbits.TRISF2=1; //set TRIS value for pin (input)
@@ -65,22 +57,19 @@ void main(void){
    
     
     while(1){
-        if (!PORTFbits.RF2) {
-            LATBbits.LATB0 = 1; //Attempted to use button to trigger interrupt - doesn't work
-        } 
+        /*****Test Motor Operation***//*
+        stop(&motorL, &motorR);
+        fullSpeedAhead(&motorL, &motorR);
+        __delay_ms(1000);
+        stop(&motorL, &motorR);
+        */  
         
-        // Once every second
+        /******** Send Back Colour Readings to PC ******/
         if(timer_flag) { 
-            read_All_Colors(); // Read RGBC values
-            intstatus = get_int_status(); // for debugging: check interrupt status at 0x13: appears always on
-            SendColorReadings(); // Send all color readings over Serial Port
+            get_int_status(); //Send back Interrupt Status
+            read_All_Colors();
+            SendColorReadings(); 
             timer_flag =0;   
         } 
-    }    
-    
-    
-    stop(&motorL,&motorR);
-    pick_move(color, *pmoves, &motorL,&motorR);
-    pmoves = pmoves + 7; //move to the next char 
-    
+    }      
 }
