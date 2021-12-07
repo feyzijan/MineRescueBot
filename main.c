@@ -18,8 +18,12 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
+// Set correct friction value for turns
+friction = 200; // TEST THAT THIS WORKS
+
 
 void main(void){
+    
     
     //Initialisations
     initUSART4();
@@ -38,7 +42,7 @@ void main(void){
     motorL.direction=1; 
     motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); 
     motorL.dir_LAT=(unsigned char *)(&LATE); 	
-    motorL.dir_pin=4; 	/
+    motorL.dir_pin=4; 	
     motorL.PWMperiod=199; 
     
     motorR.power=0; 						

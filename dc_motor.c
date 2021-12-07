@@ -64,15 +64,9 @@ void setMotorPWM(struct DC_motor *m)
 	}
 }
 
-// High level functions to control left and right motor
-// Use setMotorPWM to perform low level update
-
-// NOTE for all below functions : 
-// You can reduce delay at the end gradually to find the minimum acceptable delay
 
 /*Function to stop the robot gradually 
  * Decrements the power of each motor by 1 until they are zero
- 
  */ 
 void stop(struct DC_motor *mL, struct DC_motor *mR)
 {
@@ -90,34 +84,7 @@ void stop(struct DC_motor *mL, struct DC_motor *mR)
     }    
 }
 
-/*Function to make the moving robot turn left a little 
- * Decreases power on left-side  wheels by 10% 
- */ 
-void turnLeft(struct DC_motor *mL)
-{
-    char new_power = mL->power * 9/10;
-    while (mL->power > new_power) {
-        mL->power  = mL->power -1; // slow down right wheels
-        setMotorPWM(mL); //update
-        __delay_ms(1);
-    }
-}
 
-/*Function to make the moving robot turn right a little 
- * Decreases power on right-side wheels by 10% 
- */ 
-void turnRight(struct DC_motor *mR)
-{
-    char new_power = mR->power * 9/10;
-    while (mR->power > new_power) {
-        mR->power  = mR->power -1; // slow down right wheels
-        setMotorPWM(mR); //update
-        __delay_ms(1);
-    }
-}
-
-/*Function to make the robot go full speed ahead ahead 
- */ 
 void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR)
 {
     // Update directions
@@ -126,12 +93,12 @@ void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR)
       
     // Increment values gradually 
     // note that left and right power are equal 
-    while ((mL->power + mR->power   < 200)){
+    while ((mL->power + mR->power   < 100)){
         
-        if(mL->power < 100){
+        if(mL->power < 50){
             mL->power ++;
         }          
-        if(mR->power < 100){
+        if(mR->power < 50){
             mR->power ++;
         } 
         setMotorPWM(mL);
@@ -140,11 +107,8 @@ void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR)
     }
 }
 
-/*Function to make a stationary robot do a full left turn quickly  
- * Reduce power on left-side wheels to 0
- * Increase power on right-side wheels to 100
- */ 
-void fullTurnLeft(struct DC_motor *mL, struct DC_motor *mR)
+
+void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 {
     //set left motors to zero and right motors to full power 
     while ((mL->power + mR->power) != 100){
@@ -158,12 +122,11 @@ void fullTurnLeft(struct DC_motor *mL, struct DC_motor *mR)
         setMotorPWM(mR);
         __delay_ms(1); 
     }    
+    friction_delay_ms();
 }
 
-/*Function to make a stationary robot do a full right turn quickly  
- * Reduce power on right-side wheels to 0
- * Increase power on left-side wheels to 100 */ 
-void fullTurnRight(struct DC_motor *mL, struct DC_motor *mR)
+
+void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 {
     //set right motors to zero and right motors to full power 
     while ((mL->power + mR->power) != 100){
@@ -177,6 +140,7 @@ void fullTurnRight(struct DC_motor *mL, struct DC_motor *mR)
         setMotorPWM(mR);
         __delay_ms(1); 
     }    
+    friction_delay_ms();
 }
 
 

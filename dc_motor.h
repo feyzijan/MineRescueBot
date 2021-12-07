@@ -2,11 +2,13 @@
 #define _DC_MOTOR_H
 
 #include <xc.h>
+#include "timers.h"
 
 #define _XTAL_FREQ 64000000
 
-/* TODO: Add comments to each function 
- * Remove turnLeft/Right functions and replace them with fullTurnLeft/Right
+
+/* TODO:
+ *
  * 
  */
 
@@ -24,26 +26,44 @@ struct DC_motor {
 
 /********************** Function prototypes ********************************/
 
-void initDCmotorsPWM(int PWMperiod); // function to setup PWM
+/*********
+ * Function to set up the PWM module for the DC motor
+ *********/
+void initDCmotorsPWM(int PWMperiod);
 
-
+/*********
+ * Function to update motor parameters to execute desired motions 
+ *************/
 void setMotorPWM(struct DC_motor *m);
 
 
+
+/******
+ * Function to 
+ ******/
 void stop(struct DC_motor *mL, struct DC_motor *mR);
 
 
-void turnLeft(struct DC_motor *mL);
-
-
-void turnRight(struct DC_motor *mR);
-
-
+/*****************
+ * Function to make the robot go full speed ahead ahead 
+ ****************/ 
 void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR);
 
-void fullTurnLeft(struct DC_motor *mL, struct DC_motor *mR);
 
-void fullTurnRight(struct DC_motor *mL, struct DC_motor *mR);
+/********************
+ * Function to make a stationary robot do a full left turn quickly  
+ * Reduce power on left-side wheels to 0
+ * Increase power on right-side wheels to 100
+ ************************/ 
+void TurnLeft(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********************
+ *Function to make a stationary robot do a full right turn quickly  
+ * Reduce power on right-side wheels to 0
+ * Increase power on left-side wheels to 100 
+ *********************/ 
+void TurnRight(struct DC_motor *mL, struct DC_motor *mR);
 
 
 #endif

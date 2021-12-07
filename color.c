@@ -15,12 +15,13 @@ void color_click_init(void)
     // TO CONFIGURE WITH TESTING
 	color_writetoaddr(0x01, 0xC0); //integration time: 64 Integ Cycles, 154ms, 65535 max count
 
+    
     //color_writetoaddr(0x00,0x1B); // Enable Wait time register?
     color_writetoaddr(0x03, 0x00); // Wait time register: 256
     
     color_writetoaddr(0x0F, 0x01); // Gain: 4X
     
-    color_writetoaddr(0x0C, 0x00);
+    //color_writetoaddr(0x0C, 0x00);
 }   
 
 void color_click_interrupt_init(void){
@@ -31,7 +32,7 @@ void color_click_interrupt_init(void){
     color_writetoaddr(0x04, 0x2C); 
     color_writetoaddr(0x05, 0x01); 
     color_writetoaddr(0x06, 0xE2); 
-    color_writetoaddr(0x07, 0x04); 
+    color_writetoaddr(0x07, 0xE4); 
     
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
     color_int_clear();
