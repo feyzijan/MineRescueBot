@@ -5,6 +5,7 @@
 /*TODO:
  * Check that func_index and time_index are updated globally
  * Check that the movement_durations and funcPtrList are updated globally
+ * Figure out how to reverse the "reverse one square" stuff
  */
 
 //Initialise variabels
@@ -17,6 +18,11 @@ unsigned char func_index = 0;
 
 
 
+/* Pick which move to execute based on the color you decided on
+/Before picking store in the timer_list how long the car had to move in a straight
+*line since it last stopped
+*Then add the function of the read color's '"complement" to the function pointer list
+*/
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
     
     if (color == 'w'){
@@ -26,14 +32,18 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
             add_function_ptr(&green_move);
             red_move(mL,mR);
         } else if(color == 'g'){
+            add_function_ptr(&red_move);
             green_move(mL,mR);
         } else if(color == 'b'){
+            add_function_ptr(&blue_move);
             blue_move(mL,mR);
         } else if (color == 'y'){
             yellow_move(mL,mR);
         } else if (color == 'o'){
+            add_function_ptr(&lightblue_move);
             orange_move(mL,mR);
         } else if (color == 'l'){
+            add_function_ptr(&orange_move);
             lightblue_move(mL,mR);
         }
     }

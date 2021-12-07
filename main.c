@@ -30,8 +30,9 @@ void main(void){
     color_click_init();
     LEDsInit();
     Interrupts_init();
-    Timer0_init();
-    initDCmotorsPWM(199); 
+    Timer1_init();
+    
+    initDCmotorsPWM(); 
 
     char color;
     
@@ -76,4 +77,12 @@ void main(void){
             timer_flag =0;   
         } 
     }      
+    
+    //test friction variable is being updated
+    /*
+    char fricstring[9];
+    sprintf(fricstring,"  F:%d  ", friction);
+    TxBufferedString(fricstring);
+    sendTxBuf();
+    */
 }

@@ -6,7 +6,7 @@
     
 
 /* Function initialise T2 and PWM for DC motor control */
-void initDCmotorsPWM(int PWMperiod){
+void initDCmotorsPWM(){
 	//initialise your TRIS and LAT registers for PWM
 
     // timer 2 config
@@ -15,7 +15,7 @@ void initDCmotorsPWM(int PWMperiod){
     T2CLKCONbits.CS=0b0001; // Fosc/4
 
     // Tpwm*(Fosc/4)/prescaler - 1 = PTPER
-    T2PR=PWMperiod; //Period reg 10kHz base period
+    T2PR=199; //199-Period reg 10kHz base period
     T2CONbits.ON=1;
     
     
@@ -65,9 +65,7 @@ void setMotorPWM(struct DC_motor *m)
 }
 
 
-/*Function to stop the robot gradually 
- * Decrements the power of each motor by 1 until they are zero
- */ 
+
 void stop(struct DC_motor *mL, struct DC_motor *mR)
 {
     //decrement values gradually 
@@ -85,14 +83,38 @@ void stop(struct DC_motor *mL, struct DC_motor *mR)
 }
 
 
-void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR)
+void move_forward(struct DC_motor *mL, struct DC_motor *mR)
 {
+    stop(mL,mR); // start from rest
+    
     // Update directions
     mL->direction = 1;
     mR->direction = 1;
       
     // Increment values gradually 
-    // note that left and right power are equal 
+    while ((mL->power + mR->power   < 100)){
+        
+        if(mL->power < 50){
+            mL->power ++;
+        }          
+        if(mR->power < 50){
+            mR->power ++;
+        } 
+        setMotorPWM(mL);
+        setMotorPWM(mR);
+        __delay_ms(1); 
+    }
+}
+
+void move_backward(struct DC_motor *mL, struct DC_motor *mR)
+{
+    stop(mL,mR); // start from rest
+    
+    // Reverse Direction
+    mL->direction = 0;
+    mR->direction = 0;
+      
+    // Increment values gradually 
     while ((mL->power + mR->power   < 100)){
         
         if(mL->power < 50){
@@ -108,39 +130,36 @@ void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR)
 }
 
 
+
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 {
-    //set left motors to zero and right motors to full power 
-    while ((mL->power + mR->power) != 100){
-        if(mL->power > 0){
-            mL->power --;  
-        }
-        if(mR->power < 100){
+    stop(mL,mR); // ensure it is stationary
+    //set left motors to zero and right motors to some level 
+    while (mR->power != 30){
             mR->power ++;
-        }
-        setMotorPWM(mL);
         setMotorPWM(mR);
         __delay_ms(1); 
     }    
-    friction_delay_ms();
+    
+    friction_delay_ms();//leave enough time to turn
+    stop(mL,mR); //stop turning
+    
 }
 
 
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 {
+    stop(mL,mR); // ensure it is stationary
+    
     //set right motors to zero and right motors to full power 
-    while ((mL->power + mR->power) != 100){
-        if(mL->power < 100){
-            mL->power  ++;  
-        }
-        if(mR->power > 0){
-            mR->power --;
-        }
+    while (mL->power  != 30){
+        mL->power  ++;  
         setMotorPWM(mL);
-        setMotorPWM(mR);
         __delay_ms(1); 
     }    
-    friction_delay_ms();
+    
+    friction_delay_ms();//leave enough time to turn
+    stop(mL,mR); //stop turning
 }
 
 

@@ -8,10 +8,12 @@
 
 
 /* TODO:
+ * Test all motor functions with different values of delay time between updates and power
  *
- * 
  */
 
+
+/*************************  Variable Prototypes ********************************/
 
 // Definition of DC_motor structure
 struct DC_motor { 
@@ -24,45 +26,59 @@ struct DC_motor {
 };
 
 
-/********************** Function prototypes ********************************/
+/*************************  Function Prototypes ********************************/
 
-/*********
+
+/************
  * Function to set up the PWM module for the DC motor
- *********/
-void initDCmotorsPWM(int PWMperiod);
+ ************/
+void initDCmotorsPWM();
 
-/*********
- * Function to update motor parameters to execute desired motions 
+
+/*************
+ * Function to perform low level update on motor power and direction via PWM 
  *************/
 void setMotorPWM(struct DC_motor *m);
 
 
-
-/******
- * Function to 
- ******/
+/*************
+ * Function to stop the buggy's movement
+ * Decrements the power of left and right motors gradually
+ *************/ 
 void stop(struct DC_motor *mL, struct DC_motor *mR);
 
 
-/*****************
- * Function to make the robot go full speed ahead ahead 
- ****************/ 
-void fullSpeedAhead(struct DC_motor *mL, struct DC_motor *mR);
+/*************
+ * Function to make the robot go forward
+ * Sets direction to 1, gradually increases the power on each motor to 50
+ * Note: Follow this with a delay and stop function to achieve predetermined distance
+ *************/ 
+void move_forward(struct DC_motor *mL, struct DC_motor *mR);
 
 
-/********************
- * Function to make a stationary robot do a full left turn quickly  
- * Reduce power on left-side wheels to 0
- * Increase power on right-side wheels to 100
- ************************/ 
+/*************
+ * Function to make the robot go forward
+ * Sets direction to 0, gradually increases the power on each motor to 50
+ * Note: Follow this with a delay and stop function to achieve predetermined distance
+ **************/ 
+void move_backward(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/*************
+ * Function to make buggy do a 90degree left turn 
+ * Stops motor - gradually increases power on right wheels - then stops again
+ * NOTE: Global friction variable must be set according to surface friction for accurate turns
+ * Picking correct friction value requires testing and calibration  
+ **************/ 
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR);
 
 
-/********************
- *Function to make a stationary robot do a full right turn quickly  
- * Reduce power on right-side wheels to 0
- * Increase power on left-side wheels to 100 
- *********************/ 
+/*************
+ * Function to make buggy do a 90degree right turn
+ * Stops motor - gradually increases power on left wheels - then stops again
+ * NOTE: Global friction variable must be set according to surface friction for accurate turns
+ * Picking correct friction value requires testing and calibration  
+ **************/ 
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR);
 
 

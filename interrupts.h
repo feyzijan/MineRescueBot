@@ -9,8 +9,15 @@
  * 
  */
 
-// Variable to check readings are taken every second - remove after testing
+
+/*************************  Variable Prototypes ********************************/
+
+/*****Variables for Testing only****/
 char timer_flag; 
+
+
+
+/*************************  Function Prototypes ********************************/
 
 
 /**********************************************

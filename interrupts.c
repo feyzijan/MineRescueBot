@@ -11,41 +11,42 @@
 ************************************/
 void Interrupts_init(void)
 {
-    INTCONbits.IPEN = 1; // Enable priority levels
-    PIE0bits.TMR0IE = 1; //Enable Timer0 interrupt
+    INTCONbits.IPEN = 1; // Interrupt Priority Levels: Enable
+    //PIE0bits.TMR0IE = 1; //TMR0 Interrupt: Enable
+    PIE5bits.TMR1IE = 1; //TMR1 Interrupt: Enable
+    IPR5bits.TMR1IP = 1; //TMR1 Interrupt Priority: High
     
-    /***********************Clicker Interrupt Init****************************/
-    //Pins for Clicker Interrupt
-    TRISBbits.TRISB0 = 1; //RB0 as input
-    ANSELBbits.ANSELB0 = 0; // RB0 as digital input
     
-    // Configure INT0IE interrupt
-    PIE0bits.INT0IE = 1; //Enable INT0IE interrupt
-    PIR0bits.INT0IF = 0; // Turn off Interrupt Flag initially
-    INTCONbits.INT0EDG = 0; // Interrupt on falling edge 
-    IPR0bits.INT0IP = 1; // High Priority
+    //****Clicker Interrupt Initialisations
+    TRISBbits.TRISB0 = 1; // Pin RB0: Input(1)
+    ANSELBbits.ANSELB0 = 0; // Pin RB0: Digital input(0)
     
-    color_click_interrupt_init();
-    //INTCONbits.PEIE = 1; // Toggle peripheral interrupts - appears unnecessary
-    INTCONbits.GIE = 1; //Toggle interrupts Globally
+    PIE0bits.INT0IE = 1; //Interrupt on Pin RB0: Enable
+    PIR0bits.INT0IF = 0; //Interrupt Flag: Off
+    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge 
+    IPR0bits.INT0IP = 1; // Interrupt Priority: High
+    
+    color_click_interrupt_init(); // Write interrupt configurations to clicker
+    
+    // Enable all interrupts
+    INTCONbits.PEIE = 1; 
+    INTCONbits.GIE = 1; 
 }
 
 /************************************
  * High priority interrupt service routine for:
- * TMR0 overflows(1s) (For Testing)
- * Serial transmission (For Testing)
+ * TMR1 overflows(1s) (For Testing)
+ * Serial transmission TX (For Testing)
  * Clicker Interrupt
  ************************************/
 void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt
-    // NOTE: Flag is not raised when I manually set LATB0 to 1
     if(PIR0bits.INT0IF){
         //__debug_break();
         color_int_clear();
-        PIR0bits.INT0IF = 0;// Flag
-        HeadLamp = !HeadLamp;
-        
+        PIR0bits.INT0IF = 0; // Clear Flag
+        HeadLamp = !HeadLamp; // Testing
     }
 
     // Interrupt for transmitting data- For Testing only
@@ -56,10 +57,11 @@ void __interrupt(high_priority) HighISR()
         }
     }
     
-    // Timer 0 Interrupt - Triggers every second
-    if(PIR0bits.TMR0IF) {
+    // Timer 1 Interrupt - Triggers every second (almost))
+    if(PIR5bits.TMR1IF) {
             timer_flag = 1;
-            TMR0L = 0b00001000;
-            PIR0bits.TMR0IF = 0; // clear flag
+            TMR1H = 0;
+            TMR1L = 0;
+            PIR5bits.TMR1IF = 0; // clear flag
         }
 }

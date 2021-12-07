@@ -23,24 +23,27 @@
 #define RightLamp LATHbits.LATH0 
 
 
-/***************************************
+/*************************  Function Prototypes ********************************/
+
+
+/************
  * Function to set all LED pins as output and set output to zero
- *************************************/
+ ************/
 void LEDsInit(void);
 
-/***************************************
+
+/************
  * Function to toggle front white light with RGB LEDs
- *************************************/
+ ************/
 void LightToggle(void);
 
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/
 
-
-/***************************************
+/*************
  * Function to test that LEDs work 
- *************************************/
+ *************/
 void LEDTest(void);
 
 

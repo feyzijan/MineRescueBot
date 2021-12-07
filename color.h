@@ -6,13 +6,21 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 /*TODO: 
- * Modify color_read so it reads all colors at once 
+ * 
+ * 
  */
+
+
+/*************************  Variable Prototypes ********************************/
+
 
 unsigned int red;
 unsigned int green;
 unsigned int blue;
 unsigned int clear;
+
+
+/*************************  Function Prototypes ********************************/
 
 
 /********************************************//**
@@ -50,6 +58,7 @@ void read_All_Colors(void);
  * Function to clear the RGBC interrupt in the clicker
  ***********************************************/
 void color_int_clear(void);
+
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/
