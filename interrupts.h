@@ -13,7 +13,7 @@
 /*************************  Variable Prototypes ********************************/
 
 /*****Variables for Testing only****/
-char timer_flag; 
+char timer_flag; // doesnt work when I put in extern for some reason
 
 
 

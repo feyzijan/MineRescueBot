@@ -18,12 +18,14 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
+
 // Set correct friction value for turns
 friction = 200; // TEST THAT THIS WORKS
-
+reverse_time = 15;
 
 void main(void){
     
+    //friction = 300;
     
     //Initialisations
     initUSART4();
@@ -62,27 +64,100 @@ void main(void){
    
     
     while(1){
-        /*****Test Motor Operation***//*
-        stop(&motorL, &motorR);
-        fullSpeedAhead(&motorL, &motorR);
-        __delay_ms(1000);
-        stop(&motorL, &motorR);
-        */  
+        
         
         /******** Send Back Colour Readings to PC ******/
         if(timer_flag) { 
             get_int_status(); //Send back Interrupt Status
             read_All_Colors();
             SendColorReadings(); 
-            timer_flag =0;   
+            timer_flag =0;  
+        }
+        
+        
+        if (!PORTFbits.RF2) {
+            /*****Test Forward/Backward Movement ***/
+            /*
+            stop(&motorL, &motorR);
+            move_forward(&motorL, &motorR,0);
+            __delay_ms(1000);
+            stop(&motorL, &motorR);
+            
+            __delay_ms(2000);
+            move_backward(&motorL, &motorR,0);
+            __delay_ms(2000);
+            stop(&motorL, &motorR);
+            */
+            
+            
+            /***** Test Timed Forward/Backward Movement ***/
+            /*
+            stop(&motorL, &motorR);
+            move_forward(&motorL, &motorR,1000);
+            stop(&motorL, &motorR);
+            
+            __delay_ms(2000);
+            move_backward(&motorL, &motorR,1000);
+            stop(&motorL, &motorR);
+            */
+            
+            /***** Test Turning - modify friction******/
+            /*
+             TurnLeft(mL,mR);
+             TurnRight(mL,mR);
+             
+             */
+            
+            
+            /**** Test friction variable is being updated ****/
+            /*
+             * 
+            char fricstring[9];
+            sprintf(fricstring,"  F:%d  ", friction);
+            TxBufferedString(fricstring);
+            sendTxBuf();
+             * 
+             */
+            
+            /******* Test Pickmove and Pointers *****/
+            /*
+             
+             
+             */
+            
+            /******** Test Timer0 Recording *******/
+            /*
+             setTMR0(0); //Start timer
+             move_forward(&motorL, &motorR,1000);
+             stop(&motorL, &motorR);
+             unsigned int temp_test = getTMR0();
+             
+             
+             
+             */
+            
+        
         } 
+        
+        /************ Test actual operation ******************/
+        /*
+         * 
+        // Start timer to time movement duration
+        Timer0_init();
+        move_forward(&motorL,&motorR,0);
+        // Move forward until interrupt is triggered
+        //When interrupt is triggered
+        // - Stop Timer0
+        // - Stop motor
+        // - Read card
+        // - Decide the color and execute the motion via pick_move
+        // Then start Timer0 from zero and start moving again
+        
+        */
+            
+         
+            
     }      
     
-    //test friction variable is being updated
-    /*
-    char fricstring[9];
-    sprintf(fricstring,"  F:%d  ", friction);
-    TxBufferedString(fricstring);
-    sendTxBuf();
-    */
+    
 }

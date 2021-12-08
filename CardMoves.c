@@ -1,6 +1,7 @@
 #include <xc.h>
 #include "CardMoves.h"
 #include "dc_motor.h"
+#include "timers.h"
 
 /*TODO:
  * Check that func_index and time_index are updated globally
@@ -16,6 +17,8 @@ unsigned char time_index = 0;
 card_func funcPtrList[30];
 unsigned char func_index = 0;
 
+// Reverse one square time
+int reverse_time = 100; // this is multiplied with 10ms
 
 
 /* Pick which move to execute based on the color you decided on
@@ -24,80 +27,129 @@ unsigned char func_index = 0;
 *Then add the function of the read color's '"complement" to the function pointer list
 */
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
+    //Read Timer0 value and add to time list
+    unsigned int temp_time = getTMR0_in_ms();
+    add_timing(temp_time);
     
     if (color == 'w'){
-        //white_move(mL,mR, move_list); // pass move list so you can revert it 
+        white_move(mL,mR); // pass move list so you can revert it 
     } else {
         if(color == 'r'){
             add_function_ptr(&green_move);
+            
             red_move(mL,mR);
+            
         } else if(color == 'g'){
             add_function_ptr(&red_move);
+            
             green_move(mL,mR);
+            
         } else if(color == 'b'){
             add_function_ptr(&blue_move);
+            
             blue_move(mL,mR);
+            
         } else if (color == 'y'){
+            
             yellow_move(mL,mR);
+            
+        } else if (color == 'p'){
+            
+            pink_move(mL,mR); 
+        
         } else if (color == 'o'){
             add_function_ptr(&lightblue_move);
+            
             orange_move(mL,mR);
+            
         } else if (color == 'l'){
             add_function_ptr(&orange_move);
+            
             lightblue_move(mL,mR);
         }
+        setTMR0(0);//restart Timer
     }
 }
 
 
-/********** Red Card: Turn Right  90Â° *************************/
+//Turn Right  90°
 void red_move(struct DC_motor *mL, struct DC_motor *mR) {
     TurnRight(mL,mR);
-    
+    TurnRight(mL,mR);
 }
 
-/********** Green Card: Turn Left 90Â° ************************/
+
+//Turn left 90° 
 void green_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnLeft(mL,mR);
+    TurnLeft(mL,mR);
 }
 
-/********** Blue Card: Turn back 180Â°*********************/
+
+//Turn back 180°
 void blue_move(struct DC_motor *mL, struct DC_motor *mR){
-    TurnLeft(mL,mR);
-    TurnLeft(mL,mR);
+    for(char i=0;i<4;i++) TurnLeft(mL,mR);
 }
 
-/********** Yellow Card: Reverse one square + turn right 90Â°***/
-void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
 
+//Reverse one square + turn right 90°
+void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
+    move_backward(mL,mR,reverse_time);
+    stop(mL,mR);
+    TurnRight(mL,mR);
     TurnRight(mL,mR);
 }
 
-/********** Yellow Card: Reverse one square + turn left 90Â° ***/
+
+//Reverse one square + turn left 90°
 void pink_move(struct DC_motor *mL, struct DC_motor *mR){
     //reverse
+    move_backward(mL,mR,reverse_time);
+    stop(mL,mR);
+    TurnLeft(mL,mR);
     TurnLeft(mL,mR);
 }
 
-/********** Orange Card: Turn Right 135Â° s***************/
+
+// Turn Right 135°
 void orange_move(struct DC_motor *mL, struct DC_motor *mR){
-
-    TurnRight(mL,mR);
+    
+    for(char i=0;i<3;i++)TurnRight(mL,mR);
 
 }
 
 
-/********** LightBlue Card: Turn Left 135Â° ****************/
+// Turn Left 135°
 void lightblue_move(struct DC_motor *mL, struct DC_motor *mR){
-    TurnLeft(mL, mR);
+    
+    for(char i=0;i<3;i++) TurnLeft(mL,mR);
 
 }
 
 
-/********** White Card: Finish - execute reverse instructions ***************/
+// Execute reverse instructions
 void white_move(struct DC_motor *mL, struct DC_motor *mR)
 {
- //Loop through the two lists  - first function pointers than times
+    // First Turn back
+    for(char i=0;i<4;i++) TurnLeft(mL,mR);
+    
+    //Loop through the two lists  - first time then function pointer
+    unsigned int temp_time;
+    card_func temp_func;
+    
+    while(time_index >= 0){
+        temp_time = get_timing(); // get the last movement time (index auto decrements)
+        
+        //Move car forward for specified time and stop
+        move_forward(mL,mR,temp_time); 
+        stop(mL,mR);
+        
+        //Execute function in function pointer (index auto decrements)
+        temp_func = get_function_ptr();
+        temp_func(mL,mR);
+        __delay__ms(10); // Just some slack
+    }
+    stop(mL,mR);
     
     
 }
@@ -119,7 +171,6 @@ void add_timing(unsigned int timing){
 
 // Make this return the 16bit
 unsigned int get_timing(void){
-    
     return timeList[time_index--];
 }
 

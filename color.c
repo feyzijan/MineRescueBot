@@ -3,6 +3,8 @@
 #include "i2c.h"
 #include <stdio.h>
 #include "serial.h"
+
+
 void color_click_init(void)
 {   
     I2C_2_Master_Init();//Initialise i2c Master
@@ -23,6 +25,7 @@ void color_click_init(void)
     
     //color_writetoaddr(0x0C, 0x00);
 }   
+
 
 void color_click_interrupt_init(void){
     //__debug_break();
@@ -47,11 +50,13 @@ void color_writetoaddr(char address, char value){
     I2C_2_Master_Stop();          //Stop condition
 }
 
+
 void color_int_clear(void){
     I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
     I2C_2_Master_Write(0xE6); // Clear RGBC interrupt
 }
+
 
 unsigned int color_read(unsigned char address)
 {  
@@ -69,6 +74,7 @@ unsigned int color_read(unsigned char address)
     I2C_2_Master_Stop();      
     return tmp;
 }
+
 
 /*Send the interrupt status over the Serial port
  Function for debugging purposes only - delete later*/ 
@@ -135,3 +141,19 @@ void read_All_Colors(void){
 }
 
 
+// Work in Progress
+char decide_color(void){
+    char color;
+    unsigned int redval, greenval, blueval, clearval;
+   
+    redval = color_read(0x16); 
+    greenval = color_read(0x18); 
+    blueval = color_read(0x1A); 
+    clearval = color_read(0x14); 
+    
+    //Procedure to decide
+
+    
+    
+    return color;
+}

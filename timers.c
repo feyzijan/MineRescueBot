@@ -1,22 +1,14 @@
 #include <xc.h>
 #include "timers.h"
+#include "dc_motor.h"
 
 
-
-
-
-
-int friction = 100;
-
-/************************************
- * Function to set up timer 0
-************************************/
-
+//Note: Overflows in 134 seconds, 1 bit = 2.048ms
 void Timer0_init()
 {
-    T0CON1bits.T0CS=0b100; // LFINTOSC = 31Khz
+    T0CON1bits.T0CS=0b010; // Fosc/4 = 16MHz
     T0CON1bits.T0ASYNC=1; 
-    T0CON1bits.T0CKPS=0b0111 ; // Pre-scaler 1:128 - overflow in 1s
+    T0CON1bits.T0CKPS=0b1111 ; // Pre-scaler 1:32768
 
     T0CON0bits.T016BIT=1; //16bit mode	  
     TMR0H = 0;
@@ -35,36 +27,36 @@ void Timer1_init(void){
     T1GCONbits.GE = 0; // Counter mode off
 }
 
+
 //returns TMR1 value in milisecond format
-unsigned int getTMR0(void){
+unsigned int getTMR0_in_ms(void){
     unsigned int temp;
     temp = TMR10<<8;
     temp += TMR0L;
-    return temp *2580645/100000000; //MODIFY HERE
-    // each bit is 0.2580645 ms
-
+    temp = temp *2048/1000; 
+    return temp;
+    // each bit is 2.048ms
 }
 
 
 void setTMR0(unsigned int t_start){
+    unsigned int temp = t_start;
     TMR0H = t_start>>8;
-    TMR0L = t_start & 0b11111111;
+    TMR0L = temp & 0b11111111;
 }
 
 
-// ** Currently makes maximum 32678 * 10 ms delay
-// Test if this is accurate enough
 void friction_delay_ms(void){
     int i;
-    for(i=0;i<friction;i++){
+    for(i=0;i<friction/10;i++){
         __delay_ms(10);
     }
 }
 
 
 void custom_delay_ms(unsigned int delay_time){
-    int i;
-    for(i=0;i<delay_time;i++){
+    unsigned int i;
+    for(i=0;i<delay_time/10;i++){
         __delay_ms(10);
     }
     

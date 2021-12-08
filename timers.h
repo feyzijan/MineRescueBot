@@ -6,16 +6,15 @@
 #define _XTAL_FREQ 64000000
 
 
-/* TODO: Switch the testing interrupt operation to Timer1 - Add Timer 1 init function
+/* TODO: 
+ * Test the accurate operation of custom delay functions
  * Configure Timer0 to time the movement durations in between reading cards
- * Add read and write functions for Timer 0
- * Modify getTMR0 function to return time in miliseconds/10
+ * 
  */
 
 
 /*************************  Variable Prototypes ********************************/
 
-extern int friction;
 
 
 /*************************  Function Prototypes ********************************/
@@ -30,8 +29,11 @@ void Timer0_init(void);
 
 /***********
  * Function to read TMR0 value
+ * Output is the Timer0 bit converted to ms
+ * This is so when we pass the output to custom_delay_ms we can wait for a time
+ * equal to the time recorded in TMR0
  ***********/
-unsigned int getTMR0(void);
+unsigned int getTMR0_in_ms(void);
 
 
 /************
@@ -42,20 +44,20 @@ void setTMR0(unsigned int t_start);
 
 
 /***********
- * Delay long enough for succesful turns
+ * Function that causes a delay that allows the buggy to complete a 45 degree turn
+ * Modify the global friction variable 
  ***********/
 void friction_delay_ms(void);
 
 
 /************
- * Delay for custom amount of time
- * Used in reverse motion
+ * Function to generate a delay equal to the inputted number (in ms)
  ************/
 void custom_delay_ms(unsigned int delay_time);
 
 
-
 /****** Functions for Testing Purposes - Will be removed from final build *****/
+
 
 /********************************
  * Function to initialise Timer1

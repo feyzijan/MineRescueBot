@@ -6,7 +6,7 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 /*TODO: 
- * 
+ * Complete decide_color() function 
  * 
  */
 
@@ -14,10 +14,7 @@
 /*************************  Variable Prototypes ********************************/
 
 
-unsigned int red;
-unsigned int green;
-unsigned int blue;
-unsigned int clear;
+unsigned int red, green, blue, clear;
 
 
 /*************************  Function Prototypes ********************************/
@@ -59,6 +56,11 @@ void read_All_Colors(void);
  ***********************************************/
 void color_int_clear(void);
 
+/*****************
+ * Function to take RGBC channel readings and return a 
+ * a char corresponding to the color
+ ******************/
+char decide_color(void);
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/
