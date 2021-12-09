@@ -15,7 +15,10 @@ void color_click_init(void)
 	color_writetoaddr(0x00, 0x03);
 
     //set integration time
-	color_writetoaddr(0x01, 0xFF); // trying different integration times to calibrate colour readings
+	color_writetoaddr(0x01, 0xD5); // trying different integration times to calibrate colour readings
+    
+    //persistance filter for threshold interrupts
+    //color_writetoaddr(0x0C, 0x01); // 1 clear channel outside of threshold range
 }
 
 void color_writetoaddr(char address, char value){
@@ -60,6 +63,20 @@ unsigned int color_read_Blue(void)
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
 	I2C_2_Master_Write(0xA0 | 0x1A);    //command (auto-increment protocol transaction) + start at BLUE low register (why 0xA0?)
+	I2C_2_Master_RepStart();			// start a repeated transmission
+	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
+	tmp=I2C_2_Master_Read(1);			//read the Red LSB
+	tmp=tmp | (I2C_2_Master_Read(0)<<8); //read the Red MSB (don't acknowledge as this is the last read)
+	I2C_2_Master_Stop();          //Stop condition
+	return tmp;
+}
+
+unsigned int color_read_Clear(void)
+{
+	unsigned int tmp;
+	I2C_2_Master_Start();         //Start condition
+	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
+	I2C_2_Master_Write(0xA0 | 0x14);    //command (auto-increment protocol transaction) + start at BLUE low register (why 0xA0?)
 	I2C_2_Master_RepStart();			// start a repeated transmission
 	I2C_2_Master_Write(0x52 | 0x01);     //7 bit address + Read (1) mode
 	tmp=I2C_2_Master_Read(1);			//read the Red LSB

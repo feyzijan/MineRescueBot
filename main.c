@@ -27,10 +27,12 @@ void main(void){
     unsigned int colorRed;
     unsigned int colorGreen;
     unsigned int colorBlue;
+    unsigned int colorClear;
     
     char buf1[] = {0x00};
     char buf2[] = {0x00};
     char buf3[] = {0x00};
+    char buf4[] = {0x00};
     // clicker board LEDs
     /*
     LATDbits.LATD7 = 1;
@@ -79,6 +81,9 @@ void main(void){
     LATEbits.LATE7 = 1;
     ANSELEbits.ANSELE7=0;
     
+    TRISFbits.TRISF2=1; //set TRIS value for pin (input)
+    ANSELFbits.ANSELF2=0; //turn off analogue input on pin
+    
 
     while(1){
         
@@ -88,24 +93,39 @@ void main(void){
             colorRed = color_read_Red(); //read red color
             colorGreen = color_read_Green(); //read green color
             colorBlue = color_read_Blue(); //read blue color
+            colorClear = color_read_Clear(); //read blue color
 
             sprintf(buf1,"%d",colorRed);
+            TxBufferedString(" ");
+            TxBufferedString("\n");
+            //TxBufferedString("RED:   "); // writes string to buffer
+            TxBufferedString(buf1);
+            TxBufferedString("\n");
             
-            
-            
-            //__debug_break();
-            TxBufferedString("       RED: "); // writes string to buffer
-            TxBufferedString(buf1); 
             sprintf(buf2,"%d",colorGreen);
-            TxBufferedString("       GREEN: "); // writes string to buffer
-            TxBufferedString(buf2); 
+            //TxBufferedString("GREEN: "); // writes string to buffer
+            TxBufferedString(buf2);
+            TxBufferedString("\n");
+            
             sprintf(buf3,"%d",colorBlue);
-            TxBufferedString("       BLUE: "); // writes string to buffer
-            TxBufferedString(buf3); 
+            //TxBufferedString("BLUE:  "); // writes string to buffer
+            TxBufferedString(buf3);
+            TxBufferedString("\n");
+            
+            sprintf(buf4,"%d",colorClear);
+            //TxBufferedString("CLEAR: "); // writes string to buffer
+            TxBufferedString(buf4);
+            TxBufferedString("\n");
             sendTxBuf(); //interrupt will handle the rest
             
             timer_flag =0;
             //__delay_ms(1000);
+            
+        if (!PORTFbits.RF2) {
+            LATGbits.LATG0 = !LATGbits.LATG0;
+            LATAbits.LATA3 = !LATAbits.LATA3;
+            LATEbits.LATE7 = !LATEbits.LATE7;
+        }
         }
     }    
 }
