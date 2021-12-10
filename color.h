@@ -66,7 +66,7 @@ void color_int_clear(void);
  * Function to take RGBC channel readings and return a 
  * a char corresponding to the color
  ******************/
-char decide_color(void);
+int decide_color(void);
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/

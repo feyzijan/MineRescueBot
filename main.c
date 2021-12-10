@@ -25,7 +25,7 @@ void main(void){
     LEDsInit();
     Interrupts_init();
     Timer1_init();    
-    initDCmotorsPWM(); 
+    //initDCmotorsPWM(); 
 
     char color;
     // Set correct friction value for turns
@@ -82,10 +82,10 @@ void main(void){
             sendTxBuf(); //interrupt will handle the rest
             
             timer_flag =0;
-         
-         */
-        //TxBufferedString("A");
-        __delay_ms(100);   
+         }
+        */
+        
+  
         if (!PORTFbits.RF2) {
             LightToggle();
         }
@@ -94,11 +94,14 @@ void main(void){
             //TxBufferedString("hello");
             //TxBufferedString("\n");
             LED1 = 1;
-            color = decide_color();      
-            TxBufferedString("A");
+            color = decide_color();
+            if (color == 4){
+                LED1 = 0;
+            }
             LightToggle();
             test_flag=0;
             //color_click_interrupt_init();
         }
     }
 }
+

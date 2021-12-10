@@ -4,6 +4,7 @@
 #include "LEDs.h"
 #include <stdio.h>
 #include "serial.h"
+#include <math.h>
 
 
 void color_click_init(void)
@@ -35,8 +36,8 @@ void color_click_interrupt_init(void){
     //Configure interrupt thresholds RGBC clear channel: Low 300 High: 1250
     color_writetoaddr(0x04, 0x2C); 
     color_writetoaddr(0x05, 0x01); 
-    color_writetoaddr(0x06, 0xFB); 
-    color_writetoaddr(0x07, 0x04); 
+    color_writetoaddr(0x06, 0xD6); 
+    color_writetoaddr(0x07, 0x06); 
     
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
     color_int_clear();
@@ -156,9 +157,9 @@ void read_All_Colors(void){
 
 
 // Work in Progress
-char decide_color(void){
-    char color;
-    /*
+int decide_color(void){
+    int color_decision = 100;
+    
     //unsigned int LED_and_amb_read[4] = {0,0,0,0};   // light from ambient + LED cross talk + LED reflection {clear,red,green,blue)
     //unsigned int ambient[4] = {0,0,0,0};            // light from ambient alone (when LED is turned off)
     
@@ -178,12 +179,11 @@ char decide_color(void){
     clear = LED_and_amb_read[3]-ambient[3]-LED_cross_talk[3];
     
     
-    // calculate percentage RGB values of clear channel
-    unsigned int redPercentage = 100*(red/clear);
-    unsigned int greenPercentage = 100*(green/clear);
-    unsigned int bluePercentage = 100*(blue/clear);
-    
-    
+    // calculate integer percentage RGB values of clear channel
+    int redPercentage = 100*(red*pow(clear,-1));
+    int greenPercentage = 100*(green*pow(clear,-1));
+    int bluePercentage = 100*(blue*pow(clear,-1));
+
     unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
     unsigned int clear_channel_black_thresh = 100;        // a threshold to tell if the color is black
 
@@ -191,41 +191,49 @@ char decide_color(void){
     
     if (redPercentage >= 65){
         if (red > red_channel_red_orange_sep_thresh){
-            color = 'r';
+            //color_decision = 'r';
+            color_decision = 1;
         }
         else{
-            color = 'o';
+            //color_decision = 'o';
+            color_decision = 6;
         }
     }
     else if(redPercentage < 65 && redPercentage >= 52){
         if (greenPercentage>30 && bluePercentage<21){
-            color = 'y';
+            //color_decision = 'y';
+            color_decision = 4;
         }
         else{
-            color = 'p';
+            //color_decision = 'p';
+            color_decision = 5;
         }
     }
     else if(redPercentage < 52 && redPercentage >= 35){
         if (clear<clear_channel_black_thresh){
-            color = 'b';
+            //color_decision = 'b';
+            color_decision = 9;
         }
         else if (redPercentage>=45){
-            color = 'w';
+            //color_decision = 'w';
+            color_decision = 8;
         }
         else{
-            color = 'l';
+            //color_decision = 'l';
+            color_decision = 7;
         }
     }
     else if(redPercentage<35 && redPercentage >= 20){
         if (bluePercentage>=29){
-            color = 'b';
+            //color_decision = 'b';
+            color_decision = 3;
         }
         else{
-            color = 'g';
+            //color_decision = 'g';
+            color_decision = 2;
         }
     }
-     */
-    color="A";
-    return color;
+    //color_decision = 7;
+    return color_decision;
  
 }
