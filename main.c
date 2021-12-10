@@ -6,12 +6,14 @@
 #pragma config WDTE = OFF        // WDT operating mode (WDT enabled regardless of sleep)
 
 #include <xc.h>
+#include "dc_motor.h"
 #include "i2c.h"
 #include "color.h"
-#include "dc_motor.h"
+#include "LEDs.h"
 #include "serial.h"
 #include "timers.h"
 #include "interrupts.h"
+#include "CardMoves.h"
 #include <stdio.h>
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
@@ -19,10 +21,16 @@
 
 void main(void){
     initUSART4();
-    Interrupts_init();
-    Timer0_init();
-    
     color_click_init();
+    LEDsInit();
+    Interrupts_init();
+    Timer1_init();    
+    initDCmotorsPWM(); 
+
+    char color;
+    // Set correct friction value for turns
+    friction = 200; // TEST THAT THIS WORKS
+    reverse_time = 15;
     
     unsigned int colorRed;
     unsigned int colorGreen;
@@ -33,54 +41,12 @@ void main(void){
     char buf2[] = {0x00};
     char buf3[] = {0x00};
     char buf4[] = {0x00};
-    // clicker board LEDs
-    /*
-    LATDbits.LATD7 = 1;
-    LATHbits.LATH3 = 1;
-    TRISDbits.TRISD7 = 0;
-    TRISHbits.TRISH3 = 0; 
-    
-    //Head Lamps - Working
-    TRISHbits.TRISH1 = 0; 
-    LATHbits.LATH1 = 1;
-    // Main Beam - Working
-    TRISDbits.TRISD3 = 0; 
-    LATDbits.LATD3 = 1;
-    // Brake Lights - Working
-    TRISDbits.TRISD4 = 0; 
-    LATDbits.LATD4 = 1;
-    ANSELDbits.ANSELD4=0;
-    // Right Lamps - Working
-    TRISHbits.TRISH0 = 0; 
-    LATHbits.LATH0= 1;
-    // Left Lamps - Working
-    TRISFbits.TRISF0 = 0; 
-    LATFbits.LATF0 = 1;
-    ANSELFbits.ANSELF0=0;
-    // BATV-Sense - Not Tested
-    //TRISFbits.TRISF6 = 1;
-    
-    */
     
     // COLOR CLICK RGB LEDs
     
-    // Red Led (G0 for MB1 G1 for MB2)
-    TRISGbits.TRISG0 = 0; 
-    LATGbits.LATG0 = 1;
-    ANSELGbits.ANSELG0=0;
+    LightToggle();
     
-    // Blue Led (A3 for MB1 F7 for MB2)
-    
-    TRISAbits.TRISA3 = 0; 
-    LATAbits.LATA3 = 1;
-    ANSELAbits.ANSELA3=0;
-    
-    
-    // Green Led (A3 for MB1 F6 for MB2)
-    TRISEbits.TRISE7 = 0; 
-    LATEbits.LATE7 = 1;
-    ANSELEbits.ANSELE7=0;
-    
+    // Button RF2 to toggle light on and off for testing
     TRISFbits.TRISF2=1; //set TRIS value for pin (input)
     ANSELFbits.ANSELF2=0; //turn off analogue input on pin
     
@@ -88,44 +54,51 @@ void main(void){
     while(1){
         
         //Edit for Color
-        
+        /*
         if(timer_flag) { //1 second has passed 
-            colorRed = color_read_Red(); //read red color
-            colorGreen = color_read_Green(); //read green color
-            colorBlue = color_read_Blue(); //read blue color
-            colorClear = color_read_Clear(); //read blue color
+            read_All_Colors(); // read colours
 
-            sprintf(buf1,"%d",colorRed);
+            sprintf(buf1,"%d",red);
             TxBufferedString(" ");
             TxBufferedString("\n");
             //TxBufferedString("RED:   "); // writes string to buffer
             TxBufferedString(buf1);
             TxBufferedString("\n");
             
-            sprintf(buf2,"%d",colorGreen);
+            sprintf(buf2,"%d",green);
             //TxBufferedString("GREEN: "); // writes string to buffer
             TxBufferedString(buf2);
             TxBufferedString("\n");
             
-            sprintf(buf3,"%d",colorBlue);
+            sprintf(buf3,"%d",blue);
             //TxBufferedString("BLUE:  "); // writes string to buffer
             TxBufferedString(buf3);
             TxBufferedString("\n");
             
-            sprintf(buf4,"%d",colorClear);
+            sprintf(buf4,"%d",clear);
             //TxBufferedString("CLEAR: "); // writes string to buffer
             TxBufferedString(buf4);
             TxBufferedString("\n");
             sendTxBuf(); //interrupt will handle the rest
             
             timer_flag =0;
-            //__delay_ms(1000);
-            
+         
+         */
+        //TxBufferedString("A");
+        __delay_ms(100);   
         if (!PORTFbits.RF2) {
-            LATGbits.LATG0 = !LATGbits.LATG0;
-            LATAbits.LATA3 = !LATAbits.LATA3;
-            LATEbits.LATE7 = !LATEbits.LATE7;
+            LightToggle();
         }
+            
+        if (test_flag){
+            //TxBufferedString("hello");
+            //TxBufferedString("\n");
+            LED1 = 1;
+            color = decide_color();      
+            TxBufferedString("A");
+            LightToggle();
+            test_flag=0;
+            //color_click_interrupt_init();
         }
-    }    
+    }
 }

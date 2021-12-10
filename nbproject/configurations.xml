@@ -28,6 +28,10 @@
       <itemPath>timers.c</itemPath>
       <itemPath>timers.h</itemPath>
       <itemPath>Colour Data &amp; Testing.xlsx</itemPath>
+      <itemPath>LEDs.c</itemPath>
+      <itemPath>LEDs.h</itemPath>
+      <itemPath>CardMoves.c</itemPath>
+      <itemPath>CardMoves.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

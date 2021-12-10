@@ -1,8 +1,9 @@
 #include <xc.h>
 #include "interrupts.h"
-#include "string.h"
 #include "serial.h"
-#include "ADC.h"
+#include "i2c.h"
+#include "color.h"
+#include "LEDs.h"
 
 /************************************
  * Function to turn on interrupts and set if priority is used
@@ -10,28 +11,47 @@
 ************************************/
 void Interrupts_init(void)
 {
-    PIE0bits.TMR0IE = 1; //enable Timer0 interrupt
-    PIE4bits.RC4IE = 1; // recieve interrupt
-    INTCONbits.PEIE = 1; // Toggle peripheral interrupts  
-    INTCONbits.GIE = 1; //Toggle interrupts Globally
+    INTCONbits.IPEN = 1; // Interrupt Priority Levels: Enable
+    //PIE0bits.TMR0IE = 1; //TMR0 Interrupt: Enable
+    PIE5bits.TMR1IE = 1; //TMR1 Interrupt: Enable
+    IPR5bits.TMR1IP = 1; //TMR1 Interrupt Priority: High
     
+    
+    //****Clicker Interrupt Initialisations
+    TRISBbits.TRISB0 = 1; // Pin RB0: Input(1)
+    ANSELBbits.ANSELB0 = 0; // Pin RB0: Digital input(0)
+    
+    PIE0bits.INT0IE = 1; //Interrupt on Pin RB0: Enable
+    PIR0bits.INT0IF = 0; //Interrupt Flag: Off
+    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge 
+    IPR0bits.INT0IP = 1; // Interrupt Priority: High
+    
+    color_click_interrupt_init(); // Write interrupt configurations to clicker
+    
+    // Enable all interrupts
+    INTCONbits.PEIE = 1; 
+    INTCONbits.GIE = 1; 
 }
 
-
 /************************************
- * High priority interrupt service routine
- * Send out LDR readings when TMR0 overflows(1s)
+ * High priority interrupt service routine for:
+ * TMR1 overflows(2s) (For Testing)
+ * Serial transmission TX (For Testing)
+ * Clicker Interrupt
  ************************************/
-char temp;
-
 void __interrupt(high_priority) HighISR()
-{
-    // interrupt for reading data
-    if(PIR4bits.RC4IF){
-        putCharToRxBuf(getCharSerial4()); //read char and put in buffer
+{    
+    //Colour Clicker RGBC Clear Channel Interrupt
+    if(PIR0bits.INT0IF){
+        //__debug_break();
+        test_flag = 1;
+        color_int_clear();
+        PIR0bits.INT0IF = 0; // Clear Flag
+        BrakeLight = !BrakeLight; // Testing
+        color_click_interrupt_off(); //turn off interrupt source
     }
 
-    //interrupt for transmitting data
+    // Interrupt for transmitting data- For Testing only
     if(PIR4bits.TX4IF){
         sendCharSerial4(getCharFromTxBuf()); // read buffer and send
         if(!isDataInTxBuf()) {
@@ -39,12 +59,11 @@ void __interrupt(high_priority) HighISR()
         }
     }
     
-    if(PIR0bits.TMR0IF == 1) { //1 second has passed 
+    // Timer 1 Interrupt - Triggers every 2 second (almost))
+    if(PIR5bits.TMR1IF) {
             timer_flag = 1;
-            
-            TMR0L = 0b00001000;
-            PIR0bits.TMR0IF = 0; // clear interrupt flag
+            TMR1H = 0;
+            TMR1L = 0;
+            PIR5bits.TMR1IF = 0; // clear flag
         }
-    
-    
 }

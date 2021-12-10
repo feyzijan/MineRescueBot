@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=color.c i2c.c dc_motor.c main.c ADC.c interrupts.c serial.c timers.c
+SOURCEFILES_QUOTED_IF_SPACED=color.c i2c.c dc_motor.c main.c ADC.c interrupts.c serial.c timers.c LEDs.c CardMoves.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/ADC.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/serial.p1 ${OBJECTDIR}/timers.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/color.p1.d ${OBJECTDIR}/i2c.p1.d ${OBJECTDIR}/dc_motor.p1.d ${OBJECTDIR}/main.p1.d ${OBJECTDIR}/ADC.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/serial.p1.d ${OBJECTDIR}/timers.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/ADC.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/serial.p1 ${OBJECTDIR}/timers.p1 ${OBJECTDIR}/LEDs.p1 ${OBJECTDIR}/CardMoves.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/color.p1.d ${OBJECTDIR}/i2c.p1.d ${OBJECTDIR}/dc_motor.p1.d ${OBJECTDIR}/main.p1.d ${OBJECTDIR}/ADC.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/serial.p1.d ${OBJECTDIR}/timers.p1.d ${OBJECTDIR}/LEDs.p1.d ${OBJECTDIR}/CardMoves.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/ADC.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/serial.p1 ${OBJECTDIR}/timers.p1
+OBJECTFILES=${OBJECTDIR}/color.p1 ${OBJECTDIR}/i2c.p1 ${OBJECTDIR}/dc_motor.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/ADC.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/serial.p1 ${OBJECTDIR}/timers.p1 ${OBJECTDIR}/LEDs.p1 ${OBJECTDIR}/CardMoves.p1
 
 # Source Files
-SOURCEFILES=color.c i2c.c dc_motor.c main.c ADC.c interrupts.c serial.c timers.c
+SOURCEFILES=color.c i2c.c dc_motor.c main.c ADC.c interrupts.c serial.c timers.c LEDs.c CardMoves.c
 
 
 
@@ -158,6 +158,22 @@ ${OBJECTDIR}/timers.p1: timers.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/timers.d ${OBJECTDIR}/timers.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/timers.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/LEDs.p1: LEDs.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/LEDs.p1.d 
+	@${RM} ${OBJECTDIR}/LEDs.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/LEDs.p1 LEDs.c 
+	@-${MV} ${OBJECTDIR}/LEDs.d ${OBJECTDIR}/LEDs.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/LEDs.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/CardMoves.p1: CardMoves.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/CardMoves.p1.d 
+	@${RM} ${OBJECTDIR}/CardMoves.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/CardMoves.p1 CardMoves.c 
+	@-${MV} ${OBJECTDIR}/CardMoves.d ${OBJECTDIR}/CardMoves.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/CardMoves.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/color.p1: color.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
@@ -222,6 +238,22 @@ ${OBJECTDIR}/timers.p1: timers.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/timers.p1 timers.c 
 	@-${MV} ${OBJECTDIR}/timers.d ${OBJECTDIR}/timers.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/timers.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/LEDs.p1: LEDs.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/LEDs.p1.d 
+	@${RM} ${OBJECTDIR}/LEDs.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/LEDs.p1 LEDs.c 
+	@-${MV} ${OBJECTDIR}/LEDs.d ${OBJECTDIR}/LEDs.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/LEDs.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/CardMoves.p1: CardMoves.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/CardMoves.p1.d 
+	@${RM} ${OBJECTDIR}/CardMoves.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/CardMoves.p1 CardMoves.c 
+	@-${MV} ${OBJECTDIR}/CardMoves.d ${OBJECTDIR}/CardMoves.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/CardMoves.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 
