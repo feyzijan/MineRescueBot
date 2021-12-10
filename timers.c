@@ -55,6 +55,7 @@ void friction_delay_ms(void){
 
 
 void custom_delay_ms(unsigned int delay_time){
+  
     unsigned int i;
     for(i=0;i<delay_time/10;i++){
         __delay_ms(10);

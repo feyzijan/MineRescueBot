@@ -14,7 +14,7 @@
 
 /*****Variables for Testing only****/
 char timer_flag; // doesnt work when I put in extern for some reason
-
+char wall_flag; //Set to 1 if clicker triggers interrupt
 
 
 /*************************  Function Prototypes ********************************/

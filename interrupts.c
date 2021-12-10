@@ -4,6 +4,7 @@
 #include "i2c.h"
 #include "color.h"
 #include "LEDs.h"
+#include "timers.h"
 
 /************************************
  * Function to turn on interrupts and set if priority is used
@@ -23,7 +24,7 @@ void Interrupts_init(void)
     
     PIE0bits.INT0IE = 1; //Interrupt on Pin RB0: Enable
     PIR0bits.INT0IF = 0; //Interrupt Flag: Off
-    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge 
+    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge - Trigger below threshold
     IPR0bits.INT0IP = 1; // Interrupt Priority: High
     
     color_click_interrupt_init(); // Write interrupt configurations to clicker
@@ -43,13 +44,14 @@ void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt
     if(PIR0bits.INT0IF){
-        //__debug_break();
-        color_int_clear();
+        timer0val = getTMR0_in_ms(); // Get movement duration
         PIR0bits.INT0IF = 0; // Clear Flag
         HeadLamp = !HeadLamp; // Testing
+        color_click_interrupt_off(); // Turn off clicker interrupt (this clears it as well)
+        wall_flag = 1;
     }
 
-    // Interrupt for transmitting data- For Testing only
+    // Interrupt for transmitting data- FOR TESTING
     if(PIR4bits.TX4IF){
         sendCharSerial4(getCharFromTxBuf()); // read buffer and send
         if(!isDataInTxBuf()) {
@@ -57,7 +59,7 @@ void __interrupt(high_priority) HighISR()
         }
     }
     
-    // Timer 1 Interrupt - Triggers every second (almost))
+    // Timer 1 Interrupt - Triggers every second (almost)) - FOR TESTING
     if(PIR5bits.TMR1IF) {
             timer_flag = 1;
             TMR1H = 0;

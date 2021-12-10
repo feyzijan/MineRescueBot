@@ -9,6 +9,10 @@
  * Figure out how to reverse the "reverse one square" stuff
  */
 
+// Global variables take up lot of memory
+// data flow in program
+
+
 //Initialise variabels
 int timeList[30];
 unsigned char time_index = 0;
@@ -27,10 +31,7 @@ int reverse_time = 100; // this is multiplied with 10ms
 *Then add the function of the read color's '"complement" to the function pointer list
 */
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
-    //Read Timer0 value and add to time list
-    unsigned int temp_time = getTMR0_in_ms();
-    add_timing(temp_time);
-    
+
     if (color == 'w'){
         white_move(mL,mR); // pass move list so you can revert it 
     } else {
@@ -49,11 +50,11 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
             
             blue_move(mL,mR);
             
-        } else if (color == 'y'){
+        } else if (color == 'y'){ // Figure out complement function
             
             yellow_move(mL,mR);
             
-        } else if (color == 'p'){
+        } else if (color == 'p'){ // Figure out complement function
             
             pink_move(mL,mR); 
         
@@ -103,7 +104,6 @@ void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
 
 //Reverse one square + turn left 90°
 void pink_move(struct DC_motor *mL, struct DC_motor *mR){
-    //reverse
     move_backward(mL,mR,reverse_time);
     stop(mL,mR);
     TurnLeft(mL,mR);
@@ -147,7 +147,7 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
         //Execute function in function pointer (index auto decrements)
         temp_func = get_function_ptr();
         temp_func(mL,mR);
-        __delay__ms(10); // Just some slack
+        __delay_ms(10); // Just some slack
     }
     stop(mL,mR);
     

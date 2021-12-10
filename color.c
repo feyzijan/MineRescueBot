@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "serial.h"
 
+unsigned int blue_th = 1100; 
+unsigned int green_th= 1800;
+unsigned int red_th = 3875;
+
 
 void color_click_init(void)
 {   
@@ -31,14 +35,19 @@ void color_click_interrupt_init(void){
     //__debug_break();
     color_int_clear();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
-    //Configure interrupt thresholds RGBC clear channel: Low 300 High: 1250
+    //Configure interrupt thresholds RGBC clear channel: Low 300 High: 6950
     color_writetoaddr(0x04, 0x2C); 
     color_writetoaddr(0x05, 0x01); 
-    color_writetoaddr(0x06, 0xE2); 
-    color_writetoaddr(0x07, 0xE4); 
+    color_writetoaddr(0x06, 0x26); 
+    color_writetoaddr(0x07, 0x1B); 
     
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
     color_int_clear();
+}
+
+void color_click_interrupt_off(void){
+    color_int_clear(); //clear interrupt just in case
+    color_writetoaddr(0x00, 0x03); //turn off Clicker Interrupt(write 0 to AIEN bit)
 }
 
 
@@ -143,17 +152,28 @@ void read_All_Colors(void){
 
 // Work in Progress
 char decide_color(void){
-    char color;
+    //char color;
     unsigned int redval, greenval, blueval, clearval;
    
     redval = color_read(0x16); 
     greenval = color_read(0x18); 
     blueval = color_read(0x1A); 
-    clearval = color_read(0x14); 
+    //clearval = color_read(0x14); 
     
     //Procedure to decide
-
+    // For testing 
+    if(red > red_th){
+        sendCharSerial4('R');
+        return 'r';
+    } else if(blue > blue_th){
+        sendCharSerial4('B');
+        return 'b';
+    }else if(red > green_th){
+        sendCharSerial4('G');
+        return 'g';
+    } else{
+        sendCharSerial4('R');
+        return 'r';
+    }
     
-    
-    return color;
 }

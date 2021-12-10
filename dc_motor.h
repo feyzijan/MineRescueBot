@@ -8,8 +8,9 @@
 
 
 /* TODO:
- * Test all motor functions with different values of delay time between updates and power
+ * Use pointers to update reverse time and friction values
  * Make TurnLeft/Right functions turn 45 degrees
+ * Consider making stop function stop quicker
  */
 
 // Estimated time of all functions is about 3ms
@@ -18,14 +19,17 @@
 
 
 int friction;
+//Some reference values
+//(~400-SAF Table)
 // Time required for reverse one square
 int reverse_time;
 
 
 // Definition of DC_motor structure
+// Note that I have defined 0 direction as forward due to with clicker's position
 struct DC_motor { 
     char power;         //motor power, out of 100
-    char direction;     //motor direction, forward(1), reverse(0)
+    char direction;     //motor direction, forward(0), reverse(1)
     unsigned char *dutyHighByte; //PWM duty high byte address
     unsigned char *dir_LAT; //LAT address for direction pin
     char dir_pin; // pin number that controls direction on LAT (L:RE4, R:RG6)
@@ -39,7 +43,7 @@ struct DC_motor {
 /************
  * Function initialise T2 and PWM for DC motor control
  ************/
-void initDCmotorsPWM();
+void initDCmotorsPWM(int PWMperiod);
 
 
 /*************
@@ -57,19 +61,17 @@ void stop(struct DC_motor *mL, struct DC_motor *mR);
 
 /*************
  * Function to make the robot go forward
- * Sets direction to 1, gradually increases the power on each motor to 50
- * Note: Follow this with a delay and stop function to achieve predetermined distance
- * Execute delay equal to the duration in ms
+ * Sets direction to 0, gradually increases the power on each motor
+ * Takes optional time input for timed movements
  *************/ 
 void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration);
 
 
 /*************
- * Function to make the robot go forward
- * Sets direction to 0, gradually increases the power on each motor to 50
- * Note: Follow this with a delay and stop function to achieve predetermined distance
- * Execute delay equal to the duration in ms
- **************/ 
+ * Function to make the robot go backwards
+ * Sets direction to 1, gradually increases the power on each motor
+ * Takes optional time input for timed movements
+ *************/ 
 void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration);
 
 

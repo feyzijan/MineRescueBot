@@ -15,6 +15,8 @@
 
 
 unsigned int red, green, blue, clear;
+//Threshold values- for testing
+unsigned int red_th, green_th, blue_th;
 
 
 /*************************  Function Prototypes ********************************/
@@ -30,6 +32,11 @@ void color_click_init(void);
  ***********************************************/
 void color_click_interrupt_init(void);
 
+
+/**********************************************
+ *  Function to turn off clicker interrupt 
+ ***********************************************/
+void color_click_interrupt_off(void);
 
 /********************************************//**
  *  Function to write to the colour click module

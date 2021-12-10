@@ -21,15 +21,17 @@
 #define BrakeLight LATDbits.LATD4 
 #define LeftLamp LATFbits.LATF0 
 #define RightLamp LATHbits.LATH0 
-
+#define ButtonRF2 !PORTFbits.RF2
+#define ButtonRF3 !PORTFbits.RF3
 
 /*************************  Function Prototypes ********************************/
 
 
 /************
  * Function to set all LED pins as output and set output to zero
+ * And configure buttons RF2 and RF3
  ************/
-void LEDsInit(void);
+void LEDs_buttons_init(void);
 
 
 /************

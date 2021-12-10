@@ -2,7 +2,7 @@
 #include "dc_motor.h"
 
 
-void initDCmotorsPWM(){
+void initDCmotorsPWM(int PWMperiod){
 	//Initialise your TRIS and LAT registers for PWM
 
     // timer 2 config
@@ -11,7 +11,7 @@ void initDCmotorsPWM(){
     T2CLKCONbits.CS=0b0001; // Fosc/4
 
     // Tpwm*(Fosc/4)/prescaler - 1 = PTPER
-    T2PR=199; //199-Period reg 10kHz base period
+    T2PR=PWMperiod; //199-Period reg 10kHz base period
     T2CONbits.ON=1;
     
     // Direction Pins
@@ -61,97 +61,78 @@ void stop(struct DC_motor *mL, struct DC_motor *mR)
     //decrement values gradually 
     while ((mL->power + mR->power) > 0){
         if(mL->power > 0){
-            mL->power = mL->power -1;  
+            mL->power = mL->power -5;  
         }
         if(mR->power > 0){
-            mR->power = mR->power - 1;
+            mR->power = mR->power - 5;
         }
         setMotorPWM(mL);
         setMotorPWM(mR);
-        __delay_us(100);  // delay for gradual change
     }    
 }
 
 
-void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
+void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
 {
-    stop(mL,mR); // start from rest
+    stop(mL,mR); 
     
-    // Update directions
     mL->direction = 1;
     mR->direction = 1;
       
     // Increment values gradually 
     while ((mL->power + mR->power) < 50){
         
-        if(mL->power < 25){
-            mL->power ++;
-        }          
-        if(mR->power < 25){
-            mR->power ++;
-        } 
+        mL->power = mL->power + 5;
+        mR->power = mR->power + 5;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        __delay_us(100); 
+        
     }
     custom_delay_ms(duration);
 }
 
 
-void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
+void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
 {
-    stop(mL,mR); // start from rest
+    stop(mL,mR); 
     
-    // Reverse Direction
     mL->direction = 0;
     mR->direction = 0;
       
-    // Increment values gradually 
-    while ((mL->power + mR->power) < 50){
-        
-        if(mL->power < 25){
-            mL->power ++;
-        }          
-        if(mR->power < 25){
-            mR->power ++;
-        } 
+    // Increment values gradually - NOTE For some reason Power is = power - 50 or smt
+    while ((mL->power + mR->power) < 150){   
+        mL->power = mL->power + 10 ;
+        mR->power = mR->power + 10;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        __delay_us(100); 
     }
     custom_delay_ms(duration);
 }
 
 
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
-{
-    stop(mL,mR); // ensure it is stationary
-    //set left motors to zero and right motors to some level 
-    while (mR->power != 25){
-            mR->power ++;
+{ 
+    stop(mL,mR); 
+ 
+    while (mR->power != 80){
+        mR->power = mR->power + 10;
         setMotorPWM(mR);
-        __delay_us(100); 
     }    
-    
-    friction_delay_ms();//leave enough time to turn
-    stop(mL,mR); //stop turning
-    
+    friction_delay_ms();// Leave enough time to turn
+    stop(mL,mR); 
 }
 
 
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 {
-    stop(mL,mR); // ensure it is stationary
+    stop(mL,mR); 
     
-    //set right motors to zero and right motors to full power 
-    while (mL->power  != 25){
-        mL->power  ++;  
+    while (mL->power  != 80){
+        mL->power  = mL->power + 10;  
         setMotorPWM(mL);
-        __delay_us(100); 
     }    
-    
-    friction_delay_ms();//leave enough time to turn
-    stop(mL,mR); //stop turning
+    friction_delay_ms();// Leave enough time to turn
+    stop(mL,mR); 
 }
 
 
