@@ -18,12 +18,11 @@
 /*************************  Variable Prototypes ********************************/
 
 
-int friction;
-//Some reference values
-//(~400-SAF Table)
-// Time required for reverse one square
-int reverse_time;
+int friction; // time (in ms) needed for a 45 degree turn (320 for Room-749 surface)
+//Can be updated anywhere
 
+int reverse_time; // Time(in ms) required for reverse one square
+//Must be updated inside the main loop if it'll be used there
 
 // Definition of DC_motor structure
 // Note that I have defined 0 direction as forward due to with clicker's position

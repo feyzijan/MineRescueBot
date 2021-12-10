@@ -15,11 +15,11 @@
 
 //Initialise variabels
 int timeList[30];
-unsigned char time_index = 0;
+char time_index = 0;
 
 // Array of functions to call
 card_func funcPtrList[30];
-unsigned char func_index = 0;
+char func_index = 0;
 
 // Reverse one square time
 int reverse_time = 100; // this is multiplied with 10ms
@@ -138,6 +138,7 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
     card_func temp_func;
     
     while(time_index >= 0){
+    //while(func_index >= 0){
         temp_time = get_timing(); // get the last movement time (index auto decrements)
         
         //Move car forward for specified time and stop
@@ -147,10 +148,9 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
         //Execute function in function pointer (index auto decrements)
         temp_func = get_function_ptr();
         temp_func(mL,mR);
-        __delay_ms(10); // Just some slack
+        __delay_ms(1000); // Just some slack
     }
     stop(mL,mR);
-    
     
 }
 
@@ -158,23 +158,23 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
 
 
 void add_function_ptr (card_func func){
-    funcPtrList[func_index] = func;
-    func_index ++; 
-            
+    funcPtrList[func_index++] = func;
+    //func_index ++;        
 }
 
 
 void add_timing(unsigned int timing){
-    timeList[time_index] = timing;
-    time_index ++; //CHECK THAT THIS IS UPDATED GLOBALLY
+    timeList[time_index++] = timing;
+    //time_index ++; //CHECK THAT THIS IS UPDATED GLOBALLY
 }
 
 // Make this return the 16bit
 unsigned int get_timing(void){
-    return timeList[time_index--];
+    return timeList[--time_index];
 }
 
 
 card_func get_function_ptr(void){
-    return funcPtrList[func_index--];
+    return funcPtrList[--func_index];
 }
+

@@ -1,7 +1,10 @@
 #include <xc.h>
 #include "timers.h"
 #include "dc_motor.h"
+#include "CardMoves.h"
 
+
+extern unsigned int timer0val;
 
 //Note: Overflows in 134 seconds, 1 bit = 2.048ms
 void Timer0_init()
@@ -16,6 +19,11 @@ void Timer0_init()
     T0CON0bits.T0EN=1;	//start the timer
 }
 
+void reset_Timer0(void){
+    TMR0H = 0;
+    TMR0L = 0;
+}
+
 
 void Timer1_init(void){
     // Will overflow every ~2.1 s
@@ -28,17 +36,16 @@ void Timer1_init(void){
 }
 
 
-//returns TMR1 value in milisecond format
-unsigned int getTMR0_in_ms(void){
-    unsigned int temp;
-    temp = TMR10<<8;
-    temp += TMR0L;
-    temp = temp *2048/1000; 
-    return temp;
-    // each bit is 2.048ms
+// IMPORTANT: READ TMR0L first
+void getTMR0_in_ms(void){
+    unsigned int temp = TMR0L;
+    temp = TMR0H<<8;
+    timer0val = temp * 2  + temp / 21  ; // each bit is 2.048ms
+    add_timing(timer0val);
 }
 
 
+// IMPORTANT: Set TMR0H first
 void setTMR0(unsigned int t_start){
     unsigned int temp = t_start;
     TMR0H = t_start>>8;
@@ -55,7 +62,6 @@ void friction_delay_ms(void){
 
 
 void custom_delay_ms(unsigned int delay_time){
-  
     unsigned int i;
     for(i=0;i<delay_time/10;i++){
         __delay_ms(10);

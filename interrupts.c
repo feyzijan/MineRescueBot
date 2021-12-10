@@ -44,9 +44,9 @@ void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt
     if(PIR0bits.INT0IF){
-        timer0val = getTMR0_in_ms(); // Get movement duration
+        //getTMR0_in_ms(); // Get movement duration
         PIR0bits.INT0IF = 0; // Clear Flag
-        HeadLamp = !HeadLamp; // Testing
+        //HeadLamp = !HeadLamp; // Testing
         color_click_interrupt_off(); // Turn off clicker interrupt (this clears it as well)
         wall_flag = 1;
     }

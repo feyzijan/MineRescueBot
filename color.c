@@ -6,7 +6,7 @@
 
 unsigned int blue_th = 1100; 
 unsigned int green_th= 1800;
-unsigned int red_th = 3875;
+unsigned int red_th = 2500;
 
 
 void color_click_init(void)
@@ -25,7 +25,7 @@ void color_click_init(void)
     //color_writetoaddr(0x00,0x1B); // Enable Wait time register?
     color_writetoaddr(0x03, 0x00); // Wait time register: 256
     
-    color_writetoaddr(0x0F, 0x01); // Gain: 4X
+    color_writetoaddr(0x0F, 0x00); // Gain: 1x
     
     //color_writetoaddr(0x0C, 0x00);
 }   
@@ -36,10 +36,10 @@ void color_click_interrupt_init(void){
     color_int_clear();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
     //Configure interrupt thresholds RGBC clear channel: Low 300 High: 6950
-    color_writetoaddr(0x04, 0x2C); 
-    color_writetoaddr(0x05, 0x01); 
-    color_writetoaddr(0x06, 0x26); 
-    color_writetoaddr(0x07, 0x1B); 
+    color_writetoaddr(0x04, 0x00); 
+    color_writetoaddr(0x05, 0x00); 
+    color_writetoaddr(0x06, 0xA0); 
+    color_writetoaddr(0x07, 0x0F); 
     
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
     color_int_clear();
@@ -162,18 +162,18 @@ char decide_color(void){
     
     //Procedure to decide
     // For testing 
-    if(red > red_th){
+    if(redval > 2500){
         sendCharSerial4('R');
         return 'r';
-    } else if(blue > blue_th){
+    } else if(blueval > 1000){
         sendCharSerial4('B');
         return 'b';
-    }else if(red > green_th){
+    }else if(blueval < 1000){
         sendCharSerial4('G');
         return 'g';
     } else{
-        sendCharSerial4('R');
-        return 'r';
+        sendCharSerial4('O');
+        return 'o'; 
     }
     
 }

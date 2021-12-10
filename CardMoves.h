@@ -17,13 +17,11 @@ typedef void (*card_func)(struct DC_motor *, struct DC_motor *);
 
 // List of times that we moved forward by
 int timeList[30];
-unsigned char time_index;
+char time_index;
 
 // Array of functions to call
 card_func funcPtrList[30];
-unsigned char func_index;
-
-
+char func_index;
 
 
 

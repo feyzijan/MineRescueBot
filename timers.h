@@ -9,14 +9,13 @@
 /* TODO: 
  * Test the accurate operation of custom delay functions
  * Configure Timer0 to time the movement durations in between reading cards
- * 
+ * Remove temp variables from Timer0 getters and setters
  */
 
 
 /*************************  Variable Prototypes ********************************/
 
 unsigned int timer0val;
-
 
 /*************************  Function Prototypes ********************************/
 
@@ -29,12 +28,9 @@ void Timer0_init(void);
 
 
 /***********
- * Function to read TMR0 value
- * Output is the Timer0 bit converted to ms
- * This is so when we pass the output to custom_delay_ms we can wait for a time
- * equal to the time recorded in TMR0
+ * Function to read TMR0 value and store it in the timer list (as milisecond value)
  ***********/
-unsigned int getTMR0_in_ms(void);
+void getTMR0_in_ms(void);
 
 
 /************
@@ -66,5 +62,6 @@ void custom_delay_ms(unsigned int delay_time);
  ********************************/
 void Timer1_init(void);
 
+void reset_Timer0(void);
 
 #endif

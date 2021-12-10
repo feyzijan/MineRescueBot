@@ -2,6 +2,11 @@
 #include "dc_motor.h"
 
 
+extern int friction;
+extern int reverse_time;
+
+ 
+
 void initDCmotorsPWM(int PWMperiod){
 	//Initialise your TRIS and LAT registers for PWM
 
@@ -80,7 +85,7 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
     mR->direction = 1;
       
     // Increment values gradually 
-    while ((mL->power + mR->power) < 50){
+    while ((mL->power + mR->power) < 100){
         
         mL->power = mL->power + 5;
         mR->power = mR->power + 5;

@@ -19,14 +19,16 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 
-// Set correct friction value for 45^turns 
+
+extern unsigned int timer0val;
 
 
 void main(void){
     
     // Variable Initialisations
-    friction = 400; // Delay required ofor a 45^ turn - can be updated outside main
-    reverse_time = 1500; // Delay required for Reverse One Square - has to be updated inside main 
+    friction = 600; 
+    reverse_time = 200;
+     // Delay required for Reverse One Square - has to be updated inside main 
     
     //Initialisations 
     initUSART4();
@@ -36,61 +38,96 @@ void main(void){
     Timer1_init();
     
     
-    //****Motor Initialisation****
+    //****Motor Initialisation****//
   
     //Initialise Motor structs
-    struct DC_motor motorL, motorR; 
+    struct DC_motor motorL,motorR;
     motorL.power=1; 	// For some reason when this is zero it breaks everything			
-    motorL.direction=1; 
+    motorL.direction=0; 
     motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); 
     motorL.dir_LAT=(unsigned char *)(&LATE); 	
     motorL.dir_pin=4; 	
     motorL.PWMperiod=199; 
     
     motorR.power=1; 						
-    motorR.direction=1; 					
+    motorR.direction=0; 					
     motorR.dutyHighByte=(unsigned char *)(&PWM7DCH);	
     motorR.dir_LAT=(unsigned char *)(&LATG); 		
     motorR.dir_pin=6;
-    motorR.PWMperiod=199; 		
+    motorR.PWMperiod=199; 
     
-    //setMotorPWM(&motorL);
-    //setMotorPWM(&motorR);
-           
-    initDCmotorsPWM(199);     
-    stop(&motorL,&motorR);
-    
-    //*** Test DC Motor Moves ***///
-    //move_forward(&motorL,&motorR,1000);
-    //stop(&motorL,&motorR);
-    //move_backward(&motorL,&motorR,reverse_time);
-    //TurnLeft(&motorL,&motorR);
-    //__delay_ms(1000);
-    //TurnRight(&motorL,&motorR);
+    // Initialise pointer to structs
+    struct DC_motor * mL = &motorL; 
+    struct DC_motor * mR = &motorR; 
  
-    LightToggle(); 
-    while(1){
+    initDCmotorsPWM(199);     
+    stop(mL,mR);
+    //********************//
+    
 
-        /******** Send Back Colour Readings to PC every 2 secs ******/
+    
+    Timer0_init();
+    
+    //LightToggle(); 
+    
+    card_func my_function;
+    
+    while(1){
+        
+        /******** Send Back Colour Readings to PC every 2 secs **********/
+        /*
         if(timer_flag) { 
-            __debug_break();
+            
             get_int_status(); //Send back Interrupt Status
             read_All_Colors();
             SendColorReadings(); 
+
+            reset_Timer0();
             timer_flag =0;  
+            
         }
+        */
         
-        // Re-enable clicker interrupt with button press
+        
+        //******************* Re-enable the clicker interrupt **************//
+        /*
         if (ButtonRF2) { 
             color_click_interrupt_init();  
-            __delay_ms(1);
-        }  
-        if (ButtonRF3) {
-            LightToggle();     
-            __delay_ms(1);
-        }  
+            __delay_ms(10);
+        }
+        */
+        
+        //******** Testing Function Pointer Memory **************//
+        if (ButtonRF3){
+            __delay_ms(100);
+            add_function_ptr(&green_move);
+            add_function_ptr(&red_move);
+            my_function =  get_function_ptr();
+            my_function(mL,mR); // executes green move (turn Left)
+            my_function =  get_function_ptr();
+            my_function(mL,mR); // executes red move (turn Right)
+        }
+        
+        //************ Testing that Timer0 logs movement duration *************//
+        
+        if (ButtonRF2) { 
+            __delay_ms(500); //So that button Press doesn't trigger condition below
+            setTMR0(0); // Reset Timer0
+            
+            move_forward(&motorL,&motorR,0); // Move forward until button press
+            while(!ButtonRF2); // move straight until interrupt
+            
+            getTMR0_in_ms(); // log time in memory
+           
+            stop(&motorL,&motorR); // Stop buggy
+            __delay_ms(1000); // wait for a bit
+            
+            move_backward(&motorL,&motorR,get_timing()); // Retrieve timer from memory and move back
+            
+            stop(&motorL,&motorR);
+        }
+         
 
-        /************ Test actual operation ******************/
         /*
        while(!ButtonRF2);
 
@@ -119,34 +156,15 @@ void main(void){
     }
 }
 
-//************* Crude Test Cases ***************//////
 
+    //****************TODO: Calibration Routine for surface ****************//
 
-    /*****Test Forward/Backward Movement ***/
     /*
-    stop(&motorL, &motorR);
-    move_forward(&motorL, &motorR,0);
-    __delay_ms(1000);
-    stop(&motorL, &motorR);
-
-    __delay_ms(2000);
-    move_backward(&motorL, &motorR,0);
-    __delay_ms(2000);
-    stop(&motorL, &motorR);
-    */
-
-
-    /******* Test Pickmove and Pointers *****/
-    /*
-
-     */
-
-
-    /******** Test Timer0 Recording *******/
-    /*
-     setTMR0(0); //Start timer
-     move_forward(&motorL, &motorR,1000);
-     stop(&motorL, &motorR);
-     unsigned int temp_test = getTMR0();
-
-     */
+    while(!(ButtonRF3 && ButtonRF2)) // Press both buttons to exit calibration
+    {
+        for(int k = 0; k<4; k++){ //Loop 180
+            TurnLeft(&motorL,&motorR);
+            __delay_ms(1000);
+        }
+    }
+        */
