@@ -93,10 +93,18 @@ void main(void){
         if (test_flag){
             //TxBufferedString("hello");
             //TxBufferedString("\n");
-            LED1 = 1;
+            LED1 = 0;
             color = decide_color();
-            if (color == 4){
+            /*
+            if (color == 6){
                 LED1 = 0;
+            }
+             */
+            for (int i=0;i<color;i++){
+                LED1 = 1;
+                __delay_ms(350);
+                LED1 = 0;
+                __delay_ms(350);
             }
             LightToggle();
             test_flag=0;

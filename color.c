@@ -23,7 +23,7 @@ void color_click_init(void)
     //color_writetoaddr(0x00,0x1B); // Enable Wait time register?
     //color_writetoaddr(0x03, 0x00); // Wait time register: 256
     
-    color_writetoaddr(0x0F, 0x00); // Gain: 4X
+    color_writetoaddr(0x0F, 0x00); // Gain: 1X
     
     //color_writetoaddr(0x0C, 0x00);
 }   
@@ -185,12 +185,18 @@ int decide_color(void){
     int bluePercentage = 100*(blue*pow(clear,-1));
 
     unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
-    unsigned int clear_channel_black_thresh = 100;        // a threshold to tell if the color is black
+    unsigned int clear_channel_black_thresh = 1;        // a threshold to tell if the color is black
 
     //Procedure to decide
     
     if (redPercentage >= 65){
+        /*
         if (red > red_channel_red_orange_sep_thresh){
+            //color_decision = 'r';
+            color_decision = 1;
+        }
+         */
+        if(greenPercentage<11){
             //color_decision = 'r';
             color_decision = 1;
         }
