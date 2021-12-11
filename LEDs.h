@@ -46,7 +46,7 @@ void LightToggle(void);
 /*************
  * Function to test that LEDs work 
  *************/
-void LEDTest(void);
+void LightTest(void);
 
 
 #endif

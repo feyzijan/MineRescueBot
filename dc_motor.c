@@ -115,6 +115,13 @@ void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duratio
 }
 
 
+void reverse_square(struct DC_motor *mL, struct DC_motor *mR){
+    move_backward(mL,mR,reverse_time);
+    stop(mL,mR);
+}
+
+
+
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 { 
     stop(mL,mR); 
@@ -141,3 +148,60 @@ void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 }
 
 
+
+void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
+    
+    LightTest(); // Toggle Light to indicate start of Calibration
+    
+    // Store initial value so the 5% adding/subtracting don't compound
+    int temp = friction; 
+    
+    while(!(ButtonRF3 && ButtonRF2)) // Press both buttons to exit calibration
+    {
+        // Try turning 180 degrees in 4 motions
+        for(int k = 0; k<4; k++){
+            TurnLeft(mL,mR);
+            __delay_ms(500); // Time lag to check each 45 degree turn
+        }
+        
+        while(!(ButtonRF3 || ButtonRF2)) // Wait for either to be pressed
+            
+            if(ButtonRF2 && ButtonRF3){ // No change
+                break;
+            } else if(ButtonRF2){
+                friction  -= temp /20; //5% Decrease
+            } else if(ButtonRF3){
+                friction  += temp /20;; //5% Increase
+            }
+        __delay_ms(1000); // Leave one second to exit Calibration   
+    }
+    LightTest(); // Indicate end of Calibration
+}
+
+
+
+void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR){
+    
+    LightTest(); // Toggle Light to indicate start of Calibration
+    
+    // Store initial value so the 5% adding/subtracting don't compound
+    int temp = reverse_time; 
+    
+    while(!(ButtonRF3 && ButtonRF2)) // Press both buttons to exit calibration
+    {
+        reverse_square(mL,mR);  // Perform reverse_square movement
+        stop(mL,mR);
+        
+        while(!(ButtonRF3 || ButtonRF2)) // Wait for either to be pressed
+            
+            if(ButtonRF2 && ButtonRF3){ // No change
+                break;
+            } else if(ButtonRF2){
+                reverse_time  -=  temp /20; //5% Decrease
+            } else if(ButtonRF3){
+                reverse_time  +=  temp /20; //5% Increase
+            }
+        __delay_ms(1000); // Have one second to exit Calibration 
+    }
+    LightTest(); // Indicate end of Calibration
+}

@@ -26,22 +26,25 @@ extern unsigned int timer0val;
 void main(void){
     
     // Variable Initialisations
-    friction = 600; 
-    reverse_time = 200;
+    friction = 600; //45 degree turn time
+    reverse_time = 2000; // Reverse_square time
+    card_func my_function; // In main.c for testing only
      // Delay required for Reverse One Square - has to be updated inside main 
     
     //Initialisations 
-    initUSART4();
     color_click_init();
     LEDs_buttons_init();
     Interrupts_init();
-    Timer1_init();
+    Timer0_init();
+     
     
     
-    //****Motor Initialisation****//
-  
-    //Initialise Motor structs
+    //********************** Motor Initialisation ****************************//
+    
+    //Initialise Motor structs and pointers 
     struct DC_motor motorL,motorR;
+    struct DC_motor * mL = &motorL; 
+    struct DC_motor * mR = &motorR; 
     motorL.power=1; 	// For some reason when this is zero it breaks everything			
     motorL.direction=0; 
     motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); 
@@ -55,22 +58,19 @@ void main(void){
     motorR.dir_LAT=(unsigned char *)(&LATG); 		
     motorR.dir_pin=6;
     motorR.PWMperiod=199; 
-    
-    // Initialise pointer to structs
-    struct DC_motor * mL = &motorL; 
-    struct DC_motor * mR = &motorR; 
  
-    initDCmotorsPWM(199);     
+    initDCmotorsPWM(199); //Initialise PWM module  
     stop(mL,mR);
-    //********************//
+    //************************************************************************//
     
-
+    // Calibration Functions
+    CalibrateTurns(mL,mR);
+    __delay_ms(1000);
+    CalibrateReverseSquare(mL,mR);
     
-    Timer0_init();
-    
-    //LightToggle(); 
-    
-    card_func my_function;
+    // Timer1 and Serial Comms Initialisations (Testing mode only)
+    initUSART4(); 
+    Timer1_init();
     
     while(1){
         
@@ -112,7 +112,7 @@ void main(void){
         
         if (ButtonRF2) { 
             __delay_ms(500); //So that button Press doesn't trigger condition below
-            setTMR0(0); // Reset Timer0
+            ResetTMR0(); // Reset Timer0
             
             move_forward(&motorL,&motorR,0); // Move forward until button press
             while(!ButtonRF2); // move straight until interrupt
@@ -154,17 +154,12 @@ void main(void){
        */
 
     }
+    
+    
+    
+    
+        
 }
 
 
-    //****************TODO: Calibration Routine for surface ****************//
-
-    /*
-    while(!(ButtonRF3 && ButtonRF2)) // Press both buttons to exit calibration
-    {
-        for(int k = 0; k<4; k++){ //Loop 180
-            TurnLeft(&motorL,&motorR);
-            __delay_ms(1000);
-        }
-    }
-        */
+    

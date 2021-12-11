@@ -37,7 +37,7 @@ void getTMR0_in_ms(void);
  * Set TMR1 value
  * Start at 2^16 - move_time so it overflows in move_time seconds
  ************/
-void setTMR0(unsigned int t_start);
+void ResetTMR0(void);
 
 
 /***********
@@ -45,6 +45,7 @@ void setTMR0(unsigned int t_start);
  * Modify the global friction variable 
  ***********/
 void friction_delay_ms(void);
+
 
 
 /************

@@ -3,6 +3,7 @@
 
 #include <xc.h>
 #include "timers.h"
+#include "LEDs.h"
 
 #define _XTAL_FREQ 64000000
 
@@ -75,6 +76,16 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
 
 
 /*************
+ * Function to make the robot perform "reverse one square"
+ * Calls the move_backward method with the global variable reverse_time as an input
+ * Then stops
+ * This is so that the reverse_time variable used can be updated globally
+ *************/ 
+void reverse_square(struct DC_motor *mL, struct DC_motor *mR);
+
+
+
+/*************
  * Function to make buggy do a 45degree left turn 
  * Stops motor - gradually increases power on right wheels - then stops again
  * NOTE: Global friction variable must be set according to surface friction for accurate turns
@@ -92,4 +103,20 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR);
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR);
 
 
+/*************
+ * Function to
+ * 
+ * 
+ * 
+ **************/ 
+void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/*************
+ * Function to
+ * 
+ * 
+ * 
+ **************/ 
+void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR);
 #endif

@@ -41,7 +41,7 @@ void LightToggle(void){
     GreenLight = !GreenLight;
 }
 
-void LEDtest(void){
+void LightTest(void){
     for(char i=0; i <4;i++){
         RedLight = !RedLight;
         BlueLight = !BlueLight;
@@ -53,7 +53,7 @@ void LEDtest(void){
         BrakeLight = !BrakeLight;
         LeftLamp = !LeftLamp;
         RightLamp = !RightLamp;
-        __delay_ms(250);
+        __delay_ms(500);
     }
 }
 

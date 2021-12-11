@@ -46,10 +46,13 @@ void getTMR0_in_ms(void){
 
 
 // IMPORTANT: Set TMR0H first
-void setTMR0(unsigned int t_start){
-    unsigned int temp = t_start;
-    TMR0H = t_start>>8;
-    TMR0L = temp & 0b11111111;
+void ResetTMR0(void){
+    TMR0H = 0;
+    TMR0L = 0;
+    //unsigned int temp = t_start;
+    
+    //TMR0H = t_start>>8;
+    //TMR0L = temp & 0b11111111;
 }
 
 
