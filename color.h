@@ -92,4 +92,10 @@ void SendColorReadings(void);
 void get_int_status(void);
 
 
+
+/**********************************************
+ * Function to calibrate interrupt thresholds
+ * 
+ ***********************************************/
+void interrupt_threshold_calibrate(void);
 #endif

@@ -48,7 +48,7 @@ void color_click_interrupt_init(void){
     color_writetoaddr(0x06, int_high & 0xFF); 
     color_writetoaddr(0x07, int_high >>8); 
     
-    color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
+    color_writetoaddr(0x0C, 0b0001); // Persistence register = 1
     color_int_clear();
 }
 
@@ -182,5 +182,16 @@ char decide_color(void){
         sendCharSerial4('O');
         return 'o'; 
     }
+    
+}
+
+
+// We call this function in main.c
+void interrupt_threshold_calibrate(void) {
+    // Calibration procedure
+    
+    // At the end just update these two global variables
+    //int_low = 500;
+    //int_high = 1000;
     
 }
