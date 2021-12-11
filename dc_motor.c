@@ -121,6 +121,12 @@ void reverse_square(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
+void forward_square(struct DC_motor *mL, struct DC_motor *mR){
+    move_forward(mL,mR,reverse_time);
+    stop(mL,mR);
+}
+
+
 
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 { 

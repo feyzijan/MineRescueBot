@@ -28,6 +28,9 @@ void main(void){
     // Variable Initialisations
     friction = 600; //45 degree turn time
     reverse_time = 2000; // Reverse_square time
+    int_low  = 300; // Interrupt Low Threshold
+    int_high = 12560; // Interrupt High Threshold
+    
     card_func my_function; // In main.c for testing only
      // Delay required for Reverse One Square - has to be updated inside main 
     
@@ -128,30 +131,29 @@ void main(void){
         }
          
 
-        /*
-       while(!ButtonRF2);
+        
+       while(!ButtonRF2); // Wait for Button press to start
 
        // Start timer to time movement duration
-       Timer0_init();
-       move_forward(&motorL,&motorR,0);
-       while(!wall_flag); // move straight until interrupt
+       //Timer0_init();
+       //move_forward(&motorL,&motorR,0);
+       //while(!wall_flag); // move straight until interrupt
        // Now clicker interrupt has been triggerd - we are near a wall
 
 
        //Step 1: Stop motor
-       stop(&motorL,&motorR);
+       //stop(&motorL,&motorR);
        //Step 1.1: Add the movement time( read in interrupt) to our list
-       add_timing(timer0val);
        //Step 2: Turn on Light
        //LightToggle();
        //Step 3: Take readings and decide on color
-       color = decide_color();
+       //color = decide_color();
        //Step 4: Pick and execute appropriate move
-       pick_move(color,&motorL,&motorR);
+       //pick_move(color,&motorL,&motorR);
 
        while(!ButtonRF2);
        
-       */
+       
 
     }
     

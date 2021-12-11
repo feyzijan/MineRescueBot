@@ -84,6 +84,12 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
 void reverse_square(struct DC_motor *mL, struct DC_motor *mR);
 
 
+/* Function that makes the robot go forward one square
+ * Same as reverse_square but calls move_forward inside the function
+ */
+void forward_square(struct DC_motor *mL, struct DC_motor *mR);
+
+
 
 /*************
  * Function to make buggy do a 45degree left turn 

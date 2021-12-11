@@ -13,9 +13,11 @@
 
 /*************************  Variable Prototypes ********************************/
 
+unsigned int int_low, int_high; // Interrupt thresholds
 
 unsigned int red, green, blue, clear;
-//Threshold values- for testing
+
+//Threshold values- for testing // may not need these
 unsigned int red_th, green_th, blue_th;
 
 

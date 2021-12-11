@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include "serial.h"
 
+// may not need these
 unsigned int blue_th = 1100; 
 unsigned int green_th= 1800;
 unsigned int red_th = 2500;
 
+extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
 
 void color_click_init(void)
 {   
@@ -35,11 +37,16 @@ void color_click_interrupt_init(void){
     //__debug_break();
     color_int_clear();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
-    //Configure interrupt thresholds RGBC clear channel: Low 300 High: 6950
-    color_writetoaddr(0x04, 0x00); 
-    color_writetoaddr(0x05, 0x00); 
-    color_writetoaddr(0x06, 0xA0); 
-    color_writetoaddr(0x07, 0x0F); 
+    //Configure interrupt thresholds RGBC clear channel:
+    //color_writetoaddr(0x04, 0x00); 
+    //color_writetoaddr(0x05, 0x00); 
+    //color_writetoaddr(0x06, 0xA0); 
+    //color_writetoaddr(0x07, 0x0F); 
+    // Use global variables that can be updated by the calibration function
+    color_writetoaddr(0x04, int_low & 0xFF); 
+    color_writetoaddr(0x05, int_low >> 8); 
+    color_writetoaddr(0x06, int_high & 0xFF); 
+    color_writetoaddr(0x07, int_high >>8); 
     
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 5
     color_int_clear();

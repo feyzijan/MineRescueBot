@@ -80,9 +80,15 @@ void blue_move(struct DC_motor *mL, struct DC_motor *mR);
 void yellow_move(struct DC_motor *mL, struct DC_motor *mR);
 
 
-/********** Yellow Card: Reverse one square + turn left 90° ***/
+/********** Pink Card: Reverse one square + turn left 90° ***/
 void pink_move(struct DC_motor *mL, struct DC_motor *mR);
 
+
+/********** Reverse Yellow Card: turn right 90° + Move Forward one square***/
+void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR);
+
+/********** Reverse Pink Card: turn left 90° + Move Forward one square **/
+void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR);
 
 /********** Orange Card: Turn Right 135° s***************/
 void orange_move(struct DC_motor *mL, struct DC_motor *mR);
