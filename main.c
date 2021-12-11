@@ -14,6 +14,7 @@
 #include "timers.h"
 #include "interrupts.h"
 #include "CardMoves.h"
+#include "buttons.h"
 #include <stdio.h>
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
@@ -23,9 +24,21 @@ void main(void){
     initUSART4();
     color_click_init();
     LEDsInit();
-    Interrupts_init();
     Timer1_init();    
-    //initDCmotorsPWM(); 
+    //initDCmotorsPWM(199);
+    buttonsInit();
+    
+    // COLOR CLICK RGB LEDs    
+    LightToggle();
+
+    // Calibrate interrupt threshold instructions:
+    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
+    // 2. press the left button (RF3)
+    // 3. Leave blue card in front of buggy for at least a second
+    interrupt_threshold_calibrate();
+    // Initialize interrupt after threshold calibration
+    Interrupts_init();
+    
 
     char color;
     // Set correct friction value for turns
@@ -41,22 +54,13 @@ void main(void){
     char buf2[] = {0x00};
     char buf3[] = {0x00};
     char buf4[] = {0x00};
-    
-    // COLOR CLICK RGB LEDs
-    
-    LightToggle();
-    
-    // Button RF2 to toggle light on and off for testing
-    TRISFbits.TRISF2=1; //set TRIS value for pin (input)
-    ANSELFbits.ANSELF2=0; //turn off analogue input on pin
-    
 
     while(1){
         
         //Edit for Color
-        /*
+        
         if(timer_flag) { //1 second has passed 
-            read_All_Colors(); // read colours
+            read_All_Colors(); // read colous
 
             sprintf(buf1,"%d",red);
             TxBufferedString(" ");
@@ -83,23 +87,15 @@ void main(void){
             
             timer_flag =0;
          }
-        */
+        
         
   
-        if (!PORTFbits.RF2) {
-            LightToggle();
-        }
+        if (!RightButton) {LightToggle();}                                  // turn RGB light off manually if required
+        if (!LeftButton) {color_click_interrupt_init();BrakeLight=0;}       // turn on interrupt source manually for testing
             
         if (test_flag){
-            //TxBufferedString("hello");
-            //TxBufferedString("\n");
             LED1 = 0;
             color = decide_color();
-            /*
-            if (color == 6){
-                LED1 = 0;
-            }
-             */
             for (int i=0;i<color;i++){
                 LED1 = 1;
                 __delay_ms(350);
@@ -108,7 +104,6 @@ void main(void){
             }
             LightToggle();
             test_flag=0;
-            //color_click_interrupt_init();
         }
     }
 }

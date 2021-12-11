@@ -32,6 +32,8 @@
       <itemPath>LEDs.h</itemPath>
       <itemPath>CardMoves.c</itemPath>
       <itemPath>CardMoves.h</itemPath>
+      <itemPath>buttons.c</itemPath>
+      <itemPath>buttons.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

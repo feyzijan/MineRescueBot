@@ -15,6 +15,7 @@
 
 
 unsigned int red, green, blue, clear;
+unsigned int int_low, int_high; // Interrupt thresholds
 unsigned int LED_cross_talk[4] = {484,268,183,993};
 
 
@@ -87,6 +88,12 @@ void SendColorReadings(void);
  * Function to send back interrupt status at register 0x12 to PC
  ***********************************************/
 void get_int_status(void);
+
+/**********************************************
+ * Function to calibrate interrupt thresholds
+ * 
+ ***********************************************/
+void interrupt_threshold_calibrate(void);
 
 
 #endif
