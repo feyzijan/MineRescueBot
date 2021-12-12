@@ -3,11 +3,8 @@
 #include "i2c.h"
 #include <stdio.h>
 #include "serial.h"
+#include "LEDs.h"
 
-// may not need these
-unsigned int blue_th = 1100; 
-unsigned int green_th= 1800;
-unsigned int red_th = 2500;
 
 extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
 
@@ -157,41 +154,124 @@ void read_All_Colors(void){
 }
 
 
-// Work in Progress
-char decide_color(void){
-    //char color;
+// Just for testing
+char decide_color_test(void){
     unsigned int redval, greenval, blueval, clearval;
    
     redval = color_read(0x16); 
     greenval = color_read(0x18); 
     blueval = color_read(0x1A); 
-    //clearval = color_read(0x14); 
     
-    //Procedure to decide
-    // For testing 
-    if(redval > 2500){
-        sendCharSerial4('R');
-        return 'r';
-    } else if(blueval > 1000){
-        sendCharSerial4('B');
-        return 'b';
-    }else if(blueval < 1000){
-        sendCharSerial4('G');
-        return 'g';
-    } else{
-        sendCharSerial4('O');
-        return 'o'; 
-    }
-    
+    return 'r';
 }
 
 
 // We call this function in main.c
 void interrupt_threshold_calibrate(void) {
-    // Calibration procedure
+
+    while (!ButtonRF3); //wait for button press
+    __delay_ms(500); // Button delay
+    LightTest(); // Indicate start
+   
+    clear = color_read(0x14); // read clear color channel for blue card
     
-    // At the end just update these two global variables
-    //int_low = 500;
+    // Update global variable high threshold 
     //int_high = 1000;
     
+    while (!ButtonRF3); //wait for second button press
+    LightTest(); // Indicate end
+}
+
+
+/*Changes to ajays code
+ * Use char not int
+ * Put own LightToggle function
+ * 
+*/
+
+//Potential problem with two lists being the same?
+char decide_color(void){
+    
+    char color_decision;
+    __delay_ms(500); // wait for readings to stabilise  
+        
+    // Read with LED on
+    read_All_Colors();
+    unsigned int LED_and_amb_read[4] = {red,green,blue,clear}; // light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
+    
+    // Read with LED off
+    LightToggle();// turn RGB LED off 
+    __delay_ms(500); // wait for readings to stabilise  
+    read_All_Colors();
+    unsigned int ambient[4] = {red,green,blue,clear};// light from ambient only
+    
+    
+    // correct the readings to remove ambient and LED cross_talk
+    red = LED_and_amb_read[0]- ambient[0] - LED_cross_talk[0];
+    green = LED_and_amb_read[1]- ambient[1] - LED_cross_talk[1];
+    blue = LED_and_amb_read[2]- ambient[2] - LED_cross_talk[2];
+    clear = LED_and_amb_read[3]- ambient[3] - LED_cross_talk[3];
+    
+    
+    // calculate integer percentage RGB values of clear channel
+    // How does the below operation work?
+    // Also we need to write our own power!! 
+    // Why do we need power for 1/clear?
+    int redPercentage = 100*(red*pow(clear,-1));
+    int greenPercentage = 100*(green*pow(clear,-1));
+    int bluePercentage = 100*(blue*pow(clear,-1));
+
+    //unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
+    //unsigned int clear_channel_black_thresh = 2200;        // a threshold to tell if the colour is black
+
+    //Procedure to decide - will explain in read me file to follow logic process via graphs
+    
+    // Either Red or Orange
+    if (redPercentage >= 65){ 
+        /*
+        if (red > red_channel_red_orange_sep_thresh){
+            //color_decision = 'r';
+            color_decision = 1;
+        }
+         */
+        if(greenPercentage<11){
+            color_decision = 1; //RED
+        }
+        else{
+            color_decision = 6; // Orange
+        }
+    }
+    
+    // Yellow or Pink
+    else if(redPercentage < 65 && redPercentage >= 52){ 
+        if (greenPercentage>30 && bluePercentage<21){
+            color_decision = 4; // Yellow
+        }
+        else{
+            color_decision = 5; // Pink
+        }
+    }
+    
+    // White or light blue
+    else if(redPercentage < 52 && redPercentage >= 35){
+        if (redPercentage>=45){
+            color_decision = 8; // White
+        }
+        else{
+            color_decision = 7; //Light blue
+        }
+    }
+    
+    // Blue or green
+    else if(redPercentage<35 && redPercentage >= 20){       
+        if (bluePercentage>=29){
+            color_decision = 3; //Blue
+        }
+        else{
+            color_decision = 2; //Green
+        }
+    }
+    
+    return color_decision; // return the specific color value
+ 
 }

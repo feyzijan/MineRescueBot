@@ -49,6 +49,7 @@ void __interrupt(high_priority) HighISR()
         //HeadLamp = !HeadLamp; // Testing
         color_click_interrupt_off(); // Turn off clicker interrupt(also clears it)
         wall_flag = 1; // Raise flag for main loop
+        test_flag = 1; // Test flag to indicate color reaidng with LED
         PIR0bits.INT0IF = 0; // Clear Interrupt Flag
     }
 

@@ -2,12 +2,22 @@
 #define _color_H
 
 #include <xc.h>
+#include <math.h> // MUST WRITE OWN POWER FUNCTION
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 /*TODO: 
  * Complete decide_color() function 
- * 
+ * Update LED_cross_talk to be a constant
+ */
+
+
+/* Color Values
+ * 1:Red    5: Pink
+ * 2:Green  6: Orange 
+ * 3:Blue   7: Light Blue
+ * 4:Yellow 8: White
+ * 9:       
  */
 
 
@@ -17,9 +27,9 @@ unsigned int int_low, int_high; // Interrupt thresholds
 
 unsigned int red, green, blue, clear;
 
-//Threshold values- for testing // may not need these
-unsigned int red_th, green_th, blue_th;
 
+//Cross talk values
+unsigned int LED_cross_talk[4] = {484,268,183,993};
 
 /*************************  Function Prototypes ********************************/
 
@@ -72,6 +82,12 @@ void color_int_clear(void);
 char decide_color(void);
 
 
+/*****************
+ * Test function - we assign color manually
+ ******************/
+char decide_color_test(void);
+
+
 /****** Functions for Testing Purposes - Will be removed from final build *****/
 
 /**********************************************
@@ -97,5 +113,9 @@ void get_int_status(void);
  * Function to calibrate interrupt thresholds
  * 
  ***********************************************/
+// Calibrate interrupt threshold instructions:
+// 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
+// 2. press the left button (RF3)
+// 3. Leave blue card in front of buggy for at least a second
 void interrupt_threshold_calibrate(void);
 #endif

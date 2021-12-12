@@ -34,42 +34,35 @@ char end_motion = 0;
 */
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
 
-    if (color == 'w'){
+    if (color == 8){ // White
         white_move(mL,mR); // pass move list so you can revert it 
     } else {
-        if(color == 'r'){
+        if(color == 1){ // Red
             add_function_ptr(&green_move);
-            
             red_move(mL,mR);
             
-        } else if(color == 'g'){
+        } else if(color == 2){ // Green
             add_function_ptr(&red_move);
-            
             green_move(mL,mR);
             
-        } else if(color == 'b'){
+        } else if(color == 3){ // Blue
             add_function_ptr(&blue_move);
-            
             blue_move(mL,mR);
             
-        } else if (color == 'y'){ // Figure out complement function
-            add_function_ptr(reverse_yellow_move);
-            
+        } else if (color == 4){ // Yellow
+            add_function_ptr(reverse_yellow_move); 
             yellow_move(mL,mR);
             
-        } else if (color == 'p'){ // Figure out complement function
+        } else if (color == 5){ // Pink
             add_function_ptr(reverse_pink_move);
-            
             pink_move(mL,mR); 
         
-        } else if (color == 'o'){
+        } else if (color == 6){ // Orange
             add_function_ptr(&lightblue_move);
-            
             orange_move(mL,mR);
             
-        } else if (color == 'l'){
+        } else if (color == 7){ // Light Blue
             add_function_ptr(&orange_move);
-            
             lightblue_move(mL,mR);
         }
         ResetTMR0();//restart Timer

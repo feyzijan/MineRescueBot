@@ -28,11 +28,10 @@ void main(void){
     // Variable Initialisations
     friction = 600; //45 degree turn time
     reverse_time = 2000; // Reverse_square time
-    int_low  = 300; // Interrupt Low Threshold
+    int_low  = 0; // Interrupt Low Threshold
     int_high = 12560; // Interrupt High Threshold
     
     card_func my_function; // In main.c for testing only
-     // Delay required for Reverse One Square - has to be updated inside main 
     
     //Initialisations 
     color_click_init(); // Move this to just before main operation
@@ -69,6 +68,8 @@ void main(void){
     CalibrateTurns(mL,mR);
     __delay_ms(1000);
     CalibrateReverseSquare(mL,mR);
+    __delay_ms(1000);
+    interrupt_threshold_calibrate();
     
     // Timer1 and Serial Comms Initialisations (Testing mode only)
     initUSART4(); 
@@ -143,6 +144,23 @@ void main(void){
             //Step 4: Re-enable clicker interrupt 
             color_click_interrupt_init(); 
        }
+        
+        
+        // Indicate Colour Reading with LED
+        /*
+        if (test_flag){
+            LED1 = 0;
+            color = decide_color();
+            for (int i=0;i<color;i++){
+                LED1 = 1;
+                __delay_ms(350);
+                LED1 = 0;
+                __delay_ms(350);
+            }
+            LightToggle();
+            test_flag=0;
+        }
+         */
        
     }
         
