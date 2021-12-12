@@ -109,6 +109,16 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR);
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR);
 
 
+
+/*************
+ * Function to make buggy move backwards before executing a turn
+ * Calls the move_backward method with the global variable reverse_time/10 as an input
+ * This is needed because the car moves forward whilst turning, and it is very close
+ * to the wall when it detects the color
+ **************/ 
+void PrepareForTurn(struct DC_motor *mL, struct DC_motor *mR);
+
+
 /*************
  * Function to
  * 

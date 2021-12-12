@@ -23,38 +23,14 @@ char time_index;
 card_func funcPtrList[30];
 char func_index;
 
+char end_motion; //signifies motion has ended
 
 
 /*************************  Function Prototypes ********************************/
 
-// Getters and setters for the two arrays
 
 
-/**********
- *  Add a function pointer to our list of function pointers, increment index
- **********/
-void add_function_ptr(card_func func);
-
-
-/********
- * Add a timing to our list, decrement index
- ********/
-void add_timing(unsigned int timing);
-
-
-/**********
- * Get a timing from our list, decrement index
- **********/
- unsigned int get_timing(void);
-
- 
-/********
- * Get a function pointer from our list, decrement index
- ********/
- card_func get_function_ptr(void);
-
-
-// Function for color cards
+//***************** Functions for color cards
 
  
 /*******************************************************************
@@ -101,6 +77,34 @@ void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
 /* This function loops backwards through the list of colours stored in move_list 
  * to get back to the start condition */
 void white_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+//***************** Getters and setters for the two arrays********************//
+
+
+/**********
+ *  Add a function pointer to our list of function pointers, increment index
+ **********/
+void add_function_ptr(card_func func);
+
+
+/********
+ * Add a timing to our list, decrement index
+ ********/
+void add_timing(unsigned int timing);
+
+
+/**********
+ * Get a timing from our list, decrement index
+ **********/
+ unsigned int get_timing(void);
+
+ 
+/********
+ * Get a function pointer from our list, decrement index
+ ********/
+ card_func get_function_ptr(void);
+
 
 
 #endif

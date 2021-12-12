@@ -22,7 +22,9 @@ card_func funcPtrList[30];
 char func_index = 0;
 
 // Reverse one square time
-int reverse_time = 100; // this is multiplied with 10ms
+//int reverse_time = 100; // this is multiplied with 10ms
+
+char end_motion = 0;
 
 
 /* Pick which move to execute based on the color you decided on
@@ -77,6 +79,7 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
 
 //Turn Right  90°
 void red_move(struct DC_motor *mL, struct DC_motor *mR) {
+    PrepareForTurn(mL,mR);
     TurnRight(mL,mR);
     TurnRight(mL,mR);
 }
@@ -84,6 +87,7 @@ void red_move(struct DC_motor *mL, struct DC_motor *mR) {
 
 //Turn left 90° 
 void green_move(struct DC_motor *mL, struct DC_motor *mR){
+    PrepareForTurn(mL,mR);
     TurnLeft(mL,mR);
     TurnLeft(mL,mR);
 }
@@ -91,9 +95,24 @@ void green_move(struct DC_motor *mL, struct DC_motor *mR){
 
 //Turn back 180°
 void blue_move(struct DC_motor *mL, struct DC_motor *mR){
+    PrepareForTurn(mL,mR);
+    PrepareForTurn(mL,mR);
     for(char i=0;i<4;i++) TurnLeft(mL,mR);
 }
 
+
+// Turn Right 135°
+void orange_move(struct DC_motor *mL, struct DC_motor *mR){
+    PrepareForTurn(mL,mR);
+    for(char i=0;i<3;i++)TurnRight(mL,mR);
+}
+
+
+// Turn Left 135°
+void lightblue_move(struct DC_motor *mL, struct DC_motor *mR){
+    PrepareForTurn(mL,mR);
+    for(char i=0;i<3;i++) TurnLeft(mL,mR);
+}
 
 //Reverse one square + turn right 90°
 void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
@@ -112,7 +131,7 @@ void pink_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnLeft(mL,mR);
 }
 
-//Reverse one square + turn right 90°
+//Turn right 90° + Undo reverse one square
 void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnRight(mL,mR);
     TurnRight(mL,mR);
@@ -121,7 +140,7 @@ void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-// Turn left 90° + Undo reverse square
+// Turn left 90° + Undo reverse one square
 void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnLeft(mL,mR);
     TurnLeft(mL,mR);
@@ -130,17 +149,6 @@ void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-
-// Turn Right 135°
-void orange_move(struct DC_motor *mL, struct DC_motor *mR){
-    for(char i=0;i<3;i++)TurnRight(mL,mR);
-}
-
-
-// Turn Left 135°
-void lightblue_move(struct DC_motor *mL, struct DC_motor *mR){
-    for(char i=0;i<3;i++) TurnLeft(mL,mR);
-}
 
 
 // Execute reverse instructions
@@ -168,6 +176,8 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
     }
     stop(mL,mR);
     
+    end_motion = 1; // End motion
+    LightTest(); // Flash lights to signify end
 }
 
 /*************Functions for Function Pointer and Timing arrays****************/

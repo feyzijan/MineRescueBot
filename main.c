@@ -35,12 +35,11 @@ void main(void){
      // Delay required for Reverse One Square - has to be updated inside main 
     
     //Initialisations 
-    color_click_init();
+    color_click_init(); // Move this to just before main operation
     LEDs_buttons_init();
     Interrupts_init();
     Timer0_init();
      
-    
     
     //********************** Motor Initialisation ****************************//
     
@@ -75,6 +74,8 @@ void main(void){
     initUSART4(); 
     Timer1_init();
     
+    unsigned char color;
+    
     while(1){
         
         /******** Send Back Colour Readings to PC every 2 secs **********/
@@ -91,15 +92,6 @@ void main(void){
         }
         */
         
-        
-        //******************* Re-enable the clicker interrupt **************//
-        /*
-        if (ButtonRF2) { 
-            color_click_interrupt_init();  
-            __delay_ms(10);
-        }
-        */
-        
         //******** Testing Function Pointer Memory **************//
         if (ButtonRF3){
             __delay_ms(100);
@@ -111,55 +103,48 @@ void main(void){
             my_function(mL,mR); // executes red move (turn Right)
         }
         
-        //************ Testing that Timer0 logs movement duration *************//
         
+        //************ Testing that Timer0 logs movement duration *************//
         if (ButtonRF2) { 
-            __delay_ms(500); //So that button Press doesn't trigger condition below
+            __delay_ms(500); 
             ResetTMR0(); // Reset Timer0
             
             move_forward(&motorL,&motorR,0); // Move forward until button press
             while(!ButtonRF2); // move straight until interrupt
-            
             getTMR0_in_ms(); // log time in memory
            
             stop(&motorL,&motorR); // Stop buggy
             __delay_ms(1000); // wait for a bit
             
             move_backward(&motorL,&motorR,get_timing()); // Retrieve timer from memory and move back
-            
             stop(&motorL,&motorR);
         }
          
 
         
-       while(!ButtonRF2); // Wait for Button press to start
+        LightToggle(); //LED on
+       //************************ Main Operating Loop ************************//
+        while(!ButtonRF2); // Wait for Button press to start - For Testing
 
-       // Start timer to time movement duration
-       //Timer0_init();
-       //move_forward(&motorL,&motorR,0);
-       //while(!wall_flag); // move straight until interrupt
-       // Now clicker interrupt has been triggerd - we are near a wall
+        //while(!end_motion) // Use flag that is set to 1 with final card
+        while(1){
+            // Step 1: Forward Motion
+            Timer0_init();//Start timer to time movement duration
+            move_forward(mL,mR,0); // Move forward
+            while(!wall_flag); // Continue motion until clicker triggers this flag
 
+            //Step 2: Stop buggy and read card
+            stop(mL,mR); // Interrupt means we are near a card so stop
+            color = decide_color(); // Logic process to decide color 
 
-       //Step 1: Stop motor
-       //stop(&motorL,&motorR);
-       //Step 1.1: Add the movement time( read in interrupt) to our list
-       //Step 2: Turn on Light
-       //LightToggle();
-       //Step 3: Take readings and decide on color
-       //color = decide_color();
-       //Step 4: Pick and execute appropriate move
-       //pick_move(color,&motorL,&motorR);
-
-       while(!ButtonRF2);
+            //Step 3: Pick and execute appropriate move
+            pick_move(color, mL,mR); // Execute needed motion and update motion memory
+            
+            //Step 4: Re-enable clicker interrupt 
+            color_click_interrupt_init(); 
+       }
        
-       
-
     }
-    
-    
-    
-    
         
 }
 
