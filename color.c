@@ -54,6 +54,7 @@ void color_click_interrupt_init(void){
 void interrupt_threshold_calibrate(void) {
     // Calibration procedure
     // start the procedure with button press
+    int amb_and_LED;
     while (LeftButton); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
         __delay_ms(100);
@@ -62,7 +63,30 @@ void interrupt_threshold_calibrate(void) {
         LED2=0;
     }
     clear = color_read(0x14); // read clear color channel for blue card
+    int_high = clear;
     
+    while (LeftButton); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }
+    clear = color_read(0x14); // read clear color channel for blue card
+    amb_and_LED = clear;    
+    
+    while (LeftButton); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }    
+    clear = color_read(0x14); // read clear color channel for blue card
+    
+    if(clear<amb_and_LED){int_low=clear+(clear/20);}
+    else{int_low=0;}
+
     // wait for a second button press to finish the calibration
     while (LeftButton); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){ // indicate the procedure has ended
@@ -72,8 +96,8 @@ void interrupt_threshold_calibrate(void) {
         LED2=0;
     }
     // update global variables for high and low (low is 0 by default has we don't want to trigger interrupt when light level falls)
-    int_low = 0;
-    int_high = clear;   
+    //int_low = 0;
+    //int_high = clear;   
 }
 
 void color_click_interrupt_off(void){
@@ -198,6 +222,8 @@ int decide_color(void){
     unsigned int LED_and_amb_read[4] = {red,green,blue,clear};      // light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
     LightToggle();                                  // turn RGB LED off 
     
+    int black_thresh = clear;
+    
     __delay_ms(500);                                // allow readings to stabilize
     read_All_Colors();                              // read color channel values
     unsigned int ambient[4] = {red,green,blue,clear};               // read color channel values
@@ -219,8 +245,8 @@ int decide_color(void){
     //unsigned int clear_channel_black_thresh = 2200;        // a threshold to tell if the color is black
 
     //Procedure to decide - will explain in read me file to follow logic process via graphs
-    
-    if (redPercentage >= 65){                               // distinguish between red and orange
+    if (black_thresh <= int_low){color_decision=9;}
+    else if (redPercentage >= 65){                               // distinguish between red and orange
         /*
         if (red > red_channel_red_orange_sep_thresh){
             //color_decision = 'r';
@@ -257,8 +283,8 @@ int decide_color(void){
         }
     }
     else if(redPercentage<35 && redPercentage >= 20){       // distinguish between blue and green
+        
         if (bluePercentage>=29){
-            //color_decision = 'b';
             color_decision = 3;
         }
         else{

@@ -35,7 +35,9 @@ void main(void){
     // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
     // 2. press the left button (RF3)
     // 3. Leave blue card in front of buggy for at least a second
+    // 4. Place buggy at the start point of the tracking course and press left button again to end calibration
     interrupt_threshold_calibrate();
+    
     // Initialize interrupt after threshold calibration
     Interrupts_init();
     
@@ -61,7 +63,7 @@ void main(void){
         
         if(timer_flag) { //1 second has passed 
             read_All_Colors(); // read colous
-
+            /*
             sprintf(buf1,"%d",red);
             TxBufferedString(" ");
             TxBufferedString("\n");
@@ -75,6 +77,17 @@ void main(void){
             TxBufferedString("\n");
             
             sprintf(buf3,"%d",blue);
+            //TxBufferedString("BLUE:  "); // writes string to buffer
+            TxBufferedString(buf3);
+            TxBufferedString("\n");
+            */
+            
+            sprintf(buf2,"%d",int_high);
+            //TxBufferedString("GREEN: "); // writes string to buffer
+            TxBufferedString(buf2);
+            TxBufferedString("\n");
+            
+            sprintf(buf3,"%d",int_low);
             //TxBufferedString("BLUE:  "); // writes string to buffer
             TxBufferedString(buf3);
             TxBufferedString("\n");
