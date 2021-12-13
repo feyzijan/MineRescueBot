@@ -34,7 +34,6 @@ void main(void){
     LEDs_buttons_init();
     Timer0_init();
     interrupt_threshold_calibrate();
-    LightOn();
     Interrupts_init();
     
     
@@ -63,16 +62,12 @@ void main(void){
     
     //************************************************************************//
   
-    
     // Calibration Functions - Detailed instructions in header files
-    
     //CalibrateTurns(mL,mR);
     //__delay_ms(1000);
     //CalibrateReverseSquare(mL,mR);
     //__delay_ms(1000);
-    
-    
-    
+       
     // Initialisation for testing
     initUSART4(); 
     Timer1_init();

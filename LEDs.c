@@ -27,7 +27,7 @@ void LEDs_buttons_init(void){
     LeftLamp = 0;
     RightLamp = 0;
   
-    // Button RF2 and RF3 - for debugging
+    // Button RF2 and RF3 
     TRISFbits.TRISF2=1; 
     ANSELFbits.ANSELF2=0;
     TRISFbits.TRISF3=1; 

@@ -4,9 +4,8 @@
 #include "timers.h"
 
 /*TODO:
- * 
- *
- * Figure out how to reverse the "reverse one square" stuff
+ *  Figure out how to reverse the "reverse one square" stuff
+ * Try to stop using  global variables
  */
 
 // Global variables take up lot of memory
@@ -21,18 +20,9 @@ char time_index = 0;
 card_func funcPtrList[30];
 char func_index = 0;
 
-// Reverse one square time
-//int reverse_time = 100; // this is multiplied with 10ms
-
-char end_motion = 0;
+char end_motion = 0; // Flag
 
 
-
-/* Pick which move to execute based on the color you decided on
-/Before picking store in the timer_list how long the car had to move in a straight
-*line since it last stopped
-*Then add the function of the read color's '"complement" to the function pointer list
-*/
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
     if (color == 8 || color == 9){ // White
         end_motion = 1;
@@ -61,12 +51,11 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
         } else if (color == 6){ // Orange
             add_function_ptr(&lightblue_move);
             orange_move(mL,mR);
-            
+    
         } else if (color == 7){ // Light Blue
             add_function_ptr(&orange_move);
             lightblue_move(mL,mR);
         }
-        ResetTMR0();//restart Timer
     }
 }
 
@@ -108,6 +97,7 @@ void lightblue_move(struct DC_motor *mL, struct DC_motor *mR){
     for(char i=0;i<3;i++) TurnLeft(mL,mR);
 }
 
+
 //Reverse one square + turn right 90°
 void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
     reverse_square(mL,mR);
@@ -146,21 +136,22 @@ void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR){
 void white_move(struct DC_motor *mL, struct DC_motor *mR)
 {
     // First Turn back
+    PrepareForTurn(mL,mR);
     for(char i=0;i<4;i++) TurnLeft(mL,mR);
     
     //Loop through the two lists  - first time then function pointer
     unsigned int temp_time;
     card_func temp_func;
     
-    while(time_index >= 0){
+    while(time_index >= 0){ // Note that indexes auto decrement
     //while(func_index >= 0){
-        temp_time = get_timing(); // get the last movement time (index auto decrements)
+        temp_time = get_timing(); // get the last movement time 
         
         //Move car forward for specified time and stop
         move_forward(mL,mR,temp_time); 
         stop(mL,mR);
         
-        //Execute function in function pointer (index auto decrements)
+        //Execute function in function pointer 
         temp_func = get_function_ptr();
         temp_func(mL,mR);
 

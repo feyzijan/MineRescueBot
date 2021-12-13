@@ -7,23 +7,22 @@
 
 
 /* TODO: 
- * Test the accurate operation of custom delay functions
- * Configure Timer0 to time the movement durations in between reading cards
- * Remove temp variables from Timer0 getters and setters
+ * 
  */
 
 
 /*************************  Variable Prototypes ********************************/
-
-
 unsigned int timer0val;
 
-/*************************  Function Prototypes ********************************/
 
+
+/*************************  Function Prototypes ********************************/
+//******** Timer0 Functions
 
 /***********
  * Function to initialise Timer0
  * Used to time buggy movements
+ * Overflows in 134 seconds, 1 bit = 2.048ms
  ***********/
 void Timer0_init(void);
 
@@ -40,6 +39,9 @@ void getTMR0_in_ms(void);
  ************/
 void ResetTMR0(void);
 
+
+//******** Custom Delay Functions
+ 
 
 /***********
  * Function that causes a delay that allows the buggy to complete a 45 degree turn

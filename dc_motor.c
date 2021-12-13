@@ -169,7 +169,7 @@ void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 
 
 void PrepareForTurn(struct DC_motor *mL, struct DC_motor *mR){
-    move_backward(mL,mR,reverse_time/10); // DECIDE ON FRACTION
+    move_backward(mL,mR,reverse_time/15); // DECIDE ON FRACTION
     stop(mL,mR);
 }
 

@@ -6,10 +6,10 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-/*TODO: 
- * UPDATE CALIBRATION INSTRUCTIONS 
+/* TODO:  
  * Update LED_cross_talk to be a constant
- */
+ * 
+ ******************************************************************************/
 
 
 /* Color Values
@@ -47,6 +47,11 @@ void color_click_interrupt_init(void);
 void color_click_interrupt_off(void);
 
 
+/***********************************************
+ * Function to clear the RGBC interrupt in the clicker
+ ***********************************************/
+void color_int_clear(void);
+
 /********************************************//**
  *  Function to write to the colour click module
  *  address is the register within the colour click to write to
@@ -67,22 +72,25 @@ unsigned int color_read(unsigned char address);
 void read_All_Colors(void);
 
 
-/***********************************************
- * Function to clear the RGBC interrupt in the clicker
- ***********************************************/
-void color_int_clear(void);
-
 /*****************
  * Function to take RGBC channel readings and return a 
  * a char corresponding to the color
  ******************/
 char decide_color(void);
 
+/**********************************************
+ * Function to calibrate interrupt thresholds
+// Calibrate interrupt threshold instructions:
+    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
+    // 2. press the left button (RF3)
+    // 3. Leave blue card in front of buggy for at least a second
+    // 4. Remove blue card and press button and wait for at least one second
+    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
+    // 6. Remove the black card
+    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
+ ***********************************************/
+void interrupt_threshold_calibrate(void);
 
-/*****************
- * Test function - we assign color manually
- ******************/
-char decide_color_test(void);
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/
@@ -103,24 +111,5 @@ void SendColorReadings(void);
  * Function to send back interrupt status at register 0x12 to PC
  ***********************************************/
 void get_int_status(void);
-
-/**
- * ADD Comment
- */
-void indicateColor(char colorvalue);
-
-/**********************************************
- * Function to calibrate interrupt thresholds
-// Calibrate interrupt threshold instructions:
-    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
-    // 2. press the left button (RF3)
-    // 3. Leave blue card in front of buggy for at least a second
-    // 4. Remove blue card and press button and wait for at least one second
-    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
-    // 6. Remove the black card
-    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
- ***********************************************/
-void interrupt_threshold_calibrate(void);
-
 
 #endif

@@ -6,7 +6,7 @@
 #define _XTAL_FREQ 64000000
 
 /* TODO: 
- * 
+ * Rename Lighttest
  */
 
 
@@ -21,7 +21,7 @@
 #define BrakeLight LATDbits.LATD4 
 #define LeftLamp LATFbits.LATF0 
 #define RightLamp LATHbits.LATH0 
-#define ButtonRF2 !PORTFbits.RF2
+#define ButtonRF2 !PORTFbits.RF2 // For ease of user Buttons are = 1 when pressed
 #define ButtonRF3 !PORTFbits.RF3
 
 /*************************  Function Prototypes ********************************/
@@ -42,12 +42,9 @@ void LightOn(void);
 
 
 /************
- * Function to turn oFF front white LED
+ * Function to turn off front white LED
  ************/
 void LightOff(void);
-
-
-/****** Functions for Testing Purposes - Will be removed from final build *****/
 
 /*************
  * Function to test that LEDs work by toggling them on/off twice 
