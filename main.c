@@ -35,7 +35,10 @@ void main(void){
     // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
     // 2. press the left button (RF3)
     // 3. Leave blue card in front of buggy for at least a second
-    // 4. Place buggy at the start point of the tracking course and press left button again to end calibration
+    // 4. Remove blue card and press button and wait for at least one second
+    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
+    // 6. Remove the black card
+    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
     interrupt_threshold_calibrate();
     
     // Initialize interrupt after threshold calibration
