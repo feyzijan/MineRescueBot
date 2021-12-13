@@ -45,10 +45,9 @@ void __interrupt(high_priority) HighISR()
     //Colour Clicker RGBC Clear Channel Interrupt
     if(PIR0bits.INT0IF){
         getTMR0_in_ms(); // Log movement duration in memory 
-        BrakeLight = !BrakeLight; // Testing
+        BrakeLight = 1; // Testing
         color_click_interrupt_off(); // Turn off clicker interrupt(also clears it)
-        wall_flag = 1; // Raise flag for main loop
-        test_flag = 1; // Test flag to indicate color reading with LED
+        color_flag = 1; // Color_flag to indicate color reading with LED
         PIR0bits.INT0IF = 0; // Clear Interrupt Flag
     }
 

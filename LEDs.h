@@ -36,10 +36,15 @@ void LEDs_buttons_init(void);
 
 
 /************
- * Function to toggle front white light with RGB LEDs
+ * Function to turn on front white LED
  ************/
-void LightToggle(void);
+void LightOn(void);
 
+
+/************
+ * Function to turn oFF front white LED
+ ************/
+void LightOff(void);
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/

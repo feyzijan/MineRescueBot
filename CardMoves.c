@@ -34,7 +34,8 @@ char end_motion = 0;
 *Then add the function of the read color's '"complement" to the function pointer list
 */
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
-    if (color == 8){ // White
+    if (color == 8 || color == 9){ // White
+        end_motion = 1;
         white_move(mL,mR); // pass move list so you can revert it 
     } else {
         if(color == 1){ // Red

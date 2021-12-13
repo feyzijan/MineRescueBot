@@ -20,25 +20,23 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 
-//Testing that commits go to correct branch
-
-extern unsigned int timer0val;
+extern unsigned int timer0val; // For logging movement time
 
 void main(void){
     
-    // Global Variable Initialisations
+    // Move these to separate files for final build
+    // Global Variable Initialisations 
     friction = 130; //45 degree turn time
     reverse_time = 2100; // Reverse_square time
-    int_low  = 0; // Interrupt Low Threshold
-    int_high = 12560; // Interrupt High Threshold
-        
+     
     //Initialisations 
     color_click_init();
-    Interrupts_init();
     LEDs_buttons_init();
     Timer0_init();
-   
-    //LightToggle(); //                 
+    interrupt_threshold_calibrate();
+    LightOn();
+    Interrupts_init();
+    
     
     //********************** Motor Initialisation ****************************//
                                                     
@@ -62,43 +60,109 @@ void main(void){
  
     initDCmotorsPWM(199); //Initialise PWM module  
     stop(mL,mR);
+    
     //************************************************************************//
   
-    //********** Motor Tests **********//
-    while(!ButtonRF2);
-    __delay_ms(1000);
-    move_forward(mL,mR,2100);
-    stop(mL,mR);
-    move_backward(mL,mR,2100);
-    stop(mL,mR);
-    //********************************************************************//
+    
+    // Calibration Functions - Detailed instructions in header files
+    
+    //CalibrateTurns(mL,mR);
+    //__delay_ms(1000);
+    //CalibrateReverseSquare(mL,mR);
+    //__delay_ms(1000);
     
     
-    // Calibration Functions
-    CalibrateTurns(mL,mR);
-    __delay_ms(1000);
-    CalibrateReverseSquare(mL,mR);
-    __delay_ms(1000);
-    interrupt_threshold_calibrate();
-    __delay_ms(1000);
     
-    // Timer1 and Serial Comms Initialisations (Testing mode only)
+    // Initialisation for testing
     initUSART4(); 
     Timer1_init();
     
     unsigned char color;
-    card_func my_function; // In main.c for testing only
-    
+   
+    //LightOn(); 
     while(1){
     
       
-        if (ButtonRF2) {LightToggle();} // turn RGB light off manually if required
+        //if (ButtonRF2) {LightOn();} // turn RGB light off manually if required
         if (ButtonRF3) {  // Turn on interrupt source manually for testing
           color_click_interrupt_init();
           BrakeLight=0;
+       
         }
         
-        /******** Send Back Colour Readings to PC every 2 secs **********/
+        
+        if (color_flag){
+            color = decide_color();
+            LED1 = 0;
+            for (int i=0;i<color;i++){
+                LED1 = 1;
+                __delay_ms(350);
+                LED1 = 0;
+                __delay_ms(350);
+            }
+            color = 0;
+            BrakeLight = 0;
+            color_flag = 0;
+                }
+       
+        
+        
+        //************************ Main Operating Loop ************************//
+        
+        
+        if(ButtonRF2){// Wait for Button press to start - For Testing
+           //LightOn(); //LED on
+           //color_click_interrupt_init();
+           //!end_motion
+           while(1){ // Use flag that is set to 1 with final card
+
+                // Step 1: Forward Motion
+                //BrakeLight = 0;
+                //ResetTMR0();//Start timer to time movement duration
+                //move_forward(mL,mR,0); // Move forward
+                while(!color_flag); // Continue motion until clicker triggers this flag
+                
+                //LightTest();
+                //Step 2: Stop buggy and read card
+                //stop(mL,mR); // Interrupt means we are near a card so stop
+                color = decide_color(); // Logic process to decide color 
+                if (color_flag){
+                    LED1 = 0;
+                    for (int i=0;i<color;i++){
+                        LED1 = 1;
+                        __delay_ms(350);
+                        LED1 = 0;
+                        __delay_ms(350);
+                    }
+                    color = 0;
+                    color_flag = 0;
+                    BrakeLight = 0;
+                }
+
+                //Step 3: Pick and execute appropriate move
+                //pick_move(color, mL,mR); // Execute needed motion and update motion memory
+
+                //Step 4: Re-enable clicker interrupt 
+                LightOn();
+                color_click_interrupt_init();
+            }
+        } 
+       
+       
+       //********************************************************************//
+        
+        
+        //****************** Indicate Colour Reading with LED *****************//
+        /*
+        
+        */ 
+        //********************************************************************//
+    }
+}
+
+
+// Test Code
+/******** Send Back Colour Readings to PC every 2 secs **********/
         /*
         if(timer_flag) { 
             
@@ -110,82 +174,4 @@ void main(void){
             timer_flag =0;  
             
         }
-        */
-        //********************************************************************//
-      
-      
-        //******** Testing Function Pointer Memory **************//
-        if (ButtonRF3){
-            __delay_ms(100);
-            add_function_ptr(&green_move);
-            add_function_ptr(&red_move);
-            my_function =  get_function_ptr();
-            my_function(mL,mR); // executes green move (turn Left)
-            my_function =  get_function_ptr();
-            my_function(mL,mR); // executes red move (turn Right)
-        }
-        //********************************************************************//
-        
-      
-        //************ Testing that Timer0 logs movement duration *************//
-        if (ButtonRF2) { 
-            __delay_ms(500); 
-            ResetTMR0(); // Reset Timer0
-            
-            move_forward(&motorL,&motorR,0); // Move forward until button press
-            while(!ButtonRF2); // move straight until interrupt
-            getTMR0_in_ms(); // log time in memory
-           
-            stop(&motorL,&motorR); // Stop buggy
-            __delay_ms(1000); // wait for a bit
-            
-            move_backward(&motorL,&motorR,get_timing()); // Retrieve timer from memory and move back
-            stop(&motorL,&motorR);
-        }
-      //********************************************************************//
-         
-
-        
-        LightToggle(); //LED on
-       //************************ Main Operating Loop ************************//
-        while(!ButtonRF2); // Wait for Button press to start - For Testing
-
-        //while(!end_motion) // Use flag that is set to 1 with final card
-        while(1){
-            // Step 1: Forward Motion
-            Timer0_init();//Start timer to time movement duration
-            move_forward(mL,mR,0); // Move forward
-            while(!wall_flag); // Continue motion until clicker triggers this flag
-
-            //Step 2: Stop buggy and read card
-            stop(mL,mR); // Interrupt means we are near a card so stop
-            color = decide_color(); // Logic process to decide color 
-
-            //Step 3: Pick and execute appropriate move
-            pick_move(color, mL,mR); // Execute needed motion and update motion memory
-            
-            //Step 4: Re-enable clicker interrupt 
-            color_click_interrupt_init(); 
-       }
-       //********************************************************************//
-        
-        
-        //****************** Indicate Colour Reading with LED *****************//
-        /*
-        if (test_flag){
-            LED1 = 0;
-            color = decide_color();
-            for (int i=0;i<color;i++){
-                LED1 = 1;
-                __delay_ms(350);
-                LED1 = 0;
-                __delay_ms(350);
-            }
-            LightToggle();
-            test_flag=0;
-        }
-        */
-        //********************************************************************//
-    }
-}
-
+ */

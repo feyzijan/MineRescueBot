@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "serial.h"
 #include "LEDs.h"
-
+#include "interrupts.h"
 
 extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
 
@@ -37,51 +37,40 @@ void color_click_interrupt_init(void){
 }
 
 
-// Update global variables for high and low (low is 0 by default has we don't want to trigger interrupt when light level falls) 
+// Update global variables for high and low (low is 0 by default has we 
+// don't want to trigger interrupt when light level falls) 
 void interrupt_threshold_calibrate(void) {
-    // Calibration procedure
+    
+    LightTest(); // Toggle Light to indicate start of Calibration
+    
+    __delay_ms(500);
+    LightOn();
     // start the procedure with button press
     unsigned int amb_and_LED;
-    while (ButtonRF3); //empty while loop (wait for button press)
-    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
-        __delay_ms(100);
-        LED2=1;
-        __delay_ms(100);
-        LED2=0;
-    }
+    
+    while (!ButtonRF3); //empty while loop (wait for button press)
+    LightTest();  // Indicate the procedure has started
     clear = color_read(0x14); // read clear color channel for blue card
     int_high = clear;
     
-    while (ButtonRF2); //empty while loop (wait for button press)
-    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
-        __delay_ms(100);
-        LED2=1;
-        __delay_ms(100);
-        LED2=0;
-    }
-    clear = color_read(0x14); // read clear color channel for blue card
+    while (!ButtonRF3); //empty while loop (wait for button press)
+    LightTest();  // Indicate the procedure has started
+    clear = color_read(0x14); // read clear color channel for ambient
     amb_and_LED = clear;    
     
-    while (ButtonRF3); //empty while loop (wait for button press)
-    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
-        __delay_ms(100);
-        LED2=1;
-        __delay_ms(100);
-        LED2=0;
-    }    
-    clear = color_read(0x14); // read clear color channel for blue card
+    while (!ButtonRF3); //empty while loop (wait for button press)
+    LightTest();  // Indicate the procedure has started 
+    clear = color_read(0x14); // read clear color channel for black card
     
     if(clear<amb_and_LED){int_low=clear+(clear/20);}
     else{int_low=0;}
 
-    // wait for a second button press to finish the calibration
-    while (ButtonRF3); //empty while loop (wait for button press)
-    for(int i=0;i<5;i++){ // indicate the procedure has ended
-        __delay_ms(100);
-        LED2=1;
-        __delay_ms(100);
-        LED2=0;
-    }
+    int_low=0;
+    
+    // Wait for a second button press to finish the calibration
+    while (!ButtonRF3); 
+    
+    LightTest(); // Toggle Light to indicate start of Calibration
 }
 
 
@@ -203,11 +192,13 @@ char decide_color_test(void){
 char decide_color(void){
     char color_decision;
     
+    LightOn(); // Turn Led on for first reading
     __delay_ms(500); // allow readings to stabilize   
     read_All_Colors(); // read color channel values
   
     unsigned int LED_and_amb_read[4] = {red,green,blue,clear};// light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
-    LightToggle(); // turn RGB LED off 
+    
+    LightOff(); // turn RGB LED off 
     
     int black_thresh = clear;
     
@@ -277,8 +268,17 @@ char decide_color(void){
         }
     }   
   
+    //indicateColor(color_decision);
     return color_decision; 
 }
+
+
+//*********
+void indicateColor(char colorvalue){
+    
+}
+
+
 
   // Function swe may use later
   /*
