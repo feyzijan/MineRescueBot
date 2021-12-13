@@ -17,19 +17,71 @@ typedef void (*card_func)(struct DC_motor *, struct DC_motor *);
 
 // List of times that we moved forward by
 int timeList[30];
-unsigned char time_index;
+
+char time_index;
 
 // Array of functions to call
 card_func funcPtrList[30];
-unsigned char func_index;
+char func_index;
 
-
-
+char end_motion; //signifies motion has ended
 
 
 /*************************  Function Prototypes ********************************/
 
-// Getters and setters for the two arrays
+//***************** Functions for color cards
+
+ 
+/*******************************************************************
+ * Function that calls the appropriate move function based on the color
+ * And appends the color to a list that can later be reversed
+ ******************************************************************/
+void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Red Card: Turn Right  90° *************************/
+void red_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Green Card: Turn Left 90° ************************/
+void green_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Blue Card: Turn back 180°*********************/
+void blue_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Yellow Card: Reverse one square + turn right 90°***/
+void yellow_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Pink Card: Reverse one square + turn left 90° ***/
+void pink_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Reverse Yellow Card: turn right 90° + Move Forward one square***/
+void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Reverse Pink Card: turn left 90° + Move Forward one square **/
+void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** Orange Card: Turn Right 135° s***************/
+void orange_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/********** LightBlue Card: Turn Left 135° ****************/
+void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+/**********  White Card: Go back to Start ***************/
+/* This function loops backwards through the list of colours stored in move_list 
+ * to get back to the start condition */
+void white_move(struct DC_motor *mL, struct DC_motor *mR);
+
+
+//***************** Getters and setters for the two arrays********************//
 
 
 /**********
@@ -55,48 +107,6 @@ void add_timing(unsigned int timing);
  ********/
  card_func get_function_ptr(void);
 
-
-// Function for color cards
-
- 
-/*******************************************************************
- * Function that calls the appropriate move function based on the color
- * And appends the color to a list that can later be reversed
- ******************************************************************/
-void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Red Card: Turn Right  90� *************************/
-void red_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Green Card: Turn Left 90� ************************/
-void green_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Blue Card: Turn back 180�*********************/
-void blue_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Yellow Card: Reverse one square + turn right 90�***/
-void yellow_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Yellow Card: Reverse one square + turn left 90� ***/
-void pink_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** Orange Card: Turn Right 135� s***************/
-void orange_move(struct DC_motor *mL, struct DC_motor *mR);
-
-
-/********** LightBlue Card: Turn Left 135� ****************/
-void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
-
-/**********  White Card: Go back to Start ***************/
-/* This function loops backwards through the list of colours stored in move_list 
- * to get back to the start condition */
-void white_move(struct DC_motor *mL, struct DC_motor *mR);
 
 
 #endif

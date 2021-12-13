@@ -1,32 +1,22 @@
 #include <xc.h>
 #include "color.h"
 #include "i2c.h"
-#include "LEDs.h"
 #include <stdio.h>
 #include "serial.h"
-#include "buttons.h"
-#include <math.h>
+#include "LEDs.h"
 
 
-void color_click_init(void)
-{   
-    I2C_2_Master_Init();//Initialise i2c Master
+extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
 
+
+void color_click_init(void) {
+  
+  I2C_2_Master_Init();//Initialise I2C Master
 	color_writetoaddr(0x00, 0x01); //set device PON to turn ColourClick on
-    __delay_ms(3); //need to wait 3ms for everthing to start up
-    
-	color_writetoaddr(0x00, 0x03); // Turn on device ADC
-
-    // TO CONFIGURE WITH TESTING
-	color_writetoaddr(0x01, 0xD5); //integration time: 64 Integ Cycles, 154ms, 65535 max count
-
-    
-    //color_writetoaddr(0x00,0x1B); // Enable Wait time register?
-    //color_writetoaddr(0x03, 0x00); // Wait time register: 256
-    
-    color_writetoaddr(0x0F, 0x00); // Gain: 1X
-    
-    //color_writetoaddr(0x0C, 0x00);
+  __delay_ms(3); //need to wait 3ms for everthing to start up
+  color_writetoaddr(0x00, 0x03); // Turn on device ADC
+  color_writetoaddr(0x01, 0xD5); //integration time: 42 Integ Cycles, 101ms, Max count:43008
+  color_writetoaddr(0x0F, 0x00); // Gain: 1X
 }   
 
 
@@ -34,28 +24,25 @@ void color_click_interrupt_init(void){
     //__debug_break();
     color_int_clear();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
+
     //Configure interrupt thresholds RGBC clear channel
-    //color_writetoaddr(0x04, 0x2C);          // low thresh lower byte
-    //color_writetoaddr(0x05, 0x01);          // low thresh upper byte
-    //color_writetoaddr(0x06, 0xAC);          // upper thresh lower byte
-    //color_writetoaddr(0x07, 0x0D);          // upper thresh upper byte
-    
     // Use global variables that can be updated by the calibration function
     color_writetoaddr(0x04, int_low & 0xFF); 
     color_writetoaddr(0x05, int_low >> 8); 
     color_writetoaddr(0x06, int_high & 0xFF); 
     color_writetoaddr(0x07, int_high >>8);
-    
+
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 1
     color_int_clear();
 }
 
-// We call this function in main.c
+
+// Update global variables for high and low (low is 0 by default has we don't want to trigger interrupt when light level falls) 
 void interrupt_threshold_calibrate(void) {
     // Calibration procedure
     // start the procedure with button press
     int amb_and_LED;
-    while (LeftButton); //empty while loop (wait for button press)
+    while (ButtonRF3); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
         __delay_ms(100);
         LED2=1;
@@ -65,7 +52,7 @@ void interrupt_threshold_calibrate(void) {
     clear = color_read(0x14); // read clear color channel for blue card
     int_high = clear;
     
-    while (LeftButton); //empty while loop (wait for button press)
+    while (ButtonRF2); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
         __delay_ms(100);
         LED2=1;
@@ -88,17 +75,15 @@ void interrupt_threshold_calibrate(void) {
     else{int_low=0;}
 
     // wait for a second button press to finish the calibration
-    while (LeftButton); //empty while loop (wait for button press)
+    while (ButtonRF3); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){ // indicate the procedure has ended
         __delay_ms(100);
         LED2=1;
         __delay_ms(100);
         LED2=0;
     }
-    // update global variables for high and low (low is 0 by default has we don't want to trigger interrupt when light level falls)
-    //int_low = 0;
-    //int_high = clear;   
 }
+
 
 void color_click_interrupt_off(void){
     color_int_clear();
@@ -138,32 +123,21 @@ unsigned int color_read(unsigned char address)
     I2C_2_Master_Stop();      
     return tmp;
 }
-/*
-// read all colour channel values for an array
-void color_read_all(unsigned int *colorArray)
-{
-    for(int i=0;i<4;i++){                           // read RGBC channel values
-        *(colorArray+i) = color_read(0x14+2*i);
-    }
-}
-*/
+
+
 
 /*Send the interrupt status over the Serial port
  Function for debugging purposes only - delete later*/ 
 void get_int_status(void)
 {  
-    //__debug_break();
-	unsigned char tmp;
+  	unsigned char tmp;
     unsigned char intstatus[9];
     unsigned char throw;
-	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
-
+	  I2C_2_Master_Start();         //Start condition
+	  I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
     I2C_2_Master_Write(0xA0 | 0x13);//command (auto-increment protocol transaction) + start at a colour's low register
-
     I2C_2_Master_RepStart();// start a repeated transmission
     I2C_2_Master_Write(0x52 | 0x01);//7 bit address + Read (1) mode
-
     tmp = I2C_2_Master_Read(1);//read the  LSB
     throw = I2C_2_Master_Read(0); //read the MSB (don't acknowledge as this is the last read)
     I2C_2_Master_Stop();
@@ -179,7 +153,7 @@ void Color2String(char *ptr, unsigned int *pval){
 }
 
 
-//TODO: Shorten Below function
+//TESTING Shorten Below function
 void SendColorReadings(void){
     char colorstring[8];
 
@@ -213,14 +187,44 @@ void read_All_Colors(void){
 }
 
 
-// Work in Progress
-int decide_color(void){
-    int color_decision;
+// Just for testing
+char decide_color_test(void){
+    unsigned int redval, greenval, blueval, clearval;
+   
+    redval = color_read(0x16); 
+    greenval = color_read(0x18); 
+    blueval = color_read(0x1A); 
     
-    __delay_ms(500);                                // allow readings to stabilize   
-    read_All_Colors();                              // read color channel values
-    unsigned int LED_and_amb_read[4] = {red,green,blue,clear};      // light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
-    LightToggle();                                  // turn RGB LED off 
+    return 'r';
+}
+
+
+// We call this function in main.c
+void interrupt_threshold_calibrate(void) {
+
+    while (!ButtonRF3); //wait for button press
+    __delay_ms(500); // Button delay
+    LightTest(); // Indicate start
+   
+    clear = color_read(0x14); // read clear color channel for blue card
+    
+    // Update global variable high threshold 
+    //int_high = 1000;
+    
+    while (!ButtonRF3); //wait for second button press
+    LightTest(); // Indicate end
+}
+
+
+//Potential problem with two lists being the same?
+char decide_color(void){
+    char color_decision;
+    
+    __delay_ms(500); // allow readings to stabilize   
+    read_All_Colors(); // read color channel values
+  
+    unsigned int LED_and_amb_read[4] = {red,green,blue,clear};// light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
+    LightToggle(); // turn RGB LED off 
     
     int black_thresh = clear;
     
@@ -237,16 +241,15 @@ int decide_color(void){
     
     
     // calculate integer percentage RGB values of clear channel
-    int redPercentage = 100*(red*pow(clear,-1));
-    int greenPercentage = 100*(green*pow(clear,-1));
-    int bluePercentage = 100*(blue*pow(clear,-1));
-
-    //unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
-    //unsigned int clear_channel_black_thresh = 2200;        // a threshold to tell if the color is black
+    int redPercentage = (100*red)/clear;
+    int greenPercentage = (100*green)/clear;
+    int bluePercentage = (100*blue)/clear;
 
     //Procedure to decide - will explain in read me file to follow logic process via graphs
     if (black_thresh <= int_low){color_decision=9;}
-    else if (redPercentage >= 65){                               // distinguish between red and orange
+  
+    // Red or Orange
+    else if (redPercentage >= 65){
         /*
         if (red > red_channel_red_orange_sep_thresh){
             //color_decision = 'r';
@@ -254,45 +257,53 @@ int decide_color(void){
         }
          */
         if(greenPercentage<11){
-            //color_decision = 'r';
-            color_decision = 1;
+            color_decision = 1; //RED
         }
         else{
-            //color_decision = 'o';
-            color_decision = 6;
-        }
-    }
-    else if(redPercentage < 65 && redPercentage >= 52){     // distinguish between yellow and pink
-        if (greenPercentage>30 && bluePercentage<21){
-            //color_decision = 'y';
-            color_decision = 4;
-        }
-        else{
-            //color_decision = 'p';
-            color_decision = 5;
-        }
-    }
-    else if(redPercentage < 52 && redPercentage >= 35){     // distinguish between white and light blue
-        if (redPercentage>=45){
-            //color_decision = 'w';
-            color_decision = 8;
-        }
-        else{
-            //color_decision = 'l';
-            color_decision = 7;
-        }
-    }
-    else if(redPercentage<35 && redPercentage >= 20){       // distinguish between blue and green
-        
-        if (bluePercentage>=29){
-            color_decision = 3;
-        }
-        else{
-            //color_decision = 'g';
-            color_decision = 2;
+            color_decision = 6; // Orange
         }
     }
     
-    return color_decision;                                  // return the specific color value
- 
+    // Yellow or Pink
+    else if(redPercentage < 65 && redPercentage >= 52){ 
+        if (greenPercentage>30 && bluePercentage<21){
+            color_decision = 4; // Yellow
+        }
+        else{
+            color_decision = 5; // Pink
+        }
+    }
+    
+    // White or light blue
+    else if(redPercentage < 52 && redPercentage >= 35){
+        if (redPercentage>=45){
+            color_decision = 8; // White
+        }
+        else{
+            color_decision = 7; // Light blue
+        }
+    }
+    
+    // Blue or green
+    else if(redPercentage<35 && redPercentage >= 20){       
+        if (bluePercentage>=29){
+            color_decision = 3; // Blue
+        }
+        else{
+            color_decision = 2; // Green
+        }
+    }   
+  
+    return color_decision; 
 }
+
+  // Function swe may use later
+  /*
+// read all colour channel values for an array
+void color_read_all(unsigned int *colorArray)
+{
+    for(int i=0;i<4;i++){                           // read RGBC channel values
+        *(colorArray+i) = color_read(0x14+2*i);
+    }
+}
+*/

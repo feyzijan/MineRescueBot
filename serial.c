@@ -2,9 +2,8 @@
 #include "serial.h"
 
 void initUSART4(void) {
-
 	//code to set up USART4 for Reception and Transmission =
-	//see readme for detials
+	//see readme for details
     RC0PPS = 0x12; // Map EUSART4 TX to RC0
     RX4PPS = 0x11; // RX is RC1  - output
     
@@ -17,6 +16,7 @@ void initUSART4(void) {
     TX4STAbits.TXEN = 1; 		//enable transmitter
     RC4STAbits.SPEN = 1; 		//enable serial port
 }
+
 
 //function to wait for a byte to arrive on serial port and read it once it does 
 char getCharSerial4(void) {
@@ -34,29 +34,6 @@ void sendStringSerial4(char *string){
     while(*string != 0){ // Until the null pointer at the end of the string
 		sendCharSerial4(*string++); //Send current bit, then increment pointer
 	}
-}
-
-
-
-//---------------circular buffer functions for RX--------------
-
-// retrieve a byte from the buffer
-char getCharFromRxBuf(void){
-    if (RxBufReadCnt>=RX_BUF_SIZE) {RxBufReadCnt=0;} 
-    return EUSART4RXbuf[RxBufReadCnt++];
-}
-
-// add a byte to the buffer
-void putCharToRxBuf(char byte){
-    if (RxBufWriteCnt>=RX_BUF_SIZE) {RxBufWriteCnt=0;}
-    EUSART4RXbuf[RxBufWriteCnt++]=byte;
-}
-
-// function to check if there is data in the RX buffer
-// 1: there is data in the buffer
-// 0: nothing in the buffer
-char isDataInRxBuf (void){
-    return (RxBufWriteCnt!=RxBufReadCnt);
 }
 
 
@@ -100,3 +77,4 @@ void sendTxBuf(void){
         PIE4bits.TX4IE=1; //enable the TX interrupt to send data
     } 
 }
+
