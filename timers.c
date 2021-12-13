@@ -19,6 +19,7 @@ void Timer0_init()
     T0CON0bits.T0EN=1;	//start the timer
 }
 
+
 void reset_Timer0(void){
     TMR0H = 0;
     TMR0L = 0;
@@ -36,18 +37,17 @@ void Timer1_init(void){
 }
 
 
-// IMPORTANT: READ TMR0L first
 void getTMR0_in_ms(void){
-    unsigned int temp = TMR0L;
+    unsigned int temp = TMR0L; // Must read Low first
     temp = TMR0H<<8;
     timer0val = temp * 2  + temp / 21  ; // each bit is 2.048ms
     add_timing(timer0val);
 }
 
 
-// IMPORTANT: Set TMR0H first
+
 void ResetTMR0(void){
-    TMR0H = 0;
+    TMR0H = 0; // Must set TMR0H first
     TMR0L = 0;
     //unsigned int temp = t_start;
     
@@ -69,5 +69,5 @@ void custom_delay_ms(unsigned int delay_time){
     for(i=0;i<delay_time/10;i++){
         __delay_ms(10);
     }
-    
 }
+

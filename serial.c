@@ -17,6 +17,12 @@ void initUSART4(void) {
     RC4STAbits.SPEN = 1; 		//enable serial port
 }
 
+
+//function to wait for a byte to arrive on serial port and read it once it does 
+char getCharSerial4(void) {
+    return RC4REG; //return byte in RCREG
+}
+
 //function to check the TX reg is free and send a byte
 void sendCharSerial4(char charToSend) {
     TX4REG = charToSend; //transfer char to transmitter

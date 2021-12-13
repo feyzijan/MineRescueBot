@@ -17,6 +17,7 @@ typedef void (*card_func)(struct DC_motor *, struct DC_motor *);
 
 // List of times that we moved forward by
 int timeList[30];
+
 char time_index;
 
 // Array of functions to call
@@ -27,8 +28,6 @@ char end_motion; //signifies motion has ended
 
 
 /*************************  Function Prototypes ********************************/
-
-
 
 //***************** Functions for color cards
 
@@ -63,8 +62,10 @@ void pink_move(struct DC_motor *mL, struct DC_motor *mR);
 /********** Reverse Yellow Card: turn right 90° + Move Forward one square***/
 void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR);
 
+
 /********** Reverse Pink Card: turn left 90° + Move Forward one square **/
 void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR);
+
 
 /********** Orange Card: Turn Right 135° s***************/
 void orange_move(struct DC_motor *mL, struct DC_motor *mR);
@@ -72,6 +73,7 @@ void orange_move(struct DC_motor *mL, struct DC_motor *mR);
 
 /********** LightBlue Card: Turn Left 135° ****************/
 void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
+
 
 /**********  White Card: Go back to Start ***************/
 /* This function loops backwards through the list of colours stored in move_list 

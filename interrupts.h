@@ -12,6 +12,7 @@
 
 /*************************  Variable Prototypes ********************************/
 
+
 char wall_flag; //Set to 1 if clicker triggers interrupt
 
 /*****Variables for Testing only****/
@@ -33,3 +34,4 @@ void Interrupts_init(void);
 void __interrupt(high_priority) HighISR();
 
 #endif
+

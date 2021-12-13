@@ -7,7 +7,7 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 /*TODO: 
- * Complete decide_color() function 
+ * UPDATE CALIBRATION INSTRUCTIONS 
  * Update LED_cross_talk to be a constant
  */
 
@@ -17,19 +17,15 @@
  * 2:Green  6: Orange 
  * 3:Blue   7: Light Blue
  * 4:Yellow 8: White
- * 9:       
+ * 9: Black       
  */
 
 
 /*************************  Variable Prototypes ********************************/
 
-unsigned int int_low, int_high; // Interrupt thresholds
-
 unsigned int red, green, blue, clear;
-
-
-//Cross talk values
-unsigned int LED_cross_talk[4] = {484,268,183,993};
+unsigned int int_low, int_high; // Interrupt thresholds
+unsigned int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
 
 /*************************  Function Prototypes ********************************/
 
@@ -49,6 +45,7 @@ void color_click_interrupt_init(void);
  *  Function to turn off clicker interrupt 
  ***********************************************/
 void color_click_interrupt_off(void);
+
 
 /********************************************//**
  *  Function to write to the colour click module
@@ -108,14 +105,18 @@ void SendColorReadings(void);
 void get_int_status(void);
 
 
-
 /**********************************************
  * Function to calibrate interrupt thresholds
- * 
- ***********************************************/
 // Calibrate interrupt threshold instructions:
-// 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
-// 2. press the left button (RF3)
-// 3. Leave blue card in front of buggy for at least a second
+    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
+    // 2. press the left button (RF3)
+    // 3. Leave blue card in front of buggy for at least a second
+    // 4. Remove blue card and press button and wait for at least one second
+    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
+    // 6. Remove the black card
+    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
+ ***********************************************/
 void interrupt_threshold_calibrate(void);
+
+
 #endif

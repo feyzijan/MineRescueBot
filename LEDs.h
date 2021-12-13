@@ -34,6 +34,7 @@
 void LEDs_buttons_init(void);
 
 
+
 /************
  * Function to toggle front white light with RGB LEDs
  ************/
@@ -44,7 +45,7 @@ void LightToggle(void);
 /****** Functions for Testing Purposes - Will be removed from final build *****/
 
 /*************
- * Function to test that LEDs work 
+ * Function to test that LEDs work by toggling them on/off twice 
  *************/
 void LightTest(void);
 

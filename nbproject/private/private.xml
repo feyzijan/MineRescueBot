@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/dc_motor.h</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/serial.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/color.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/buttons.h</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/LEDs.h</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/buttons.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/color.h</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/timers.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/interrupts.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/CardMoves.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/LEDs.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/dc_motor.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/main.c</file>
+            <file>file:/Users/ajay/MPLABXProjects/final-project-thurs-ajay-feyzi.X/interrupts.h</file>
+        </group>
+    </open-files>
+</project-private>

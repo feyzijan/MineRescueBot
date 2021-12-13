@@ -24,7 +24,7 @@ void Interrupts_init(void)
     
     PIE0bits.INT0IE = 1; //Interrupt on Pin RB0: Enable
     PIR0bits.INT0IF = 0; //Interrupt Flag: Off
-    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge - Trigger below threshold
+    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge
     IPR0bits.INT0IP = 1; // Interrupt Priority: High
     
     color_click_interrupt_init(); // Write interrupt configurations to clicker
@@ -36,7 +36,7 @@ void Interrupts_init(void)
 
 /************************************
  * High priority interrupt service routine for:
- * TMR1 overflows(1s) (For Testing)
+ * TMR1 overflows(2s) (For Testing)
  * Serial transmission TX (For Testing)
  * Clicker Interrupt
  ************************************/
@@ -44,12 +44,11 @@ void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt
     if(PIR0bits.INT0IF){
-        getTMR0_in_ms(); // Get movement duration
-        
-        //HeadLamp = !HeadLamp; // Testing
+        getTMR0_in_ms(); // Log movement duration in memory 
+        BrakeLight = !BrakeLight; // Testing
         color_click_interrupt_off(); // Turn off clicker interrupt(also clears it)
         wall_flag = 1; // Raise flag for main loop
-        test_flag = 1; // Test flag to indicate color reaidng with LED
+        test_flag = 1; // Test flag to indicate color reading with LED
         PIR0bits.INT0IF = 0; // Clear Interrupt Flag
     }
 
@@ -61,7 +60,8 @@ void __interrupt(high_priority) HighISR()
         }
     }
     
-    // Timer 1 Interrupt - Triggers every second (almost)) - FOR TESTING
+
+    // Timer 1 Interrupt - Triggers every 2 second (almost))
     if(PIR5bits.TMR1IF) {
             timer_flag = 1;
             TMR1H = 0;
@@ -69,3 +69,4 @@ void __interrupt(high_priority) HighISR()
             PIR5bits.TMR1IF = 0; // clear flag
         }
 }
+

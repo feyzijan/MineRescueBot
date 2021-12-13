@@ -15,6 +15,7 @@
 
 /*************************  Variable Prototypes ********************************/
 
+
 unsigned int timer0val;
 
 /*************************  Function Prototypes ********************************/
@@ -47,7 +48,6 @@ void ResetTMR0(void);
 void friction_delay_ms(void);
 
 
-
 /************
  * Function to generate a delay equal to the inputted number (in ms)
  ************/
@@ -63,6 +63,7 @@ void custom_delay_ms(unsigned int delay_time);
  ********************************/
 void Timer1_init(void);
 
-void reset_Timer0(void);
+
 
 #endif
+

@@ -5,12 +5,9 @@
 extern int friction;
 extern int reverse_time;
 
- 
 
 void initDCmotorsPWM(int PWMperiod){
-	//Initialise your TRIS and LAT registers for PWM
-
-    // timer 2 config
+    // Timer 2 Configuration for PWM
     T2CONbits.CKPS=011; // 1:8 prescaler
     T2HLTbits.MODE=0b00000; // Free Running Mode, software gate only
     T2CLKCONbits.CS=0b0001; // Fosc/4
@@ -18,22 +15,20 @@ void initDCmotorsPWM(int PWMperiod){
     // Tpwm*(Fosc/4)/prescaler - 1 = PTPER
     T2PR=PWMperiod; //199-Period reg 10kHz base period
     T2CONbits.ON=1;
-    
     // Direction Pins
     TRISEbits.TRISE4=0;
     TRISGbits.TRISG6=0;
-    
-    // COnfigure TRIS registers for output
+    // Configure TRIS registers for output
     TRISEbits.TRISE2=0;
     TRISCbits.TRISC7=0;
     
+    // Configure PWM pins
     RE2PPS=0x0A; //PWM6 on RE2
     RC7PPS=0x0B; //PMW7 on RC7
-   
-    //the pins start high so once it reaches value below it is set low
+    // The pins start high so once it reaches value below it is set low
     PWM6DCH=0; //0% power
     PWM7DCH=0; //0% power
-    
+    //Enable PWM
     PWM6CONbits.EN = 1;
     PWM7CONbits.EN = 1;
 }
@@ -79,14 +74,12 @@ void stop(struct DC_motor *mL, struct DC_motor *mR)
     mR->power = 0;
     setMotorPWM(mL);
     setMotorPWM(mR);
-    
 }
 
 
 void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
 {
-    stop(mL,mR); 
-    
+    stop(mL,mR);  
     mL->direction = 0;
     mR->direction = 0;
    
@@ -104,7 +97,6 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
 void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duration)
 {
     stop(mL,mR); 
-    
     mL->direction = 1;
     mR->direction = 1;
       
@@ -148,7 +140,6 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
         setMotorPWM(mR);
         setMotorPWM(mL);
     }    
-    
     friction_delay_ms();// Leave enough time to turn
     stop(mL,mR); 
 }
@@ -253,3 +244,4 @@ void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR){
     }
     LightTest(); // Indicate end of Calibration
 }
+

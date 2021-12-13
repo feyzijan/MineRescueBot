@@ -8,25 +8,15 @@
 
 extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
 
-void color_click_init(void)
-{   
-    I2C_2_Master_Init();//Initialise i2c Master
 
+void color_click_init(void) {
+  
+  I2C_2_Master_Init();//Initialise I2C Master
 	color_writetoaddr(0x00, 0x01); //set device PON to turn ColourClick on
-    __delay_ms(3); //need to wait 3ms for everthing to start up
-    
-	color_writetoaddr(0x00, 0x03); // Turn on device ADC
-
-    // TO CONFIGURE WITH TESTING
-	color_writetoaddr(0x01, 0xC0); //integration time: 64 Integ Cycles, 154ms, 65535 max count
-
-    
-    //color_writetoaddr(0x00,0x1B); // Enable Wait time register?
-    color_writetoaddr(0x03, 0x00); // Wait time register: 256
-    
-    color_writetoaddr(0x0F, 0x00); // Gain: 1x
-    
-    //color_writetoaddr(0x0C, 0x00);
+  __delay_ms(3); //need to wait 3ms for everthing to start up
+  color_writetoaddr(0x00, 0x03); // Turn on device ADC
+  color_writetoaddr(0x01, 0xD5); //integration time: 42 Integ Cycles, 101ms, Max count:43008
+  color_writetoaddr(0x0F, 0x00); // Gain: 1X
 }   
 
 
@@ -34,24 +24,70 @@ void color_click_interrupt_init(void){
     //__debug_break();
     color_int_clear();
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
-    //Configure interrupt thresholds RGBC clear channel:
-    //color_writetoaddr(0x04, 0x00); 
-    //color_writetoaddr(0x05, 0x00); 
-    //color_writetoaddr(0x06, 0xA0); 
-    //color_writetoaddr(0x07, 0x0F); 
+
+    //Configure interrupt thresholds RGBC clear channel
     // Use global variables that can be updated by the calibration function
     color_writetoaddr(0x04, int_low & 0xFF); 
     color_writetoaddr(0x05, int_low >> 8); 
     color_writetoaddr(0x06, int_high & 0xFF); 
-    color_writetoaddr(0x07, int_high >>8); 
-    
+    color_writetoaddr(0x07, int_high >>8);
+
     color_writetoaddr(0x0C, 0b0001); // Persistence register = 1
     color_int_clear();
 }
 
+
+// Update global variables for high and low (low is 0 by default has we don't want to trigger interrupt when light level falls) 
+void interrupt_threshold_calibrate(void) {
+    // Calibration procedure
+    // start the procedure with button press
+    int amb_and_LED;
+    while (ButtonRF3); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }
+    clear = color_read(0x14); // read clear color channel for blue card
+    int_high = clear;
+    
+    while (ButtonRF2); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }
+    clear = color_read(0x14); // read clear color channel for blue card
+    amb_and_LED = clear;    
+    
+    while (LeftButton); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }    
+    clear = color_read(0x14); // read clear color channel for blue card
+    
+    if(clear<amb_and_LED){int_low=clear+(clear/20);}
+    else{int_low=0;}
+
+    // wait for a second button press to finish the calibration
+    while (ButtonRF3); //empty while loop (wait for button press)
+    for(int i=0;i<5;i++){ // indicate the procedure has ended
+        __delay_ms(100);
+        LED2=1;
+        __delay_ms(100);
+        LED2=0;
+    }
+}
+
+
 void color_click_interrupt_off(void){
-    color_int_clear(); //clear interrupt just in case
-    color_writetoaddr(0x00, 0x03); //turn off Clicker Interrupt(write 0 to AIEN bit)
+    color_int_clear();
+    color_writetoaddr(0x00,0x03);
 }
 
 
@@ -89,22 +125,19 @@ unsigned int color_read(unsigned char address)
 }
 
 
+
 /*Send the interrupt status over the Serial port
  Function for debugging purposes only - delete later*/ 
 void get_int_status(void)
 {  
-    //__debug_break();
-	unsigned char tmp;
+  	unsigned char tmp;
     unsigned char intstatus[9];
     unsigned char throw;
-	I2C_2_Master_Start();         //Start condition
-	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
-
+	  I2C_2_Master_Start();         //Start condition
+	  I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
     I2C_2_Master_Write(0xA0 | 0x13);//command (auto-increment protocol transaction) + start at a colour's low register
-
     I2C_2_Master_RepStart();// start a repeated transmission
     I2C_2_Master_Write(0x52 | 0x01);//7 bit address + Read (1) mode
-
     tmp = I2C_2_Master_Read(1);//read the  LSB
     throw = I2C_2_Master_Read(0); //read the MSB (don't acknowledge as this is the last read)
     I2C_2_Master_Stop();
@@ -120,7 +153,7 @@ void Color2String(char *ptr, unsigned int *pval){
 }
 
 
-//TODO: Shorten Below function
+//TESTING Shorten Below function
 void SendColorReadings(void){
     char colorstring[8];
 
@@ -183,48 +216,40 @@ void interrupt_threshold_calibrate(void) {
 }
 
 
-/*Changes to ajays code
- * Use char not int
- * Put own LightToggle function
- * 
-*/
-
 //Potential problem with two lists being the same?
 char decide_color(void){
-    
     char color_decision;
-    __delay_ms(500); // wait for readings to stabilise  
-        
-    // Read with LED on
-    read_All_Colors();
-    unsigned int LED_and_amb_read[4] = {red,green,blue,clear}; // light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
     
-    // Read with LED off
-    LightToggle();// turn RGB LED off 
-    __delay_ms(500); // wait for readings to stabilise  
-    read_All_Colors();
-    unsigned int ambient[4] = {red,green,blue,clear};// light from ambient only
+    __delay_ms(500); // allow readings to stabilize   
+    read_All_Colors(); // read color channel values
+  
+    unsigned int LED_and_amb_read[4] = {red,green,blue,clear};// light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
+    LightToggle(); // turn RGB LED off 
+    
+    int black_thresh = clear;
+    
+    __delay_ms(500);                                // allow readings to stabilize
+    read_All_Colors();                              // read color channel values
+    unsigned int ambient[4] = {red,green,blue,clear};               // read color channel values
     
     
     // correct the readings to remove ambient and LED cross_talk
-    red = LED_and_amb_read[0]- ambient[0] - LED_cross_talk[0];
-    green = LED_and_amb_read[1]- ambient[1] - LED_cross_talk[1];
-    blue = LED_and_amb_read[2]- ambient[2] - LED_cross_talk[2];
-    clear = LED_and_amb_read[3]- ambient[3] - LED_cross_talk[3];
+    red = LED_and_amb_read[0]-ambient[0]-LED_cross_talk[0];
+    green = LED_and_amb_read[1]-ambient[1]-LED_cross_talk[1];
+    blue = LED_and_amb_read[2]-ambient[2]-LED_cross_talk[2];
+    clear = LED_and_amb_read[3]-ambient[3]-LED_cross_talk[3];
     
     
-    // Calculate percentage RGB values of clear channel
-    char redPercentage = (100*red)/clear;
-    char greenPercentage = (100*green)/clear;
-    char bluePercentage = (100*blue)/clear;
-
-    //unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
-    //unsigned int clear_channel_black_thresh = 2200;        // a threshold to tell if the colour is black
+    // calculate integer percentage RGB values of clear channel
+    int redPercentage = (100*red)/clear;
+    int greenPercentage = (100*green)/clear;
+    int bluePercentage = (100*blue)/clear;
 
     //Procedure to decide - will explain in read me file to follow logic process via graphs
-    
-    // Either Red or Orange
-    if (redPercentage >= 65){ 
+    if (black_thresh <= int_low){color_decision=9;}
+  
+    // Red or Orange
+    else if (redPercentage >= 65){
         /*
         if (red > red_channel_red_orange_sep_thresh){
             //color_decision = 'r';
@@ -255,20 +280,30 @@ char decide_color(void){
             color_decision = 8; // White
         }
         else{
-            color_decision = 7; //Light blue
+            color_decision = 7; // Light blue
         }
     }
     
     // Blue or green
     else if(redPercentage<35 && redPercentage >= 20){       
         if (bluePercentage>=29){
-            color_decision = 3; //Blue
+            color_decision = 3; // Blue
         }
         else{
-            color_decision = 2; //Green
+            color_decision = 2; // Green
         }
-    }
-    
-    return color_decision; // return the specific color value
- 
+    }   
+  
+    return color_decision; 
 }
+
+  // Function swe may use later
+  /*
+// read all colour channel values for an array
+void color_read_all(unsigned int *colorArray)
+{
+    for(int i=0;i<4;i++){                           // read RGBC channel values
+        *(colorArray+i) = color_read(0x14+2*i);
+    }
+}
+*/
