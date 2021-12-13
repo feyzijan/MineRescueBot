@@ -25,36 +25,38 @@ extern unsigned int timer0val;
 
 void main(void){
     
-    // Variable Initialisations
-    friction = 600; //45 degree turn time
-    reverse_time = 2000; // Reverse_square time
+    // Global ariable Initialisations
+    friction = 130; //45 degree turn time
+    reverse_time = 2100; // Reverse_square time
     int_low  = 0; // Interrupt Low Threshold
     int_high = 12560; // Interrupt High Threshold
     
-    card_func my_function; // In main.c for testing only
+    
     
     //Initialisations 
-    color_click_init(); // Move this to just before main operation
-    LEDs_buttons_init();
+    color_click_init();
     Interrupts_init();
+    LEDs_buttons_init();
     Timer0_init();
-     
+    
+    
+    //LightToggle(); //                 
     
     //********************** Motor Initialisation ****************************//
-    
+                                                    
     //Initialise Motor structs and pointers 
     struct DC_motor motorL,motorR;
     struct DC_motor * mL = &motorL; 
     struct DC_motor * mR = &motorR; 
     motorL.power=1; 	// For some reason when this is zero it breaks everything			
-    motorL.direction=0; 
+    motorL.direction=1; 
     motorL.dutyHighByte=(unsigned char *)(&PWM6DCH); 
     motorL.dir_LAT=(unsigned char *)(&LATE); 	
     motorL.dir_pin=4; 	
     motorL.PWMperiod=199; 
     
     motorR.power=1; 						
-    motorR.direction=0; 					
+    motorR.direction=1; 					
     motorR.dutyHighByte=(unsigned char *)(&PWM7DCH);	
     motorR.dir_LAT=(unsigned char *)(&LATG); 		
     motorR.dir_pin=6;
@@ -63,6 +65,15 @@ void main(void){
     initDCmotorsPWM(199); //Initialise PWM module  
     stop(mL,mR);
     //************************************************************************//
+    //*** Motor Tests
+    while(!ButtonRF2);
+    __delay_ms(1000);
+    move_forward(mL,mR,2100);
+    stop(mL,mR);
+    move_backward(mL,mR,2100);
+    stop(mL,mR);
+    
+    
     
     // Calibration Functions
     CalibrateTurns(mL,mR);
@@ -70,12 +81,23 @@ void main(void){
     CalibrateReverseSquare(mL,mR);
     __delay_ms(1000);
     interrupt_threshold_calibrate();
+    __delay_ms(1000);
+    
+    
+    
+
+    
+    
     
     // Timer1 and Serial Comms Initialisations (Testing mode only)
     initUSART4(); 
     Timer1_init();
     
     unsigned char color;
+    
+    
+    
+    card_func my_function; // In main.c for testing only
     
     while(1){
         

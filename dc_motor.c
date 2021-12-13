@@ -73,7 +73,13 @@ void stop(struct DC_motor *mL, struct DC_motor *mR)
         }
         setMotorPWM(mL);
         setMotorPWM(mR);
-    }    
+    }
+    // Ensure powers are zero
+    mL->power = 0;
+    mR->power = 0;
+    setMotorPWM(mL);
+    setMotorPWM(mR);
+    
 }
 
 
@@ -81,17 +87,15 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
 {
     stop(mL,mR); 
     
-    mL->direction = 1;
-    mR->direction = 1;
-      
-    // Increment values gradually 
-    while ((mL->power + mR->power) < 100){
-        
+    mL->direction = 0;
+    mR->direction = 0;
+   
+    // Increment values gradually up to 40+30 each
+    while ((mL->power + mR->power) < 140){
         mL->power = mL->power + 5;
         mR->power = mR->power + 5;
         setMotorPWM(mL);
         setMotorPWM(mR);
-        
     }
     custom_delay_ms(duration);
 }
@@ -101,13 +105,13 @@ void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duratio
 {
     stop(mL,mR); 
     
-    mL->direction = 0;
-    mR->direction = 0;
+    mL->direction = 1;
+    mR->direction = 1;
       
-    // Increment values gradually - NOTE For some reason Power is = power - 50 or smt
-    while ((mL->power + mR->power) < 150){   
-        mL->power = mL->power + 10 ;
-        mR->power = mR->power + 10;
+    // Increment values gradually up to 30 each
+    while ((mL->power + mR->power) < 60){   
+        mL->power = mL->power + 5 ;
+        mR->power = mR->power + 5;
         setMotorPWM(mL);
         setMotorPWM(mR);
     }
@@ -130,12 +134,21 @@ void forward_square(struct DC_motor *mL, struct DC_motor *mR){
 
 void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 { 
-    stop(mL,mR); 
- 
+    stop(mL,mR); // Make sure power is zero
+    
+    // Set directions
+    mL->direction = 0; // make use of Left wheels for turn as well
+    mR->direction = 1;
+    setMotorPWM(mL);
+    setMotorPWM(mR);
+    
     while (mR->power != 80){
         mR->power = mR->power + 10;
+        mL->power = mL->power + 10;
         setMotorPWM(mR);
+        setMotorPWM(mL);
     }    
+    
     friction_delay_ms();// Leave enough time to turn
     stop(mL,mR); 
 }
@@ -144,9 +157,20 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR)
 void TurnRight(struct DC_motor *mL, struct DC_motor *mR)
 {
     stop(mL,mR); 
+    
+    // Set directions
+    mL->direction = 1;
+    mR->direction = 0;
+    setMotorPWM(mL);
+    setMotorPWM(mR);
+
+    
     while (mL->power  != 80){
-        mL->power  = mL->power + 10;  
+        mL->power  = mL->power + 10; 
+        mR->power  = mR->power + 10;  
         setMotorPWM(mL);
+        setMotorPWM(mR);
+        
     }    
     friction_delay_ms();// Leave enough time to turn
     stop(mL,mR); 
@@ -165,25 +189,34 @@ void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
     
     // Store initial value so the 5% adding/subtracting don't compound
     int temp = friction; 
-    
+
     while(!(ButtonRF3 && ButtonRF2)) // Press both buttons to exit calibration
     {
+        PrepareForTurn(mL,mR);
+        __delay_ms(100); //Wait for buggy the stabilize
         // Try turning 180 degrees in 4 motions
         for(int k = 0; k<4; k++){
             TurnLeft(mL,mR);
             __delay_ms(500); // Time lag to check each 45 degree turn
         }
         
-        while(!(ButtonRF3 || ButtonRF2)) // Wait for either to be pressed
-            
+        
+        // Note: Hold on pressing your desired buttons until LED flashes on
+        while(!(ButtonRF2 || ButtonRF3)) // Wait for either to be pressed
+        __delay_ms(1000);
             if(ButtonRF2 && ButtonRF3){ // No change
-                break;
+                LED1 = 1;
+                LED2 = 1;
             } else if(ButtonRF2){
-                friction  -= temp /20; //5% Decrease
+                friction  -= temp /40; //2.5% Decrease
+                LED1 = 1;
             } else if(ButtonRF3){
-                friction  += temp /20;; //5% Increase
+                friction  += temp /40;; //2.5% Increase
+                LED2 = 1;
             }
-        __delay_ms(1000); // Leave one second to exit Calibration   
+        __delay_ms(1500); // Leave two second to exit Calibration   
+        LED1 = 0;
+        LED2 = 0;
     }
     LightTest(); // Indicate end of Calibration
 }
@@ -203,15 +236,20 @@ void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR){
         stop(mL,mR);
         
         while(!(ButtonRF3 || ButtonRF2)) // Wait for either to be pressed
-            
+            __delay_ms(1000);
             if(ButtonRF2 && ButtonRF3){ // No change
-                break;
+                LED1 = 1;
+                LED2 = 1;
             } else if(ButtonRF2){
-                reverse_time  -=  temp /20; //5% Decrease
+                reverse_time  -=  temp /40; //2.5% Decrease
+                LED1 = 1;
             } else if(ButtonRF3){
-                reverse_time  +=  temp /20; //5% Increase
+                reverse_time  +=  temp /40; //2.5% Increase
+                LED2 = 1;
             }
-        __delay_ms(1000); // Have one second to exit Calibration 
+        __delay_ms(1500); // Have one second to exit Calibration
+        LED1 = 0;
+        LED2 = 0;
     }
     LightTest(); // Indicate end of Calibration
 }

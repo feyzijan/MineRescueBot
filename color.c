@@ -213,13 +213,10 @@ char decide_color(void){
     clear = LED_and_amb_read[3]- ambient[3] - LED_cross_talk[3];
     
     
-    // calculate integer percentage RGB values of clear channel
-    // How does the below operation work?
-    // Also we need to write our own power!! 
-    // Why do we need power for 1/clear?
-    int redPercentage = 100*(red*pow(clear,-1));
-    int greenPercentage = 100*(green*pow(clear,-1));
-    int bluePercentage = 100*(blue*pow(clear,-1));
+    // Calculate percentage RGB values of clear channel
+    char redPercentage = (100*red)/clear;
+    char greenPercentage = (100*green)/clear;
+    char bluePercentage = (100*blue)/clear;
 
     //unsigned int red_channel_red_orange_sep_thresh = 200; // a threshold to distinguish between red and orange in decision process
     //unsigned int clear_channel_black_thresh = 2200;        // a threshold to tell if the colour is black

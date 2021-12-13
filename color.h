@@ -2,7 +2,7 @@
 #define _color_H
 
 #include <xc.h>
-#include <math.h> // MUST WRITE OWN POWER FUNCTION
+
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 

@@ -26,10 +26,9 @@ int reverse_time; // Time(in ms) required for reverse one square
 //Must be updated inside the main loop if it'll be used there
 
 // Definition of DC_motor structure
-// Note that I have defined 0 direction as forward due to with clicker's position
 struct DC_motor { 
     char power;         //motor power, out of 100
-    char direction;     //motor direction, forward(0), reverse(1)
+    char direction;     //motor direction, forward(1), reverse(0)
     unsigned char *dutyHighByte; //PWM duty high byte address
     unsigned char *dir_LAT; //LAT address for direction pin
     char dir_pin; // pin number that controls direction on LAT (L:RE4, R:RG6)
