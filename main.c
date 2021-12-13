@@ -92,8 +92,8 @@ void main(void){
     while(1){
     
       
-        if (!RightButton) {LightToggle();} // turn RGB light off manually if required
-        if (!LeftButton) {  // Turn on interrupt source manually for testing
+        if (ButtonRF2) {LightToggle();} // turn RGB light off manually if required
+        if (ButtonRF3) {  // Turn on interrupt source manually for testing
           color_click_interrupt_init();
           BrakeLight=0;
         }

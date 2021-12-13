@@ -41,7 +41,7 @@ void color_click_interrupt_init(void){
 void interrupt_threshold_calibrate(void) {
     // Calibration procedure
     // start the procedure with button press
-    int amb_and_LED;
+    unsigned int amb_and_LED;
     while (ButtonRF3); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
         __delay_ms(100);
@@ -62,7 +62,7 @@ void interrupt_threshold_calibrate(void) {
     clear = color_read(0x14); // read clear color channel for blue card
     amb_and_LED = clear;    
     
-    while (LeftButton); //empty while loop (wait for button press)
+    while (ButtonRF3); //empty while loop (wait for button press)
     for(int i=0;i<5;i++){   // indicate the procedure has started with 5 flashes of LED
         __delay_ms(100);
         LED2=1;
@@ -196,23 +196,6 @@ char decide_color_test(void){
     blueval = color_read(0x1A); 
     
     return 'r';
-}
-
-
-// We call this function in main.c
-void interrupt_threshold_calibrate(void) {
-
-    while (!ButtonRF3); //wait for button press
-    __delay_ms(500); // Button delay
-    LightTest(); // Indicate start
-   
-    clear = color_read(0x14); // read clear color channel for blue card
-    
-    // Update global variable high threshold 
-    //int_high = 1000;
-    
-    while (!ButtonRF3); //wait for second button press
-    LightTest(); // Indicate end
 }
 
 
