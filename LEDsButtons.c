@@ -1,5 +1,5 @@
 #include <xc.h>
-#include "LEDs.h"
+#include "LEDsButtons.h"
 
 
 void LEDs_buttons_init(void){

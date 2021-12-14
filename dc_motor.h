@@ -3,7 +3,7 @@
 
 #include <xc.h>
 #include "timers.h"
-#include "LEDs.h"
+#include "LEDsButtons.h"
 
 #define _XTAL_FREQ 64000000
 

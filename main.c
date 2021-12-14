@@ -9,7 +9,7 @@
 #include "dc_motor.h"
 #include "i2c.h"
 #include "color.h"
-#include "LEDs.h"
+#include "LEDsButtons.h"
 #include "timers.h"
 #include "interrupts.h"
 #include "CardMoves.h"
@@ -53,21 +53,21 @@ void main(void){
   
     //**** Calibration Functions - Detailed instructions in header files *****//
     //interrupt_threshold_calibrate();
-    
+    //__delay_ms(1000);
     //CalibrateTurns(mL,mR);
     //__delay_ms(1000);
     //CalibrateReverseSquare(mL,mR);
     //__delay_ms(1000);
     //************************************************************************//
 
-    LightOn();
+    LightOn(); 
     Interrupts_init();
      
     char color_main;
-    //LightOn(); 
     while(1){
     
-        if (ButtonRF3) color_click_interrupt_init(); // Re-enable Int. manually 
+        //Manually Re-enable interrupt if it prematurely clears
+        if (ButtonRF3) color_click_interrupt_init(); 
         
         /*
         if (color_flag){

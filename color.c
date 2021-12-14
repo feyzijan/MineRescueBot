@@ -2,8 +2,7 @@
 #include "color.h"
 #include "i2c.h"
 #include <stdio.h>
-#include "serial.h"
-#include "LEDs.h"
+#include "LEDsButtons.h"
 #include "interrupts.h"
 
 //extern unsigned int int_low, int_high; // Not needed here

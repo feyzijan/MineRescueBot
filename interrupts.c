@@ -2,7 +2,7 @@
 #include "interrupts.h"
 #include "i2c.h"
 #include "color.h"
-#include "LEDs.h"
+#include "LEDsButtons.h"
 #include "timers.h"
 
 /************************************
