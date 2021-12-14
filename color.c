@@ -134,10 +134,10 @@ char decide_color(void){
     char color_decision;
     int black_thresh;
     
-    LightOn(); // Turn Led on for first reading
+    //LightOn(); // Turn Led on for first reading
     __delay_ms(500); // Wait for readings to stabilise   
     read_All_Colors();
-  
+    __debug_break();
     // Array of readings: Light from ambient + LED cross talk + LED reflection 
     int LED_and_amb_read[4] = {red,green,blue,clear};  
     //black_thresh = clear; // Prospective threshold
@@ -155,7 +155,7 @@ char decide_color(void){
     __int24 blue_real = LED_and_amb_read[2]-ambient[2]-LED_cross_talk[2];
     __int24 clear_real = LED_and_amb_read[3]-ambient[3]-LED_cross_talk[3];
 
-    //__debug_break();
+    __debug_break();
     
     // Calculate percentage of RGB channel values (as percentage of clear channel)
     redPercentage = (100*red_real)/ clear_real;

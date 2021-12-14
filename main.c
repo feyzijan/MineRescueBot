@@ -60,8 +60,10 @@ void main(void){
     //__delay_ms(1000);
     //************************************************************************//
 
+    LightOn();
     Interrupts_init();
      
+    char color_main;
     //LightOn(); 
     while(1){
     
@@ -83,14 +85,12 @@ void main(void){
         
         //************************ Main Operating Loop ************************//
         if(ButtonRF2){// Wait for Button press to start - For Testing
-           LightOn();
            color_click_interrupt_off();
+           LightOn();
            color_click_interrupt_init();
            
-           char color_main;
-           char end = 0;
-           
-           while(!end){ // Use flag that is set to 1 with final card
+           color_flag = 0;
+           while(!end_motion){ // Use flag that is set to 1 with final card
                 // Step 1: Forward Motion
                 ResetTMR0();//Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
@@ -109,9 +109,7 @@ void main(void){
                 
                 //Step 4: Re-enable clicker interrupt 
                 color_click_interrupt_init();
-                if(color_main == 8) end = 1;
             }
-           end = 1;
         }
         
     }
