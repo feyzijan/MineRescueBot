@@ -19,7 +19,7 @@
 /*************************  Variable Prototypes ********************************/
 
 
-int friction; // time (in ms) needed for a 45 degree turn (320 for Room-749 surface)
+int turning_time; // time (in ms) needed for a 45 degree turn (320 for Room-749 surface)
 //Can be updated anywhere
 
 int reverse_time; // Time(in ms) required for reverse one square

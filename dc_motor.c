@@ -2,7 +2,7 @@
 #include "dc_motor.h"
 
 
-int friction = 114; //45 degree turn time
+int turning_time = 114; //45 degree turn time
 int reverse_time = 1900; // Reverse_square time
 
 void initDCmotorsPWM(int PWMperiod){
@@ -132,7 +132,7 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR){
         setMotorPWM(mR); 
         setMotorPWM(mL);
     }    
-    custom_delay_ms(friction);// Leave enough time to turn
+    custom_delay_ms(turning_time);// Leave enough time to turn
     stop(mL,mR); 
     __delay_ms(150); // Wait for Car to stabilise
 }
@@ -151,7 +151,7 @@ void TurnRight(struct DC_motor *mL, struct DC_motor *mR){
         setMotorPWM(mL);
         setMotorPWM(mR);
     }    
-    custom_delay_ms(friction);// Leave enough time to turn
+    custom_delay_ms(turning_time);// Leave enough time to turn
     stop(mL,mR); 
     __delay_ms(150); // Wait for Car to stabilise
 }
@@ -181,10 +181,10 @@ void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
             if(ButtonRF2 && ButtonRF3){ // No change
                 LED1 = LED2 = 1;
             } else if(ButtonRF2){
-                friction  -= 2; //2% Decrease
+                turning_time  -= 2; //2% Decrease
                 LED1 = 1;
             } else if(ButtonRF3){
-                friction  += 2 ; //2% Increase
+                turning_time  += 2 ; //2% Increase
                 LED2 = 1;
             }
         __delay_ms(1500); // Leave two second to exit Calibration   
