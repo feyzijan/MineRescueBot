@@ -132,7 +132,7 @@ void TurnLeft(struct DC_motor *mL, struct DC_motor *mR){
         setMotorPWM(mR); 
         setMotorPWM(mL);
     }    
-    friction_delay_ms();// Leave enough time to turn
+    custom_delay_ms(friction);// Leave enough time to turn
     stop(mL,mR); 
     __delay_ms(150); // Wait for Car to stabilise
 }
@@ -151,7 +151,7 @@ void TurnRight(struct DC_motor *mL, struct DC_motor *mR){
         setMotorPWM(mL);
         setMotorPWM(mR);
     }    
-    friction_delay_ms();// Leave enough time to turn
+    custom_delay_ms(friction);// Leave enough time to turn
     stop(mL,mR); 
     __delay_ms(150); // Wait for Car to stabilise
 }
@@ -166,7 +166,7 @@ void PrepareForTurn(struct DC_motor *mL, struct DC_motor *mR){
 
 void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
     
-    LightTest(); // Toggle Light to indicate start of Calibration
+    LightTest(); // Indicate start of Calibration
     
     while(!(ButtonRF3 && ButtonRF2)){ // Press both buttons to exit calibration
         // Try turning 180 degrees in 4 motions

@@ -35,21 +35,10 @@ void ResetTMR0(void){
     TMR0L = 0;
 }
 
-
-/******* Custom Delay Functions *******/
-
-void friction_delay_ms(void){
-    int i;
-    for(i=0;i<friction/2;i++){
-        __delay_ms(2);
-    }
-}
-
-
 void custom_delay_ms(unsigned int delay_time){
     unsigned int i;
-    for(i=0;i<delay_time/10;i++){
-        __delay_ms(10);
+    for(i=0;i<delay_time/2;i++){
+        __delay_ms(2);
     }
 }
 

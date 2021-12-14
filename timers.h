@@ -39,17 +39,6 @@ void getTMR0_in_ms(void);
  ************/
 void ResetTMR0(void);
 
-
-//******** Custom Delay Functions
- 
-
-/***********
- * Function that causes a delay that allows the buggy to complete a 45 degree turn
- * Modify the global friction variable 
- ***********/
-void friction_delay_ms(void);
-
-
 /************
  * Function to generate a delay equal to the inputted number (in ms)
  ************/
