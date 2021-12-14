@@ -6,10 +6,10 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-/*TODO: 
- * UPDATE CALIBRATION INSTRUCTIONS 
+/* TODO:  
  * Update LED_cross_talk to be a constant
- */
+ * 
+ ******************************************************************************/
 
 
 /* Color Values
@@ -25,7 +25,14 @@
 
 unsigned int red, green, blue, clear;
 unsigned int int_low, int_high; // Interrupt thresholds
-unsigned int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
+int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values (pre-calculated)
+
+
+// These are here for debugging only
+char redPercentage;
+char greenPercentage;
+char bluePercentage;
+
 
 /*************************  Function Prototypes ********************************/
 
@@ -47,6 +54,11 @@ void color_click_interrupt_init(void);
 void color_click_interrupt_off(void);
 
 
+/***********************************************
+ * Function to clear the RGBC interrupt in the clicker
+ ***********************************************/
+void color_int_clear(void);
+
 /********************************************//**
  *  Function to write to the colour click module
  *  address is the register within the colour click to write to
@@ -67,43 +79,11 @@ unsigned int color_read(unsigned char address);
 void read_All_Colors(void);
 
 
-/***********************************************
- * Function to clear the RGBC interrupt in the clicker
- ***********************************************/
-void color_int_clear(void);
-
 /*****************
  * Function to take RGBC channel readings and return a 
  * a char corresponding to the color
  ******************/
 char decide_color(void);
-
-
-/*****************
- * Test function - we assign color manually
- ******************/
-char decide_color_test(void);
-
-
-/****** Functions for Testing Purposes - Will be removed from final build *****/
-
-/**********************************************
- *  Function to convert colour reading to string
- ***********************************************/
-void Color2String(char *ptr, unsigned int *pval);
-
-
-/**********************************************
- *  Function to send all Color readings over serial port to PC
- ***********************************************/
-void SendColorReadings(void);
-
-
-/**********************************************
- * Function to send back interrupt status at register 0x12 to PC
- ***********************************************/
-void get_int_status(void);
-
 
 /**********************************************
  * Function to calibrate interrupt thresholds

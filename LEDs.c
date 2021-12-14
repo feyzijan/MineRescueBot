@@ -27,7 +27,7 @@ void LEDs_buttons_init(void){
     LeftLamp = 0;
     RightLamp = 0;
   
-    // Button RF2 and RF3 - for debugging
+    // Button RF2 and RF3 
     TRISFbits.TRISF2=1; 
     ANSELFbits.ANSELF2=0;
     TRISFbits.TRISF3=1; 
@@ -36,26 +36,26 @@ void LEDs_buttons_init(void){
 }
 
 
-void LightToggle(void){
-    RedLight = !RedLight;
-    BlueLight = !BlueLight;
-    GreenLight = !GreenLight;
+void LightOn(void){
+    RedLight = 1;
+    BlueLight = 1;
+    GreenLight = 1;
+}
+
+void LightOff(void){
+    RedLight = 0;
+    BlueLight = 0;
+    GreenLight = 0;
 }
 
 
 void LightTest(void){
     for(char i=0; i <4;i++){
-        RedLight = !RedLight;
-        BlueLight = !BlueLight;
-        GreenLight = !GreenLight;
         LED1 = !LED1;
         LED2 = !LED2;
-        HeadLamp = !HeadLamp;
-        MainBeam = !MainBeam;
         BrakeLight = !BrakeLight;
-        LeftLamp = !LeftLamp;
-        RightLamp = !RightLamp;
         __delay_ms(500);
     }
+    __delay_ms(500);
 }
 
