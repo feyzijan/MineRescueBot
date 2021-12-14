@@ -6,7 +6,7 @@
 #include "LEDs.h"
 #include "interrupts.h"
 
-extern unsigned int int_low, int_high; // declared in color.h, defined in main.c
+//extern unsigned int int_low, int_high; // Not needed here
 
 
 void color_click_init(void) {
@@ -32,6 +32,7 @@ void color_writetoaddr(char address, char value){
 
 
 void color_click_interrupt_init(void){
+    BrakeLight = 0; // testing
     
     color_int_clear(); // Clear Interrupt Flag 
     color_writetoaddr(0x00, 0x13); //turn on Clicker Interrupt(write 1 to AIEN bit)
@@ -54,7 +55,7 @@ void interrupt_threshold_calibrate(void) {
     
     __delay_ms(500);
     LightOn();
-    unsigned int amb_and_LED;
+    int amb_and_LED;
     
     while (!ButtonRF3); //Wait for button press)
     LightTest();  // Indicate procedure has started
@@ -73,6 +74,9 @@ void interrupt_threshold_calibrate(void) {
     // Assign low threshold to ambient or black reading, whichever lowest
     if(clear<amb_and_LED){int_low=clear+(clear/20);}
     else{int_low=0;}
+    
+    //TEMPORARY CHANGE
+    int_low = 0; 
 
     while (!ButtonRF3); // Wait for button press to exit calibration   
     LightTest(); // Toggle Light to indicate end of Calibration
@@ -94,9 +98,9 @@ void color_int_clear(void){
 }
 
 
-unsigned int color_read(unsigned char address)
+__int24 color_read(unsigned char address)
 {  
-	unsigned int tmp;
+	__int24 tmp;
 	I2C_2_Master_Start();         //Start condition
 	I2C_2_Master_Write(0x52 | 0x00);     //7 bit address + Write mode
     I2C_2_Master_Write(0xA0 | address);//command (auto-increment protocol transaction) 
@@ -124,21 +128,23 @@ void read_All_Colors(void){
 char decide_color(void){
     
     char color_decision;
-    unsigned int black_thresh;
+    __int24 black_thresh;
     
     LightOn(); // Turn Led on for first reading
     __delay_ms(500); // Wait for readings to stabilise   
     read_All_Colors();
+    __debug_break();
   
     // Array of readings: Light from ambient + LED cross talk + LED reflection 
-    unsigned int LED_and_amb_read[4] = {red,green,blue,clear};  
+    __int24 LED_and_amb_read[4] = {red,green,blue,clear};  
     black_thresh = clear; // Prospective threshold
     
     LightOff(); // Turn LED off 
     __delay_ms(500);
     read_All_Colors();
+    __debug_break();
     // Array of readings: Ambient Only
-    unsigned int ambient[4] = {red,green,blue,clear};
+    __int24 ambient[4] = {red,green,blue,clear};
     
   
     // Correct the readings to remove ambient and LED cross_talk
@@ -147,11 +153,12 @@ char decide_color(void){
     blue = LED_and_amb_read[2]-ambient[2]-LED_cross_talk[2];
     clear = LED_and_amb_read[3]-ambient[3]-LED_cross_talk[3];
     
+    __debug_break();
     // Calculate percentage of RGB channel values (as percentage of clear channel)
-    int redPercentage = (100*red) / clear;
-    int greenPercentage = (100*green) / clear;
-    int bluePercentage = (100*blue) / clear;
-
+    redPercentage = (100*red)/ clear;
+    greenPercentage = (100*green) / clear;
+    bluePercentage = (100*blue) / clear;
+    
     //Color Decision Procedure based on Percentage composition of readings
     
     // Check black first
@@ -179,13 +186,17 @@ char decide_color(void){
             color_decision = 7; // Light blue
         }
     }
-    else if(redPercentage<35 && redPercentage >= 20){   // Blue or green    
+    else if(redPercentage <35 && redPercentage >= 20){   // Blue or green    
         if (bluePercentage>=29){
             color_decision = 3; // Blue
         }else{
             color_decision = 2; // Green
         }
-    }   
+    } else{
+        color_decision = 0;
+    }  
+    LightOn();
+    color_debug_c = color_decision;
     return color_decision; 
 }
 
@@ -212,7 +223,7 @@ void get_int_status(void)
 }
 
 
-void Color2String(char *ptr, unsigned int *pval){
+void Color2String(char *ptr, int *pval){
     sprintf(ptr,"  %05d ", *pval);
 }
 

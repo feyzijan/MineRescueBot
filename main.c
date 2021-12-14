@@ -22,6 +22,8 @@
 
 extern unsigned int timer0val; // For logging movement time
 
+
+char color_main;
 void main(void){
     
     // Move these to separate files for final build
@@ -33,7 +35,10 @@ void main(void){
     color_click_init();
     LEDs_buttons_init();
     Timer0_init();
-    interrupt_threshold_calibrate();
+    //interrupt_threshold_calibrate();
+    LightOn();
+    int_high = 4000;
+    int_low = 0;
     Interrupts_init();
     
     
@@ -72,8 +77,6 @@ void main(void){
     initUSART4(); 
     Timer1_init();
     
-    unsigned char color;
-   
     //LightOn(); 
     while(1){
     
@@ -81,24 +84,34 @@ void main(void){
         //if (ButtonRF2) {LightOn();} // turn RGB light off manually if required
         if (ButtonRF3) {  // Turn on interrupt source manually for testing
           color_click_interrupt_init();
-          BrakeLight=0;
-       
+          //BrakeLight=0;
         }
         
         
         if (color_flag){
-            color = decide_color();
+            color_main = decide_color();
             LED1 = 0;
-            for (int i=0;i<color;i++){
+            for (int i=0;i<color_main;i++){
                 LED1 = 1;
                 __delay_ms(350);
                 LED1 = 0;
                 __delay_ms(350);
             }
-            color = 0;
-            BrakeLight = 0;
             color_flag = 0;
-                }
+        }
+        
+        
+        /*
+        if(timer_flag) { 
+            get_int_status(); //Send back Interrupt Status
+            read_All_Colors();
+            SendColorReadings(); 
+            TMR1H = 0;
+            TMR1L = 0;
+            timer_flag =0;    
+        }
+        */
+ 
        
         
         
@@ -107,66 +120,51 @@ void main(void){
         
         if(ButtonRF2){// Wait for Button press to start - For Testing
            //LightOn(); //LED on
-           //color_click_interrupt_init();
-           //!end_motion
-           while(1){ // Use flag that is set to 1 with final card
+           
+           color_click_interrupt_off();
+           LightOn();
+           color_click_interrupt_init();
+           
+           while(!end_motion){ // Use flag that is set to 1 with final card
 
                 // Step 1: Forward Motion
-                //BrakeLight = 0;
-                //ResetTMR0();//Start timer to time movement duration
-                //move_forward(mL,mR,0); // Move forward
+                ResetTMR0();//Start timer to time movement duration
+                move_forward(mL,mR,0); // Move forward
+                
                 while(!color_flag); // Continue motion until clicker triggers this flag
                 
-                //LightTest();
                 //Step 2: Stop buggy and read card
-                //stop(mL,mR); // Interrupt means we are near a card so stop
-                color = decide_color(); // Logic process to decide color 
+                stop(mL,mR); // Interrupt means we are near a card so stop
+                LightTest(); // Indicate it is going to read color
+                __delay_ms(250); // Wait for readings to stabilize
+                color_main = decide_color();
+                
                 if (color_flag){
                     LED1 = 0;
-                    for (int i=0;i<color;i++){
+                    for (int i=0;i<color_main;i++){
                         LED1 = 1;
                         __delay_ms(350);
                         LED1 = 0;
                         __delay_ms(350);
                     }
-                    color = 0;
                     color_flag = 0;
-                    BrakeLight = 0;
                 }
 
                 //Step 3: Pick and execute appropriate move
-                //pick_move(color, mL,mR); // Execute needed motion and update motion memory
+                pick_move(color_main, mL,mR); // Execute needed motion and update motion memory
 
                 //Step 4: Re-enable clicker interrupt 
-                LightOn();
                 color_click_interrupt_init();
             }
         } 
        
        
        //********************************************************************//
-        
-        
-        //****************** Indicate Colour Reading with LED *****************//
-        /*
-        
-        */ 
-        //********************************************************************//
+
     }
 }
 
 
 // Test Code
 /******** Send Back Colour Readings to PC every 2 secs **********/
-        /*
-        if(timer_flag) { 
-            
-            get_int_status(); //Send back Interrupt Status
-            read_All_Colors();
-            SendColorReadings(); 
-
-            reset_Timer0();
-            timer_flag =0;  
-            
-        }
- */
+        

@@ -23,9 +23,16 @@
 
 /*************************  Variable Prototypes ********************************/
 
-unsigned int red, green, blue, clear;
-unsigned int int_low, int_high; // Interrupt thresholds
-unsigned int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
+__int24 red, green, blue, clear;
+__int24 int_low, int_high; // Interrupt thresholds
+__int24 LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
+
+
+__int24 redPercentage;
+__int24 greenPercentage;
+__int24 bluePercentage;
+
+char color_debug_c;// Unncessary remove
 
 /*************************  Function Prototypes ********************************/
 
@@ -64,7 +71,7 @@ void color_writetoaddr(char address, char value);
  *  Function to read the red channel
  *	Returns a 16 bit ADC value representing colour intensity
  ***********************************************/
-unsigned int color_read(unsigned char address);
+__int24 color_read(unsigned char address);
 
 /**********************************************
  *  Function that calls color_read for all four RGBC channels
@@ -98,7 +105,7 @@ void interrupt_threshold_calibrate(void);
 /**********************************************
  *  Function to convert colour reading to string
  ***********************************************/
-void Color2String(char *ptr, unsigned int *pval);
+void Color2String(char *ptr, int *pval);
 
 
 /**********************************************

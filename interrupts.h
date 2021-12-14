@@ -17,6 +17,9 @@
 char timer_flag; // doesnt work when I put in extern for some reason
 char color_flag; // Flag that is set with clicker interrupt - to display color reading with LED
 
+
+
+
 /*************************  Function Prototypes ********************************/
 
 
