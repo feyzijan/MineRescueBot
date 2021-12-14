@@ -10,7 +10,6 @@
 #include "i2c.h"
 #include "color.h"
 #include "LEDs.h"
-#include "serial.h"
 #include "timers.h"
 #include "interrupts.h"
 #include "CardMoves.h"
@@ -22,28 +21,14 @@
 
 extern unsigned int timer0val; // For logging movement time
 
-
-char color_main;
 void main(void){
     
-    // Move these to separate files for final build
-    // Global Variable Initialisations 
-    friction = 130; //45 degree turn time
-    reverse_time = 2100; // Reverse_square time
-     
     //Initialisations 
     color_click_init();
     LEDs_buttons_init();
     Timer0_init();
-    //interrupt_threshold_calibrate();
-    LightOn();
-    int_high = 4000;
-    int_low = 0;
-    Interrupts_init();
     
-    
-    //********************** Motor Initialisation ****************************//
-                                                    
+    //********************** Motor Initialisation ****************************//                             
     //Initialise Motor structs and pointers 
     struct DC_motor motorL,motorR;
     struct DC_motor * mL = &motorL; 
@@ -64,69 +49,48 @@ void main(void){
  
     initDCmotorsPWM(199); //Initialise PWM module  
     stop(mL,mR);
-    
     //************************************************************************//
   
-    // Calibration Functions - Detailed instructions in header files
+    //**** Calibration Functions - Detailed instructions in header files *****//
+    //interrupt_threshold_calibrate();
+    
     //CalibrateTurns(mL,mR);
     //__delay_ms(1000);
     //CalibrateReverseSquare(mL,mR);
     //__delay_ms(1000);
-       
-    // Initialisation for testing
-    initUSART4(); 
-    Timer1_init();
-    
+    //************************************************************************//
+
+    Interrupts_init();
+     
     //LightOn(); 
     while(1){
     
-      
-        //if (ButtonRF2) {LightOn();} // turn RGB light off manually if required
-        if (ButtonRF3) {  // Turn on interrupt source manually for testing
-          color_click_interrupt_init();
-          //BrakeLight=0;
-        }
+        if (ButtonRF3) color_click_interrupt_init(); // Re-enable Int. manually 
         
-        
+        /*
         if (color_flag){
             color_main = decide_color();
             LED1 = 0;
             for (int i=0;i<color_main;i++){
                 LED1 = 1;
-                __delay_ms(350);
+                __delay_ms(250);
                 LED1 = 0;
-                __delay_ms(350);
+                __delay_ms(250);
             }
             color_flag = 0;
         }
-        
-        
-        /*
-        if(timer_flag) { 
-            get_int_status(); //Send back Interrupt Status
-            read_All_Colors();
-            SendColorReadings(); 
-            TMR1H = 0;
-            TMR1L = 0;
-            timer_flag =0;    
-        }
         */
- 
-       
-        
         
         //************************ Main Operating Loop ************************//
-        
-        
         if(ButtonRF2){// Wait for Button press to start - For Testing
-           //LightOn(); //LED on
-           
-           color_click_interrupt_off();
            LightOn();
+           color_click_interrupt_off();
            color_click_interrupt_init();
            
-           while(!end_motion){ // Use flag that is set to 1 with final card
-
+           char color_main;
+           char end = 0;
+           
+           while(!end){ // Use flag that is set to 1 with final card
                 // Step 1: Forward Motion
                 ResetTMR0();//Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
@@ -134,37 +98,21 @@ void main(void){
                 while(!color_flag); // Continue motion until clicker triggers this flag
                 
                 //Step 2: Stop buggy and read card
-                stop(mL,mR); // Interrupt means we are near a card so stop
-                LightTest(); // Indicate it is going to read color
+                stop(mL,mR); // May put this in Interrupt Routine for added accuracy
                 __delay_ms(250); // Wait for readings to stabilize
                 color_main = decide_color();
+                __delay_ms(500);
+                color_flag = 0;
                 
-                if (color_flag){
-                    LED1 = 0;
-                    for (int i=0;i<color_main;i++){
-                        LED1 = 1;
-                        __delay_ms(350);
-                        LED1 = 0;
-                        __delay_ms(350);
-                    }
-                    color_flag = 0;
-                }
-
                 //Step 3: Pick and execute appropriate move
                 pick_move(color_main, mL,mR); // Execute needed motion and update motion memory
-
+                
                 //Step 4: Re-enable clicker interrupt 
                 color_click_interrupt_init();
+                if(color_main == 8) end = 1;
             }
-        } 
-       
-       
-       //********************************************************************//
-
+           end = 1;
+        }
+        
     }
 }
-
-
-// Test Code
-/******** Send Back Colour Readings to PC every 2 secs **********/
-        

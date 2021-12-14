@@ -56,16 +56,6 @@ void friction_delay_ms(void);
 void custom_delay_ms(unsigned int delay_time);
 
 
-/****** Functions for Testing Purposes - Will be removed from final build *****/
-
-
-/********************************
- * Function to initialise Timer1
- * Used for serial transmission 
- ********************************/
-void Timer1_init(void);
-
-
 
 #endif
 

@@ -23,16 +23,16 @@
 
 /*************************  Variable Prototypes ********************************/
 
-__int24 red, green, blue, clear;
-__int24 int_low, int_high; // Interrupt thresholds
-__int24 LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
+unsigned int red, green, blue, clear;
+unsigned int int_low, int_high; // Interrupt thresholds
+int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values (pre-calculated)
 
 
-__int24 redPercentage;
-__int24 greenPercentage;
-__int24 bluePercentage;
+// These are here for debugging only
+char redPercentage;
+char greenPercentage;
+char bluePercentage;
 
-char color_debug_c;// Unncessary remove
 
 /*************************  Function Prototypes ********************************/
 
@@ -71,7 +71,7 @@ void color_writetoaddr(char address, char value);
  *  Function to read the red channel
  *	Returns a 16 bit ADC value representing colour intensity
  ***********************************************/
-__int24 color_read(unsigned char address);
+unsigned int color_read(unsigned char address);
 
 /**********************************************
  *  Function that calls color_read for all four RGBC channels
@@ -98,25 +98,5 @@ char decide_color(void);
  ***********************************************/
 void interrupt_threshold_calibrate(void);
 
-
-
-/****** Functions for Testing Purposes - Will be removed from final build *****/
-
-/**********************************************
- *  Function to convert colour reading to string
- ***********************************************/
-void Color2String(char *ptr, int *pval);
-
-
-/**********************************************
- *  Function to send all Color readings over serial port to PC
- ***********************************************/
-void SendColorReadings(void);
-
-
-/**********************************************
- * Function to send back interrupt status at register 0x12 to PC
- ***********************************************/
-void get_int_status(void);
 
 #endif

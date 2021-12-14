@@ -40,8 +40,8 @@ void ResetTMR0(void){
 
 void friction_delay_ms(void){
     int i;
-    for(i=0;i<friction/10;i++){
-        __delay_ms(10);
+    for(i=0;i<friction/2;i++){
+        __delay_ms(2);
     }
 }
 
@@ -52,17 +52,5 @@ void custom_delay_ms(unsigned int delay_time){
         __delay_ms(10);
     }
 }
-
-/* Testing Only*/
-void Timer1_init(void){
-    // Will overflow every ~2.1 s
-    TMR1CLKbits.CS = 0b0100; // Clock source: LFINTOSC(31KHz)
-    T1CONbits.CKPS = 0b00; // select pre-scaler: 1 
-    TMR1H = 0;
-    TMR1L = 0;
-    T1CONbits.ON = 1; // Enable timer
-    T1GCONbits.GE = 0; // Counter mode off
-}
-
 
 

@@ -24,8 +24,7 @@ char end_motion = 0; // Flag
 
 
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
-    if (color == 8 || color == 9){ // White
-        end_motion = 1;
+    if (color == 8 ){ // White
         white_move(mL,mR); // pass move list so you can revert it 
     } else {
         if(color == 1){ // Red
@@ -55,6 +54,8 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
         } else if (color == 7){ // Light Blue
             add_function_ptr(&orange_move);
             lightblue_move(mL,mR);
+        } else{ // No color detected
+            __delay_ms(1); // placeholder
         }
     }
 }
@@ -120,7 +121,7 @@ void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnRight(mL,mR);
     TurnRight(mL,mR);
     forward_square(mL,mR);
-    stop(mL,mR); 
+    blue_move(mL,mR);
 }
 
 
@@ -129,15 +130,14 @@ void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnLeft(mL,mR);
     TurnLeft(mL,mR);
     forward_square(mL,mR);
-    stop(mL,mR);
+    blue_move(mL,mR);
 }
 
 // Execute reverse instructions
 void white_move(struct DC_motor *mL, struct DC_motor *mR)
 {
-    // First Turn back
-    PrepareForTurn(mL,mR);
-    for(char i=0;i<4;i++) TurnLeft(mL,mR);
+    // First Turn back 180
+    blue_move(mL,mR);
     
     //Loop through the two lists  - first time then function pointer
     unsigned int temp_time;
@@ -150,16 +150,19 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
         //Move car forward for specified time and stop
         move_forward(mL,mR,temp_time); 
         stop(mL,mR);
+        __delay_ms(1000); // Just some slack
         
-        //Execute function in function pointer 
-        temp_func = get_function_ptr();
-        temp_func(mL,mR);
-
+        if (func_index > 0){
+            //Execute function in function pointer 
+            temp_func = get_function_ptr();
+            temp_func(mL,mR);
+        }
+      
         __delay_ms(1000); // Just some slack
     }
     stop(mL,mR); 
-    end_motion = 1; // End motion
     LightTest(); // Flash lights to signify end
+    end_motion = 1;
 }
 
 /*************Functions for Function Pointer and Timing arrays****************/
