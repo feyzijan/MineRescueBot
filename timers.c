@@ -6,7 +6,6 @@
 
 extern unsigned int timer0val;
 
-/****** Timer0 Functions *********/
 
 void Timer0_init() 
 {
@@ -27,8 +26,6 @@ void getTMR0_in_ms(void){
     timer0val = temp * 2  + temp / 21  ; // each bit is 2.048ms
     add_timing(timer0val);
 }
-
-
 
 void ResetTMR0(void){
     TMR0H = 0; // Must set TMR0H first

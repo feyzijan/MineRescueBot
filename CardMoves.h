@@ -14,24 +14,24 @@
 // Define function pointer type
 typedef void (*card_func)(struct DC_motor *, struct DC_motor *);
 
-
-// List of times that we moved forward by
-int timeList[30];
-
-char time_index;
-
-// Array of functions to call
+// Array of functions to call during reverse operation
+// Each function call is a "complement" of the color card that is read
 card_func funcPtrList[30];
 char func_index;
 
-char end_motion; //signifies motion has ended
+
+// List of times that we moved forward by
+// This is automatically incremented when we call getTMR0()
+int timeList[30];
+char time_index;
+
+// Both indices update automatically with their getter/setter functions
 
 
 /*************************  Function Prototypes ********************************/
 
 //***************** Functions for color cards
 
- 
 /*******************************************************************
  * Function that calls the appropriate move function based on the color
  * And appends the color to a list that can later be reversed
@@ -76,8 +76,11 @@ void lightblue_move(struct DC_motor *mL, struct DC_motor *mR);
 
 
 /**********  White Card: Go back to Start ***************/
-/* This function loops backwards through the list of colours stored in move_list 
- * to get back to the start condition */
+/* This function loops backwards through timeList and funcPtrList sequentially
+ * First turns buggy 180, then reads times and functions from the end of the list
+ * Moves forward by the time logged in the timeList, then performs function in the
+ * function list to get back to the starting point
+ */
 void white_move(struct DC_motor *mL, struct DC_motor *mR);
 
 

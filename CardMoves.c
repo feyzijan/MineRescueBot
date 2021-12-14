@@ -4,24 +4,17 @@
 #include "timers.h"
 
 /*TODO:
- *  Figure out how to reverse the "reverse one square" stuff
- * Try to stop using  global variables
+ *  
  */
 
-// Global variables take up lot of memory
-// data flow in program
 
-
-//Initialise variabels
+//Initialise variables
 int timeList[30];
 char time_index = 0;
 
 // Array of functions to call
 card_func funcPtrList[30];
 char func_index = 0;
-
-char end_motion = 0; // Flag
-
 
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
     if (color == 8 ){ // White
@@ -134,17 +127,15 @@ void reverse_pink_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 // Execute reverse instructions
-void white_move(struct DC_motor *mL, struct DC_motor *mR)
-{
-    // First Turn back 180
-    blue_move(mL,mR);
+void white_move(struct DC_motor *mL, struct DC_motor *mR){
     
-    //Loop through the two lists  - first time then function pointer
-    unsigned int temp_time;
+    blue_move(mL,mR); // First Turn back 180
+
+    unsigned int temp_time; 
     card_func temp_func;
     
-    while(time_index >= 0){ // Note that indexes auto decrement
-    //while(func_index >= 0){
+    //Loop through the two lists sequentially and move, starting with timer list
+    while(time_index >= 0){
         temp_time = get_timing(); // get the last movement time 
         
         //Move car forward for specified time and stop
@@ -162,7 +153,6 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR)
     }
     stop(mL,mR); 
     LightTest(); // Flash lights to signify end
-    end_motion = 1;
 }
 
 /*************Functions for Function Pointer and Timing arrays****************/

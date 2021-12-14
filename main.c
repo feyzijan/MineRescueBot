@@ -63,7 +63,7 @@ void main(void){
     LightOn(); 
     Interrupts_init();
      
-    char color_main;
+    char color_detected = 0;
     while(1){
     
         //Manually Re-enable interrupt if it prematurely clears
@@ -90,7 +90,7 @@ void main(void){
            color_click_interrupt_init();
            
            color_flag = 0;
-           while(!end_motion){ // Use flag that is set to 1 with final card
+           while(color_detected != 8){ // Not white colour
                 // Step 1: Forward Motion
                 ResetTMR0();//Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
@@ -100,12 +100,12 @@ void main(void){
                 //Step 2: Stop buggy and read card
                 stop(mL,mR); // May put this in Interrupt Routine for added accuracy
                 __delay_ms(250); // Wait for readings to stabilize
-                color_main = decide_color();
+                color_detected = decide_color();
                 __delay_ms(500);
                 color_flag = 0;
                 
                 //Step 3: Pick and execute appropriate move
-                pick_move(color_main, mL,mR); // Execute needed motion and update motion memory
+                pick_move(color_detected, mL,mR); // Execute needed motion and update motion memory
                 
                 //Step 4: Re-enable clicker interrupt 
                 color_click_interrupt_init();

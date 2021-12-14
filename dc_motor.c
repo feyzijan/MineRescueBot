@@ -2,8 +2,10 @@
 #include "dc_motor.h"
 
 
-int turning_time = 114; //45 degree turn time
-int reverse_time = 1900; // Reverse_square time
+int turning_time = 114; //45 degree turn time 
+int reverse_time = 1880; // Reverse_square time
+
+char peak_power = 25; // Toggle to increase speed 
 
 void initDCmotorsPWM(int PWMperiod){
     // Timer 2 Configuration for PWM
@@ -78,7 +80,7 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
     mR->direction = 0;
     setMotorPWM(mR);
     setMotorPWM(mL);
-    while ((mL->power + mR->power) < 140){ // Increment values gradually up to 40+25 each
+    while ((mL->power + mR->power) < (80 + 2* peak_power) ){ // Increment values gradually up to 40+25 each
         mL->power = mL->power + 5;   
         mR->power = mR->power + 5;
         setMotorPWM(mR);
@@ -94,7 +96,7 @@ void move_forward(struct DC_motor *mL, struct DC_motor *mR, unsigned int duratio
     mR->direction = 1;
     setMotorPWM(mR);
     setMotorPWM(mL);
-    while ((mL->power + mR->power) < 60){ // Increment values gradually up to 25 each
+    while ((mL->power + mR->power) < (2*peak_power)){ // Increment values gradually up to 25 each
         mR->power = mR->power + 5;
         mL->power = mL->power + 5 ;
         setMotorPWM(mL);

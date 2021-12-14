@@ -18,12 +18,17 @@
 
 /*************************  Variable Prototypes ********************************/
 
+char peak_power; 
+/* Toggle this variable in dc_motor.c to modify vehicle speed
+ * Note that this only effects forward and reverse operation speed, not turning
+ * Don't exceed 60, as back wheels get 40 + peak_power power to operate properly
+ * !!Don't forget to update/calibrate reverse_time appropriately!!
+ */
 
-int turning_time; // time (in ms) needed for a 45 degree turn (320 for Room-749 surface)
-//Can be updated anywhere
+int turning_time; // Time(ms) needed for a 45 degree turn 
 
-int reverse_time; // Time(in ms) required for reverse one square
-//Must be updated inside the main loop if it'll be used there
+int reverse_time; // Time(ms) needed to reverse one square
+
 
 // Definition of DC_motor structure
 struct DC_motor { 

@@ -7,7 +7,7 @@
 
 
 /* TODO: 
- * 
+ * Test removing timer0val declaration from timers.c 
  */
 
 
@@ -17,7 +17,6 @@ unsigned int timer0val;
 
 
 /*************************  Function Prototypes ********************************/
-//******** Timer0 Functions
 
 /***********
  * Function to initialise Timer0
