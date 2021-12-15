@@ -12,7 +12,9 @@
 void Interrupts_init(void)
 {
     INTCONbits.IPEN = 1; // Interrupt Priority Levels: Enable
-    //PIE0bits.TMR0IE = 1; //TMR0 Interrupt: Enable
+   
+    PIE0bits.TMR0IE = 1; // Enable TMR0 interrupt
+    IPR0bits.TMR0IP = 1; // Set TMR0 IP: To high
     
     //****Clicker Interrupt Initialisations
     TRISBbits.TRISB0 = 1; // Pin RB0: Input(1)
@@ -33,16 +35,26 @@ void Interrupts_init(void)
 /************************************
  * High priority interrupt service routine for:
  * Clicker Interrupt
+ * Timer0 interrupt
  ************************************/
 void __interrupt(high_priority) HighISR()
 {    
     //Colour Clicker RGBC Clear Channel Interrupt
     if(PIR0bits.INT0IF){
-        getTMR0_in_ms(); // Log movement duration in memory
         BrakeLight = 1; // Testing 
-        color_flag = 1; // Color_flag to indicate color reading with LED - //Testing
-        color_click_interrupt_off(); // Turn off clicker interrupt(also clears it)
+        color_flag = 1; // Flag set so main loop can stop motion and read colour
+        color_click_interrupt_off(); // Turn off (and clear) clicker interrupt
         PIR0bits.INT0IF = 0; // Clear Interrupt Flag
+        getTMR0_in_ms(); // Log movement duration in memory
     }
+    // Timer0 interrupt to return home after not having read a card in 67 seconds
+    if(PIR0bits.TMR0IF == 1) { 
+        lost_flag = 1; // Flag set so main.c can call white_move
+        PIR0bits.TMR0IF = 0; // Clear interrupt flag
+        PIE0bits.TMR0IE = 0; // Disable TMR0 interrupt
+    }
+    
+    
+    
 }
 

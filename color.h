@@ -7,7 +7,7 @@
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
 /* TODO:  
- * Update LED_cross_talk to be a constant
+ * Use cross talk in function and not as a global variable
  * 
  ******************************************************************************/
 
@@ -24,7 +24,9 @@
 /*************************  Variable Prototypes ********************************/
 
 unsigned int int_low, int_high; // Interrupt thresholds
-int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values (pre-calculated)
+//Cross talk values (pre-calculated) - Clear Red Green Blue
+// These values are constant (for 1x Gain and 42 Integration Cycles )
+int LED_cross_talk[4] = {993 ,484 ,268,183}; //
 
 /*************************  Function Prototypes ********************************/
 

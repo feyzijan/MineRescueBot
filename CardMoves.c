@@ -2,6 +2,7 @@
 #include "CardMoves.h"
 #include "dc_motor.h"
 #include "timers.h"
+#include "interrupts.h"
 
 /*TODO:
  *  
@@ -17,8 +18,12 @@ card_func funcPtrList[30];
 char func_index = 0;
 
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
-    if (color == 8 ){ // White
-        white_move(mL,mR); // pass move list so you can revert it 
+    if (color == 8 ){ // White 
+        white_move(mL,mR);  
+    } else if (color == 9) { // Black
+        LightTest(); // Signify it hit a wall
+        LightTest();
+        white_move(mL,mR); // Try to go back gome
     } else {
         if(color == 1){ // Red
             add_function_ptr(&green_move);
@@ -47,8 +52,6 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
         } else if (color == 7){ // Light Blue
             add_function_ptr(&orange_move);
             lightblue_move(mL,mR);
-        } else{ // No color detected
-            __delay_ms(1); // placeholder
         }
     }
 }
@@ -135,7 +138,7 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR){
     card_func temp_func;
     
     //Loop through the two lists sequentially and move, starting with timer list
-    while(time_index >= 0){
+    while(time_index > 0){
         temp_time = get_timing(); // get the last movement time 
         
         //Move car forward for specified time and stop
@@ -147,11 +150,11 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR){
             //Execute function in function pointer 
             temp_func = get_function_ptr();
             temp_func(mL,mR);
+            stop(mL,mR);
         }
-      
         __delay_ms(1000); // Just some slack
     }
-    stop(mL,mR); 
+    stop(mL,mR);
     LightTest(); // Flash lights to signify end
 }
 

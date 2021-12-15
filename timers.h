@@ -21,7 +21,7 @@ unsigned int timer0val;
 /***********
  * Function to initialise Timer0
  * Used to time buggy movements
- * Overflows in 134 seconds, 1 bit = 2.048ms
+ * Overflows in ~67.1 seconds, 1 bit = 1.024ms
  ***********/
 void Timer0_init(void);
 

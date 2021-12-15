@@ -2,8 +2,8 @@
 #include "dc_motor.h"
 
 
-int turning_time = 114; //45 degree turn time 
-int reverse_time = 1880; // Reverse_square time
+int turning_time = 116; // 45 degree turn time 
+int reverse_time = 2600; // Reverse_square time
 
 char peak_power = 25; // Toggle to increase speed 
 
@@ -86,6 +86,13 @@ void move_backward(struct DC_motor *mL, struct DC_motor *mR, unsigned int durati
         setMotorPWM(mR);
         setMotorPWM(mL);
     }
+    
+    // Add some extra power to make it move instep with forward function
+    mL->power = mL->power + 2;   
+    mR->power = mR->power + 2;
+    setMotorPWM(mR);
+    setMotorPWM(mL);
+    
     custom_delay_ms(duration);
 }
 
@@ -114,7 +121,7 @@ void reverse_square(struct DC_motor *mL, struct DC_motor *mR){
 
 
 void forward_square(struct DC_motor *mL, struct DC_motor *mR){
-    move_forward(mL,mR,reverse_time);
+    move_forward(mL,mR,reverse_time); 
     stop(mL,mR);
     __delay_ms(250); // Time to stabilise 
 }
@@ -173,7 +180,7 @@ void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
     while(!(ButtonRF3 && ButtonRF2)){ // Press both buttons to exit calibration
         // Try turning 180 degrees in 4 motions
         PrepareForTurn(mL,mR);
-        for(int k = 0; k<4; k++){
+        for(char k = 0; k<4; k++){
             TurnLeft(mL,mR);
         }
         
@@ -210,11 +217,11 @@ void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR){
         __delay_ms(1000);
         if(ButtonRF2 && ButtonRF3){ // No change
             LED1 = LED2 = 1;
-        } else if(ButtonRF2){
-            reverse_time  -=  100; //2.5% Decrease
+        } else if(ButtonRF2){ // Decrease time
+            reverse_time  -=  50;
             LED1 = 1;
-        } else if(ButtonRF3){
-            reverse_time  +=  100; //2.5% Increase
+        } else if(ButtonRF3){ // Increase time
+            reverse_time  +=  50; 
             LED2 = 1;
         }
         __delay_ms(1500); // Have one second to exit Calibration

@@ -14,10 +14,8 @@
 
 
 /*****Variables for Testing only****/
-char timer_flag; // doesnt work when I put in extern for some reason
+char lost_flag; // Flag set with Timer0 interrupt - tells buggy to try to go home
 char color_flag; // Flag that is set with clicker interrupt - to display color reading with LED
-
-
 
 
 /*************************  Function Prototypes ********************************/

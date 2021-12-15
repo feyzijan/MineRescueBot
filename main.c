@@ -13,7 +13,6 @@
 #include "timers.h"
 #include "interrupts.h"
 #include "CardMoves.h"
-#include <stdio.h>
 
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
@@ -26,7 +25,7 @@ void main(void){
     //Initialisations 
     color_click_init();
     LEDs_buttons_init();
-    Timer0_init();
+
     
     //********************** Motor Initialisation ****************************//                             
     //Initialise Motor structs and pointers 
@@ -49,39 +48,25 @@ void main(void){
  
     initDCmotorsPWM(199); //Initialise PWM module  
     stop(mL,mR);
-    //************************************************************************//
-  
+    //************************************************************************//   
+    
     //**** Calibration Functions - Detailed instructions in header files *****//
-    //interrupt_threshold_calibrate();
+    interrupt_threshold_calibrate();
     //__delay_ms(1000);
     //CalibrateTurns(mL,mR);
     //__delay_ms(1000);
     //CalibrateReverseSquare(mL,mR);
     //__delay_ms(1000);
     //************************************************************************//
-
+       
     LightOn(); 
     Interrupts_init();
      
     char color_detected = 0;
     while(1){
     
-        //Manually Re-enable interrupt if it prematurely clears
+        //Manually Re-enable interrupt while checking it works
         if (ButtonRF3) color_click_interrupt_init(); 
-        
-        /*
-        if (color_flag){
-            color_main = decide_color();
-            LED1 = 0;
-            for (int i=0;i<color_main;i++){
-                LED1 = 1;
-                __delay_ms(250);
-                LED1 = 0;
-                __delay_ms(250);
-            }
-            color_flag = 0;
-        }
-        */
         
         //************************ Main Operating Loop ************************//
         if(ButtonRF2){// Wait for Button press to start - For Testing
@@ -90,25 +75,36 @@ void main(void){
            color_click_interrupt_init();
            
            color_flag = 0;
-           while(color_detected != 8){ // Not white colour
+           lost_flag = 0;
+           Timer0_init();
+           
+           // Not told to go home in any way
+           while(!lost_flag && color_detected <8){ // 
                 // Step 1: Forward Motion
                 ResetTMR0();//Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
                 
-                while(!color_flag); // Continue motion until clicker triggers this flag
-                
-                //Step 2: Stop buggy and read card
-                stop(mL,mR); // May put this in Interrupt Routine for added accuracy
-                __delay_ms(250); // Wait for readings to stabilize
-                color_detected = decide_color();
-                __delay_ms(500);
-                color_flag = 0;
-                
-                //Step 3: Pick and execute appropriate move
-                pick_move(color_detected, mL,mR); // Execute needed motion and update motion memory
-                
-                //Step 4: Re-enable clicker interrupt 
-                color_click_interrupt_init();
+                // Continue motion until a flag is triggered 
+                while(!color_flag && !lost_flag); 
+                            
+                if(lost_flag) stop(mL,mR); // TMR0 overflow: buggy lost go home
+
+                if(color_flag){
+                    ResetTMR0(); // Reset to prevent unwanted overflow
+                    //Step 2: Stop buggy and read card
+                    stop(mL,mR); // May put this in Interrupt Routine for added accuracy
+                    __delay_ms(250); // Wait for readings to stabilize
+                    color_detected = decide_color();
+
+                    __delay_ms(500);
+                    color_flag = 0;
+
+                    //Step 3: Pick and execute appropriate move
+                    pick_move(color_detected, mL,mR); // Execute needed motion and update motion memory
+
+                    //Step 4: Re-enable clicker interrupt 
+                    color_click_interrupt_init();
+                    }
             }
         }
         

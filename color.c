@@ -1,13 +1,10 @@
 #include <xc.h>
 #include "color.h"
 #include "i2c.h"
-#include <stdio.h>
 #include "LEDsButtons.h"
 #include "interrupts.h"
 
-//extern unsigned int int_low, int_high; // Not needed here
-
-unsigned int int_high = 3000;
+unsigned int int_high = 3000; // Prospective value that tends to work well
 unsigned int int_low = 0;
 
 void color_click_init(void) {
@@ -56,30 +53,31 @@ void interrupt_threshold_calibrate(void) {
     
     __delay_ms(500);
     LightOn();
-    int amb_and_LED;
+    unsigned int amb_and_LED;
+    unsigned int black;
     
     while (!ButtonRF3); //Wait for button press)
     LightTest();  // Indicate procedure has started
-    unsigned int clear = color_read(0x14); // Read clear channel for blue card
-    int_high = clear;
+    int_high = color_read(0x14); // Read clear channel for blue card
     
     
     while (!ButtonRF3); 
     LightTest(); 
-    clear = color_read(0x14); // Read clear channel for ambient
-    amb_and_LED = clear;    
-    
+    amb_and_LED = color_read(0x14); // Read clear channel for ambient
+   
+
     while (!ButtonRF3); 
     LightTest(); 
-    clear = color_read(0x14); // Read clear channel for black card
+    black = color_read(0x14); // Read clear channel for black card
     
-    // Assign low threshold to ambient or black reading, whichever lowest
-    if(clear<amb_and_LED){int_low=clear+(clear/20);}
-    else{int_low=0;}
+    // If black card registers a lower value, set that + 5% tolerance as int_low
+    if(black < amb_and_LED){
+        int_low= black - black/20;
+    } else{int_low=0;}
     
- 
+    
     //Uncomment below line to effectvely disable black color recognition
-    //int_low = 0; 
+    //int_low = 0;
 
     while (!ButtonRF3); // Wait for button press to exit calibration   
     LightTest(); // Toggle Light to indicate end of Calibration
@@ -138,7 +136,7 @@ void read_All_Colors(unsigned int *writeArray){
 char decide_color(void){
     // Initialise temporary local variables
     char color_decision;
-    int black_threshold;
+    unsigned int black_threshold;
     unsigned int LED_and_ambient[4];
     unsigned int ambient[4];
     
@@ -152,24 +150,26 @@ char decide_color(void){
     LightOff(); 
     __delay_ms(500);
     read_All_Colors(ambient);
-  
+    
     // Correct the readings to remove ambient and LED cross_talk
+    // These are __int24 as they need to be multiplied by 100 below for % values
     __int24 clear_real = LED_and_ambient[0]- ambient[0]- LED_cross_talk[0];
     __int24 red_real   = LED_and_ambient[1]- ambient[1]- LED_cross_talk[1];
     __int24 green_real = LED_and_ambient[2]- ambient[2]- LED_cross_talk[2];
-    __int24 blue_real  = LED_and_ambient[3]- ambient[3]- LED_cross_talk[3];
-        
+    __int24 blue_real  = LED_and_ambient[3]- ambient[3]- LED_cross_talk[3];    
+    
+    
     // Calculate RGB values as percentage of clear channel
     char redPercentage = (100*red_real)/ clear_real;
     char greenPercentage = (100*green_real) / clear_real;
+    // error here
     char bluePercentage = (100*blue_real) / clear_real;
-    
-    // Implement Decision Procedure
 
-    if (black_threshold <= int_low){ // First check if Black
-        color_decision=9;
-    } 
-    else if (redPercentage >= 65){ // Red or Orange
+    // Implement Decision Procedure
+    
+    //if (black_threshold <= int_low){
+      //  color_decision=9; // Black
+    if (redPercentage >= 65){ // Red or Orange
         if(greenPercentage<11){
             color_decision = 1;  //Red
         } else {
@@ -196,9 +196,10 @@ char decide_color(void){
         } else {
             color_decision = 2; // Green
         }
-    } else{
-        color_decision = 0; // No color detected
-    }  
+    } else {
+        //color_decision=9; // Black 
+        color_decision=0;
+    }
     LightOn();
     return color_decision; 
 }

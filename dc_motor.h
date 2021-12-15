@@ -29,6 +29,13 @@ int turning_time; // Time(ms) needed for a 45 degree turn
 
 int reverse_time; // Time(ms) needed to reverse one square
 
+/* Suggested reverse_time and power combinations (CAGB Floor)
+ * 25:3300 - 30:1880
+ * 
+ * Suggested additions to backward power : 2 for 25 peak power
+ * 
+ */
+
 
 // Definition of DC_motor structure
 struct DC_motor { 
