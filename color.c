@@ -162,14 +162,13 @@ char decide_color(void){
     // Calculate RGB values as percentage of clear channel
     char redPercentage = (100*red_real)/ clear_real;
     char greenPercentage = (100*green_real) / clear_real;
-    // error here
     char bluePercentage = (100*blue_real) / clear_real;
 
     // Implement Decision Procedure
     
-    //if (black_threshold <= int_low){
-      //  color_decision=9; // Black
-    if (redPercentage >= 65){ // Red or Orange
+    if (black_threshold <= int_low){
+       color_decision=9; // Black
+    }else if (redPercentage >= 65){ // Red or Orange
         if(greenPercentage<11){
             color_decision = 1;  //Red
         } else {
@@ -197,7 +196,6 @@ char decide_color(void){
             color_decision = 2; // Green
         }
     } else {
-        //color_decision=9; // Black 
         color_decision=0;
     }
     LightOn();
