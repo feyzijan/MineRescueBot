@@ -95,11 +95,11 @@ All these scenarious make the buggy react as if it saw a white card
 
 **2. The lost_flag is set due to TMR0 overflow**
  - When the time spent in forward motion without detecting any card exceeds a predetermined value (~67s with current configurations) the buggy will go back home
- - This would be useful in scenarious where the person laying the color cards was uanble to place the next card and the buggy just goes on moving forward forever
- - If the white card was taken out (and the black color detection was disabled) this would make the buggy go home
- - If the buggy goes on an infinite drive in an open valley this would prevent that infinite drive and make it go home
+ - This would be useful in scenarious where the person laying the color cards was unable to place the next card and the buggy just goes on moving forward forever
+ - If the white card was taken out (and the black color detection was disabled) this would make the buggy go home some time after hitting the wall
+ - If the buggy were directed to go on an infinite drive through the desert this would stop that pleasant drive after some time and make it go home
 
-The timing can be configured by changing the TMR0 prescaler - !! You must change the operation that converts TMR0 bits to miliseconds to be stored in this case!! 
+The timing can be configured by changing the TMR0 prescaler - !! You must change the operation in getTMR0_in_ms() that converts TMR0 bits to miliseconds to be stored in this case!! 
 
 
 **3. The lost_flag is set due to Function Memory overlow**
