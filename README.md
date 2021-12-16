@@ -21,15 +21,15 @@
 
 CalibrateTurns function is used to modify the global variable turning_time to achieve accurate turns
 Procedure:
- -Lights flash to indicate start of calibration
+ - Lights flash to indicate start of calibration
  
- -The buggy then performs a 180 turn - User has 4 options
+ - The buggy then performs a 180 turn - User has 4 options
  
- 1.Car turns too much -> Hold Button RF2: Decrease turning_time
+ 1. Car turns too much -> Hold Button RF2: Decrease turning_time
  
- 2.Car turns too little -> Hold Button RF3: Increase turning_time
+ 2. Car turns too little -> Hold Button RF3: Increase turning_time
  
- 3.Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ 3. Want to see again? -> Hold Button RF2 and RF3 simultaneously
  
  --- Buttons must be held till respective LED flashes---
  
@@ -43,15 +43,15 @@ CalibrateReverseSquare function is used to modify the global variable reverse_ti
 
 Procedure:
 
- -Lights flash to indicate start of calibration
+ - Lights flash to indicate start of calibration
  
- -The buggy then performs a reverse_square move - User has 4 options
+ - The buggy then performs a reverse_square move - User has 4 options
  
- 1.Car moves too much -> Hold Button RF2: Decrease turning_time
+ 1. Car moves too much -> Hold Button RF2: Decrease turning_time
  
- 2.Car moves too little -> Hold Button RF3: Increase turning_time
+ 2. Car moves too little -> Hold Button RF3: Increase turning_time
  
- 3.Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ 3. Want to see again? -> Hold Button RF2 and RF3 simultaneously
  
   -- Buttons must be held till respective LED flashes --
   
