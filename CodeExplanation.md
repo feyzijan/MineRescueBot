@@ -85,6 +85,15 @@ AJAY INSERT IMAGE HERE
 - Then each common color is distinguished based on the other normalised color channels with distinguishable differences
 - A value from 1-9 is returned by the **decide_color()** which corresponds to a specific colour
 
+## Calibration Procedures
 
+
+## Journey Memory
+
+
+## Interrupt Procedure
+
+
+## Motor Moves
 
 
