@@ -151,7 +151,7 @@ char decide_color(void){
             color_decision = 6; // Orange
         } 
     } else if(redPercentage < 65 && redPercentage >= 52){ // Yellow or Pink
-        if (greenPercentage >=29 && bluePercentage < 21){ //greenPercentage>30
+        if (greenPercentage >=29 && bluePercentage < 21){ 
             color_decision = 4; // Yellow
         } else { 
             color_decision = 5; // Pink
@@ -162,8 +162,8 @@ char decide_color(void){
         } else {
             color_decision = 7; // Light blue
         }
-    } else if(redPercentage <35 && redPercentage >= 15){   // Blue or green  //redPercentage >= 20  
-        if (bluePercentage>=30){ //bluePercentage>=29
+    } else if(redPercentage <35 && redPercentage >= 15){  
+        if (bluePercentage>=30){ 
             color_decision = 3; // Blue
         } else {
             color_decision = 2; // Green
