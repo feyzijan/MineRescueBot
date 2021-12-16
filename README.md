@@ -19,7 +19,7 @@
 
 ## Motor Calibrations
 
-CalibrateTurns function is used to modify the global variable turning_time to achieve accurate turns
+**CalibrateTurns** function is used to modify the global variable turning_time to achieve accurate turns
 Procedure:
  - Lights flash to indicate start of calibration
  
@@ -39,7 +39,7 @@ Procedure:
 
 
 
-CalibrateReverseSquare function is used to modify the global variable reverse_time to achieve accurate turns
+**CalibrateReverseSquare** function is used to modify the global variable reverse_time to achieve accurate turns
 
 Procedure:
 
