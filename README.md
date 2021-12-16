@@ -175,8 +175,11 @@ The timing can be configured by changing the TMR0 prescaler - !! You must change
 We believe we have met all the objectives of the challenge bried outlined below.
 
 ## Performance 
+Video of Maze3 Performance
 https://imperiallondon-my.sharepoint.com/:v:/g/personal/fce19_ic_ac_uk/ESVhCReK7ClBoqI6i86UBuMB2svlf2nOec0hTsIo9OmWWQ?e=3URy1B
-Video of Maze3
+Video of Maze2 Performance
+https://imperiallondon-my.sharepoint.com/:v:/g/personal/fce19_ic_ac_uk/ERobOBb5J5ZGrGsr6G4VQeQBHswFRX8Q2XBU6sOURCF48g?e=KN85v6
+
 
 ## Challenge brief
 
