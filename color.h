@@ -8,12 +8,6 @@
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-/* TODO:  
- * Use cross talk in function and not as a global variable
- * 
- ******************************************************************************/
-
-
 /* Color Values
  * 1:Red    5: Pink
  * 2:Green  6: Orange 
@@ -22,86 +16,80 @@
  * 9: Black       
  */
 
-
 /*************************  Variable Prototypes ********************************/
 
-unsigned int int_low, int_high; // Interrupt thresholds
-//Cross talk values (pre-calculated) - Clear Red Green Blue
-// These values are constant (for 1x Gain and 42 Integration Cycles )
-int LED_cross_talk[4] = {993 ,484 ,268,183}; //
+unsigned int int_low, int_high; // Interrupt thresholds - Calibrated
 
 /*************************  Function Prototypes ********************************/
 
 
-/********************************************//**
- *  Function to initialise the colour click module using I2C
- ***********************************************/
+/***************
+ * Function to initialise the colour click module using I2C
+ ***************/
 void color_click_init(void);
 
-/**********************************************
- *  Function to write necessary bytes via I2C to clicker for interrupt
- ***********************************************/
+
+/***********
+ * Function to initialise clicker interrupt
+ * Uses global variables int_low and int_high as lower, upper thresholds
+ ***********/
 void color_click_interrupt_init(void);
 
 
-/**********************************************
- *  Function to turn off clicker interrupt 
- ***********************************************/
+/*************
+ * Function to clear and turn off clicker interrupt 
+ *************/
 void color_click_interrupt_off(void);
-
 
 /***********************************************
  * Function to clear the RGBC interrupt in the clicker
  ***********************************************/
 void color_int_clear(void);
 
-/********************************************//**
- *  Function to write to the colour click module
- *  address is the register within the colour click to write to
- *	value is the value that will be written to that address
+
+/**********************************************
+ * Function to calibrate interrupt thresholds
+ * Calibrate interrupt threshold instructions:
+ * 1. Hold blue card up perpendicular in front of buggy with a few cm gap
+ * 2. Press the left button (RF3) and wait 1s
+ * 3. Place buggy in ambient conditions (no cards/walls), press RF3, and wait 1s
+ * 4. Hold black card ~7 cm away from buggy and press the button again, wait 1s
+ * 6. Press left button again to end calibration
  ***********************************************/
+void interrupt_threshold_calibrate(void);
+
+
+/****************
+ *  Function to write to the colour click module
+ *  Input "address" is the register within the colour click to write to
+ *	Input "value" is the value that will be written to that address
+ ****************/
 void color_writetoaddr(char address, char value);
 
 
-/********************************************//**
- *  Function to read the red channel
- *	Returns a 16 bit ADC value representing colour intensity
- ***********************************************/
+/***************
+ * Function to read the channel for a colour
+ * Input address is the register address of the low byte of the colour	
+ * Returns a 16 bit ADC value representing colour intensity
+ ***************/
 unsigned int color_read(unsigned char address);
 
 
-/**********************************************
- *  Function that calls color_read for all four RGBC channels
- ***********************************************/
-//void read_All_Colors(void);
 
+/**********************************************
+ *  Function to read all colours and store them in inputted array
+ ***********************************************/
+void read_All_Colors(unsigned int *writeArray);
 
 /*****************
- * Function to take RGBC channel readings and return a 
- * a char corresponding to the color
+ * Function to take RGBC channel readings and decide on coluor
+ * Returns a number signifying colour
+ * Takes readings with LED On and Off, employs normalisation as %clear channel
+ * And decides on colours based on %Composition - Details in ReadMe
  ******************/
 char decide_color(void);
 
 
-/**********************************************
- *  Function that calls color_read for all four RGBC channels
- ***********************************************/
-void read_All_Colors(unsigned int *writeArray);
-
-
-
-/**********************************************
- * Function to calibrate interrupt thresholds
-// Calibrate interrupt threshold instructions:
-    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
-    // 2. press the left button (RF3)
-    // 3. Leave blue card in front of buggy for at least a second
-    // 4. Remove blue card and press button and wait for at least one second
-    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
-    // 6. Remove the black card
-    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
- ***********************************************/
-void interrupt_threshold_calibrate(void);
 
 
 #endif

@@ -13,16 +13,16 @@
 #include "timers.h"
 #include "interrupts.h"
 #include "CardMoves.h"
+#include "Memory.h"
 
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-// Testing that commits now go to main
 
 void main(void){
     
     //Initialisations 
     color_click_init();
-    LEDs_buttons_init();
+    LEDs_Buttons_init();
 
     //********************** Motor Initialisation ****************************//                             
     //Initialise Motor structs and pointers 
@@ -48,12 +48,12 @@ void main(void){
     //************************************************************************//   
     
     //**** Calibration Functions - Detailed instructions in header files *****//
-    //interrupt_threshold_calibrate();
-    //__delay_ms(1000);
-    //CalibrateTurns(mL,mR);
-    //__delay_ms(1000);
-    //CalibrateReverseSquare(mL,mR);
-    //__delay_ms(1000);
+    interrupt_threshold_calibrate();
+    __delay_ms(1000);
+    CalibrateTurns(mL,mR);
+    __delay_ms(1000);
+    CalibrateReverseSquare(mL,mR);
+    __delay_ms(1000);
     //************************************************************************//
        
     LightOn();
@@ -62,44 +62,43 @@ void main(void){
     char color_detected = 0;
     while(1){
     
-        //Manually Re-enable interrupt while checking it works
+        // Manually Re-enable interrupt while checking Calibration
         if (ButtonRF3) color_click_interrupt_init(); 
         
         //************************ Main Operating Loop ************************//
-        if(ButtonRF2){// Wait for Button press to start - For Testing
-           color_click_interrupt_off();
-           LightOn();
-           color_click_interrupt_init();
+        if(ButtonRF2){// Press Button to start Mission!
            
-           color_flag = 0;
+           color_click_interrupt_off();  
+           LightOn();
+           color_click_interrupt_init(); // Re-initialise interrupt
+           
+           color_flag = 0; // Set flags to 0
            lost_flag = 0;
            Timer0_init();
            
-           // Not told to go home in any way
-           while(color_detected <8){ 
+           
+           while(color_detected <8){ // Not told to go home in any way
                 // Step 1: Forward Motion
-                ResetTMR0();//Start timer to time movement duration
+                ResetTMR0();// Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
                 
-                // Continue motion until a flag is set
+                // Continue motion until an interrupt is raised and a flag set
                 while(!color_flag && !lost_flag); 
                             
                 if(color_flag){ // Clicker Interrupt: Read Card and Move On
-                    //ResetTMR0(); // Start timing the forward motion
                     
                     //Step 2: Stop buggy and read card
                     stop(mL,mR);
-                    __delay_ms(250); // Wait for readings to stabilize
+                    __delay_ms(250); // Wait for readings to stabilise
                     color_detected = decide_color();
+                    color_flag = 0; 
 
-                    __delay_ms(500);
-                    color_flag = 0;
-
-                    //Step 3: Pick and execute appropriate move, update memory
+                    //Step 3: Pick and execute appropriate move & update memory
                     pick_move(color_detected, mL,mR); 
 
-                    //Step 4: Re-enable clicker interrupt 
+                    //Step 4: Re-enable clicker interrupt and move on
                     color_click_interrupt_init();
+            
                 } else {// LostFlag set via TMR0 overflow or memory overflow
                     stop(mL,mR);
                     getTMR0_in_ms(); // Log movement duration in memory
@@ -107,7 +106,6 @@ void main(void){
                     pick_move(8, mL,mR);  // Buggy lost- go home
                 } 
             }
-        }
-        
+        }    
     }
 }

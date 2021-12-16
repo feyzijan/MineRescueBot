@@ -5,11 +5,6 @@
 
 #define _XTAL_FREQ 64000000
 
-/* TODO: 
- * Rename Lighttest
- * Rename file
- */
-
 
 // Define all LED pins for ease of reference
 #define RedLight LATGbits.LATG0
@@ -27,13 +22,12 @@
 
 /*************************  Function Prototypes ********************************/
 
-
 /************
- * Function to set all LED pins as output and set output to zero
- * And configure buttons RF2 and RF3
+ * Function to initialise all Leds and Buttons
+ * Set all LED pins as outpus and sets output to zero
+ * Set Buttons as analogue inputs
  ************/
-void LEDs_buttons_init(void);
-
+void LEDs_Buttons_init(void);
 
 
 /************
@@ -47,10 +41,12 @@ void LightOn(void);
  ************/
 void LightOff(void);
 
+
 /*************
- * Function to test that LEDs work by toggling them on/off twice 
+ * Function to toggle LED1, LED2, and brake lights
+ * Used to signal stages of calibration, and the motion's end
  *************/
-void LightTest(void);
+void LightsToggle(void);
 
 
 #endif

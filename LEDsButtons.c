@@ -2,7 +2,7 @@
 #include "LEDsButtons.h"
 
 
-void LEDs_buttons_init(void){
+void LEDs_Buttons_init(void){
     //Set all LED pins as output
     TRISGbits.TRISG0 = 0; 
     TRISEbits.TRISE7 = 0; 
@@ -27,12 +27,11 @@ void LEDs_buttons_init(void){
     LeftLamp = 0;
     RightLamp = 0;
   
-    // Button RF2 and RF3 
+    // Button RF2 and RF3 Initialisation
     TRISFbits.TRISF2=1; 
     ANSELFbits.ANSELF2=0;
     TRISFbits.TRISF3=1; 
     ANSELFbits.ANSELF3=0; 
-    
 }
 
 
@@ -49,7 +48,7 @@ void LightOff(void){
 }
 
 
-void LightTest(void){
+void LightsToggle(void){
     for(char i=0; i <4;i++){
         LED1 = !LED1;
         LED2 = !LED2;

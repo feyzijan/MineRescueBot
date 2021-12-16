@@ -1,26 +1,20 @@
 #include <xc.h>
 #include "interrupts.h"
 
-/************************************
- * Function to turn on interrupts and set if priority is used
- * Note you also need to enable peripheral interrupts in the INTCON register to use CM1IE.
-************************************/
 void Interrupts_init(void)
 {
-    INTCONbits.IPEN = 1; // Interrupt Priority Levels: Enable
+    INTCONbits.IPEN = 1;          // Interrupt Priority Levels: Enable
    
-    PIE0bits.TMR0IE = 1; // Enable TMR0 interrupt
-    IPR0bits.TMR0IP = 1; // Set TMR0 IP: To high
+    PIE0bits.TMR0IE = 1;          // Enable TMR0 interrupt
+    IPR0bits.TMR0IP = 1;          // Set TMR0 IP: To high
     
-    //****Clicker Interrupt Initialisations
-    TRISBbits.TRISB0 = 1; // Pin RB0: Input(1)
-    ANSELBbits.ANSELB0 = 0; // Pin RB0: Digital input(0)
-    
-    PIE0bits.INT0IE = 1; //Interrupt on Pin RB0: Enable
-    PIR0bits.INT0IF = 0; //Interrupt Flag: Off
-    INTCONbits.INT0EDG = 0; // Interrupt on Falling Edge
-    IPR0bits.INT0IP = 1; // Interrupt Priority: High
-    
+    // Clicker Interrupt Initialisations
+    TRISBbits.TRISB0 = 1;         // Pin RB0: Input(1)
+    ANSELBbits.ANSELB0 = 0;       // Pin RB0: Digital input(0)
+    PIE0bits.INT0IE = 1;          // Interrupt on Pin RB0: Enable
+    PIR0bits.INT0IF = 0;          // Interrupt Flag: Off
+    INTCONbits.INT0EDG = 0;       // Interrupt on Falling Edge
+    IPR0bits.INT0IP = 1;          // Interrupt Priority: High
     color_click_interrupt_init(); // Write interrupt configurations to clicker
     
     // Enable all interrupts
@@ -28,29 +22,22 @@ void Interrupts_init(void)
     INTCONbits.GIE = 1; 
 }
 
-/************************************
- * High priority interrupt service routine for:
- * Clicker Interrupt
- * Timer0 interrupt
- ************************************/
-void __interrupt(high_priority) HighISR()
-{    
-    //Colour Clicker RGBC Clear Channel Interrupt
+
+void __interrupt(high_priority) HighISR() {    
+    //Clicker Interrupt
     if(PIR0bits.INT0IF){
-        BrakeLight = 1; // Testing 
-        color_flag = 1; // Flag set so main loop can stop motion and read colour
-        color_click_interrupt_off(); // Turn off (and clear) clicker interrupt
-        PIR0bits.INT0IF = 0; // Clear Interrupt Flag
-        getTMR0_in_ms(); // Log movement duration in memory
+        getTMR0_in_ms();              // Log forward movement duration in memory
+        BrakeLight = 1;               // Indicate Interrupt has triggered
+        color_flag = 1;               // Checked in main to read colour
+        color_click_interrupt_off();  // Turn off (and clear) clicker interrupt
+        PIR0bits.INT0IF = 0;          // Clear interrupt Flag
     }
-    // Timer0 interrupt to return home after not having read a card in 67 seconds
+    
+    // Timer0 interrupt
     if(PIR0bits.TMR0IF == 1) { 
-        lost_flag = 1; // Flag set so main.c can call white_move
-        PIR0bits.TMR0IF = 0; // Clear interrupt flag
-        PIE0bits.TMR0IE = 0; // Disable TMR0 interrupt
+        lost_flag = 1;        // Flag set so main.c can return home
+        PIR0bits.TMR0IF = 0;  // Clear interrupt flag
+        PIE0bits.TMR0IE = 0;  // Disable TMR0 interrupt
     }
-    
-    
-    
 }
 

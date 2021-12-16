@@ -1,25 +1,12 @@
 #include <xc.h>
 #include "CardMoves.h"
 
-/*TODO:
- *  
- */
-
-
-//Initialise variables
-int timeList[30];
-char time_index = 0;
-
-// Array of functions to call
-card_func funcPtrList[30];
-char func_index = 0;
 
 void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
     if (color == 8 ){ // White 
         white_move(mL,mR);  
     } else if (color == 9) { // Black
-        LightTest(); // Signify it hit a wall
-        LightTest();
+        LightsToggle(); // Signify it hit a wall
         white_move(mL,mR); // Try to go back gome
     } else {
         if(color == 1){ // Red
@@ -54,7 +41,7 @@ void pick_move(char color, struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-//Turn Right  90°
+// Turn Right  90°
 void red_move(struct DC_motor *mL, struct DC_motor *mR) {
     PrepareForTurn(mL,mR);
     TurnRight(mL,mR);
@@ -62,7 +49,7 @@ void red_move(struct DC_motor *mL, struct DC_motor *mR) {
 }
 
 
-//Turn left 90° 
+// Turn left 90° 
 void green_move(struct DC_motor *mL, struct DC_motor *mR){
     PrepareForTurn(mL,mR);
     TurnLeft(mL,mR);
@@ -70,7 +57,7 @@ void green_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-//Turn back 180°
+// Turn back 180°
 void blue_move(struct DC_motor *mL, struct DC_motor *mR){
     PrepareForTurn(mL,mR);
     for(char i=0;i<4;i++) TurnLeft(mL,mR);
@@ -92,7 +79,7 @@ void lightblue_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-//Reverse one square + turn right 90°
+// Reverse one square + turn right 90°
 void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
     reverse_square(mL,mR);
     TurnRight(mL,mR);
@@ -100,7 +87,7 @@ void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-//Reverse one square + turn left 90°
+// Reverse one square + turn left 90°
 void pink_move(struct DC_motor *mL, struct DC_motor *mR){
     reverse_square(mL,mR);
     TurnLeft(mL,mR);
@@ -108,7 +95,7 @@ void pink_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-//Turn right 90° + Undo reverse one square
+// Turn right 90° + Undo reverse one square
 void reverse_yellow_move(struct DC_motor *mL, struct DC_motor *mR){
     TurnRight(mL,mR);
     TurnRight(mL,mR);
@@ -151,29 +138,5 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR){
         __delay_ms(1000); // Just some slack
     }
     stop(mL,mR);
-    LightTest(); // Flash lights to signify end
+    LightsToggle(); // Flash lights to signify end
 }
-
-/*************Functions for Function Pointer and Timing arrays****************/
-
-
-void add_function_ptr (card_func func){
-    funcPtrList[func_index++] = func;
-    if (func_index > 3) lost_flag = 1;
-}
-
-
-void add_timing(unsigned int timing){
-    timeList[time_index++] = timing;
-}
-
-// Make this return the 16bit
-unsigned int get_timing(void){
-    return timeList[--time_index];
-}
-
-
-card_func get_function_ptr(void){
-    return funcPtrList[--func_index];
-}
-
