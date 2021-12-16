@@ -89,11 +89,11 @@ Each color function comprises of instruction to TurnLeft/Right n times, and also
 The buggy will normally only try to go back home upon reading the white card. However there are three scenarios where it will attempt to go back home prematurely
 All these scenarious make the buggy react as if it saw a white card
 
-1. A black color is detected when the buggy hits a black wall face forward
+**1. A black color is detected when the buggy hits a black wall face forward**
  - This means the buggy has hit the wall and will not be able to continue its motion. 
  - This funcitonality can be turned off (say if you are allowed to correct the buggy) by setting the lower interrupt threshold to low, as the black wall is set to only trigger interrupts and register then
 
-2. The lost_flag is set due to TMR0 overflow
+**2. The lost_flag is set due to TMR0 overflow**
  - When the time spent in forward motion without detecting any card exceeds a predetermined value (~67s with current configurations) the buggy will go back home
  - This would be useful in scenarious where the person laying the color cards was uanble to place the next card and the buggy just goes on moving forward forever
  - If the white card was taken out (and the black color detection was disabled) this would make the buggy go home
@@ -102,7 +102,7 @@ All these scenarious make the buggy react as if it saw a white card
 The timing can be configured by changing the TMR0 prescaler - !! You must change the operation that converts TMR0 bits to miliseconds to be stored in this case!! 
 
 
-3. The lost_flag is set due to Function Memory overlow
+**3. The lost_flag is set due to Function Memory overlow**
 - The function pointer and movement time arrays are declared with a maximum size (currently 30)
 - If the buggy reads more cards than this memory can hold an exception will be triggered and it will go back home immediately after reading the last card
 - This is ideal for scenarious where the white flag is not present and the buggy will go on an infinite loop, won't hit the wall, and won't trigger a TMR0 interrupt because it successfully detects card 
