@@ -25,31 +25,39 @@ Procedure:
  
  -The buggy then performs a 180 turn - User has 4 options
  
- -Car turns too much -> Hold Button RF2: Decrease turning_time
+ 1.Car turns too much -> Hold Button RF2: Decrease turning_time
  
- -Car turns too little -> Hold Button RF3: Increase turning_time
+ 2.Car turns too little -> Hold Button RF3: Increase turning_time
  
- -Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ 3.Want to see again? -> Hold Button RF2 and RF3 simultaneously
  
- -Buttons must be held till respective LED flashes
+ --- Buttons must be held till respective LED flashes---
  
- -Hold Button RF2 and RF3 until back lights flash to exit calibration
+ 4. Hold Button RF2 and RF3 until back lights flash to exit calibration
  
- -Lights flash to indicate end of calibration
+ - Lights flash to indicate end of calibration
 
 
 
 CalibrateReverseSquare function is used to modify the global variable reverse_time to achieve accurate turns
+
 Procedure:
- -Function to calibrate reverse_time to ensure accurate distance
+
  -Lights flash to indicate start of calibration
+ 
  -The buggy then performs a reverse_square move - User has 4 options
- -Car moves too much -> Hold Button RF2: Decrease turning_time
- -Car moves too little -> Hold Button RF3: Increase turning_time
- -Want to see again? -> Hold Button RF2 and RF3 simultaneously
- -Buttons must be held till respective LED flashes
- -Hold Button RF2 and RF3 until back lights flash to exit calibration
- -Lights flash to indicate start of calibration
+ 
+ 1.Car moves too much -> Hold Button RF2: Decrease turning_time
+ 
+ 2.Car moves too little -> Hold Button RF3: Increase turning_time
+ 
+ 3.Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ 
+  -- Buttons must be held till respective LED flashes --
+  
+ 4. Hold Button RF2 and RF3 until back lights flash to exit calibration
+ 
+ - Lights flash to indicate start of calibration
 
 ## Memory Operations
 The buggy relies on two arrays to return home when needed
