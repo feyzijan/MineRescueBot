@@ -1,6 +1,17 @@
 # Course project - Mine navigation search and rescue
 
-
+## Main Operating Procedure
+- Turn on Buggy and go through the Clicker Interrupt threshold, and the two Motor calibrations, to ensure desirable performance in different ambient and surface settings
+- Check that the interrupt thresholds have been calibrated correctly by moving the buggy near up to different colored cards, and seeing if the interrupt is triggeered ( back lights should light up)
+- Press ButtonRF3 to reset the interrupt and try it out for different cards - if interrupts keep contintually triggering have the buggy even closer to the blue card during calibration
+- Once you are ready start set the buggy in the starting position and press ButtonRF2
+- The buggy will now commence the main operating loop
+- The buggy moves in a straight line until a clicker interrupt is triggered
+- When this happens the buggy stops, records the duration of its just ended journey in memory
+- It takes readings of the RGBC channels with Led On, and Off, normalises the readings to percentage values, and decides which color it has seen
+- It passes this color value to a function that picks and executes the appropriate move, while storing the complement function(explained below) in memory
+- The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or whjen the lost_flag is set
+- When told to go home the buggy goes through its memory of stored movement times and functions and executes them successively to go back home
 
 ## Motor Calibrations
 
