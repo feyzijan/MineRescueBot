@@ -4,7 +4,7 @@
 #include "LEDsButtons.h"
 #include "interrupts.h"
 
-unsigned int int_high = 3000; // Prospective value that tends to work well
+unsigned int int_high = 3250; // Prospective value that tends to work well
 unsigned int int_low = 0;
 
 void color_click_init(void) {
@@ -169,28 +169,28 @@ char decide_color(void){
     if (black_threshold <= int_low){
        color_decision=9; // Black
     }else if (redPercentage >= 65){ // Red or Orange
-        if(greenPercentage<11){
+        if(greenPercentage < 11){
             color_decision = 1;  //Red
         } else {
             color_decision = 6; // Orange
         } 
     } 
     else if(redPercentage < 65 && redPercentage >= 52){ // Yellow or Pink
-        if (greenPercentage>30 && bluePercentage<21){
+        if (greenPercentage >=29 && bluePercentage < 21){ //greenPercentage>30
             color_decision = 4; // Yellow
         } else { 
             color_decision = 5; // Pink
         }
     } 
     else if(redPercentage < 52 && redPercentage >= 35){ // White or light blue
-        if (redPercentage>=45){
+        if (redPercentage >= 45){
             color_decision = 8; // White
         } else {
             color_decision = 7; // Light blue
         }
     }
-    else if(redPercentage <35 && redPercentage >= 20){   // Blue or green    
-        if (bluePercentage>=29){
+    else if(redPercentage <35 && redPercentage >= 15){   // Blue or green  //redPercentage >= 20  
+        if (bluePercentage>=30){ //bluePercentage>=29
             color_decision = 3; // Blue
         } else {
             color_decision = 2; // Green

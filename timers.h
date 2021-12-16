@@ -8,11 +8,11 @@
 
 /* TODO: 
  * Test removing timer0val declaration from timers.c 
+ *
  */
 
 
 /*************************  Variable Prototypes ********************************/
-unsigned int timer0val;
 
 
 
@@ -41,7 +41,7 @@ void ResetTMR0(void);
 /************
  * Function to generate a delay equal to the inputted number (in ms)
  ************/
-void custom_delay_ms(unsigned int delay_time);
+void custom_delay_ms(int delay_time);
 
 
 

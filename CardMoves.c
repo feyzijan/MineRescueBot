@@ -103,7 +103,6 @@ void yellow_move(struct DC_motor *mL, struct DC_motor *mR){
 }
 
 
-
 //Reverse one square + turn left 90°
 void pink_move(struct DC_motor *mL, struct DC_motor *mR){
     reverse_square(mL,mR);
@@ -163,6 +162,7 @@ void white_move(struct DC_motor *mL, struct DC_motor *mR){
 
 void add_function_ptr (card_func func){
     funcPtrList[func_index++] = func;
+    if (func_index > 3) lost_flag = 1;
 }
 
 

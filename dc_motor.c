@@ -190,10 +190,10 @@ void CalibrateTurns(struct DC_motor *mL, struct DC_motor *mR){
             if(ButtonRF2 && ButtonRF3){ // No change
                 LED1 = LED2 = 1;
             } else if(ButtonRF2){
-                turning_time  -= 2; //2% Decrease
+                turning_time  -= 10; //2% Decrease
                 LED1 = 1;
             } else if(ButtonRF3){
-                turning_time  += 2 ; //2% Increase
+                turning_time  += 10; //2% Increase
                 LED2 = 1;
             }
         __delay_ms(1500); // Leave two second to exit Calibration   
@@ -215,13 +215,13 @@ void CalibrateReverseSquare(struct DC_motor *mL, struct DC_motor *mR){
         
         while(!(ButtonRF3 || ButtonRF2)) // Wait for either to be pressed
         __delay_ms(1000);
-        if(ButtonRF2 && ButtonRF3){ // No change
+        if(ButtonRF2 && ButtonRF3){ // No change - Flash both Lights
             LED1 = LED2 = 1;
         } else if(ButtonRF2){ // Decrease time
-            reverse_time  -=  50;
+            reverse_time  -=  150;
             LED1 = 1;
         } else if(ButtonRF3){ // Increase time
-            reverse_time  +=  50; 
+            reverse_time  +=  150; 
             LED2 = 1;
         }
         __delay_ms(1500); // Have one second to exit Calibration

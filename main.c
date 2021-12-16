@@ -14,11 +14,8 @@
 #include "interrupts.h"
 #include "CardMoves.h"
 
-
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-
-extern unsigned int timer0val; // For logging movement time
 
 void main(void){
     
@@ -26,7 +23,6 @@ void main(void){
     color_click_init();
     LEDs_buttons_init();
 
-    
     //********************** Motor Initialisation ****************************//                             
     //Initialise Motor structs and pointers 
     struct DC_motor motorL,motorR;
@@ -51,7 +47,7 @@ void main(void){
     //************************************************************************//   
     
     //**** Calibration Functions - Detailed instructions in header files *****//
-    interrupt_threshold_calibrate();
+    //interrupt_threshold_calibrate();
     //__delay_ms(1000);
     //CalibrateTurns(mL,mR);
     //__delay_ms(1000);
@@ -59,7 +55,7 @@ void main(void){
     //__delay_ms(1000);
     //************************************************************************//
        
-    LightOn(); 
+    LightOn();
     Interrupts_init();
      
     char color_detected = 0;
@@ -79,32 +75,36 @@ void main(void){
            Timer0_init();
            
            // Not told to go home in any way
-           while(!lost_flag && color_detected <8){ // 
+           while(color_detected <8){ 
                 // Step 1: Forward Motion
                 ResetTMR0();//Start timer to time movement duration
                 move_forward(mL,mR,0); // Move forward
                 
-                // Continue motion until a flag is triggered 
+                // Continue motion until a flag is set
                 while(!color_flag && !lost_flag); 
                             
-                if(lost_flag) stop(mL,mR); // TMR0 overflow: buggy lost go home
-
-                if(color_flag){
-                    ResetTMR0(); // Reset to prevent unwanted overflow
+                if(color_flag){ // Clicker Interrupt: Read Card and Move On
+                    //ResetTMR0(); // Start timing the forward motion
+                    
                     //Step 2: Stop buggy and read card
-                    stop(mL,mR); // May put this in Interrupt Routine for added accuracy
+                    stop(mL,mR);
                     __delay_ms(250); // Wait for readings to stabilize
                     color_detected = decide_color();
 
                     __delay_ms(500);
                     color_flag = 0;
 
-                    //Step 3: Pick and execute appropriate move
-                    pick_move(color_detected, mL,mR); // Execute needed motion and update motion memory
+                    //Step 3: Pick and execute appropriate move, update memory
+                    pick_move(color_detected, mL,mR); 
 
                     //Step 4: Re-enable clicker interrupt 
                     color_click_interrupt_init();
-                    }
+                } else {// LostFlag set via TMR0 overflow or memory overflow
+                    stop(mL,mR);
+                    getTMR0_in_ms(); // Log movement duration in memory
+                    color_click_interrupt_off(); // Turn off (and clear) clicker interrupt
+                    pick_move(8, mL,mR);  // Buggy lost- go home
+                } 
             }
         }
         
