@@ -1,5 +1,60 @@
 # Course project - Mine navigation search and rescue
 
+
+
+## Motor Calibrations
+
+CalibrateTurns function is used to modify the global variable turning_time to achieve accurate turns
+Procedure:
+ -Lights flash to indicate start of calibration
+ -The buggy then performs a 180 turn - User has 4 options
+ -Car turns too much -> Hold Button RF2: Decrease turning_time
+ -Car turns too little -> Hold Button RF3: Increase turning_time
+ -Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ -Buttons must be held till respective LED flashes
+ -Hold Button RF2 and RF3 until back lights flash to exit calibration
+ -Lights flash to indicate end of calibration
+
+
+
+CalibrateReverseSquare function is used to modify the global variable reverse_time to achieve accurate turns
+Procedure:
+ -Function to calibrate reverse_time to ensure accurate distance
+ -Lights flash to indicate start of calibration
+ -The buggy then performs a reverse_square move - User has 4 options
+ -Car moves too much -> Hold Button RF2: Decrease turning_time
+ -Car moves too little -> Hold Button RF3: Increase turning_time
+ -Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ -Buttons must be held till respective LED flashes
+ -Hold Button RF2 and RF3 until back lights flash to exit calibration
+ -Lights flash to indicate start of calibration
+
+## Memory Operations
+The buggy relies on two arrays to return home when needed
+ - time_list :  A list of TMR0 readings ( converted from bits to ms)
+ - funcPtrList : A list of pointers to functions that take only left and right motor structs as input
+
+When the buggy is told to return home it first performs a 180 turn
+Then it loops through the two lists in memory, starting from the latest entry
+- First it moves the buggy forward by the amount of time in the time_list
+- Then it calls the function in the function list
+
+### Complement Functions:
+The complement function is the function that needs to be executed for the buggy, coming from the opposite direciton, needs to perform to undo the move.
+
+These can intiutively be mapped as follows:
+- Red and Green are inverse of each other
+- Orange and Lightblue are inverse of eachother
+- Blue is inverse with itself
+- For the yellow and pink card reverse_yellow_move and reverse_pink_move functions
+    - These first turn the buggy 90 degrees, then move forward one square
+
+### Color Function
+Each card has a move function assocaited with it in CardMoves.c (pink_move, red_move etc)
+These functions are called when that color is read and the color value (1-9) is passed to pick_move()
+Before that card function is called the complement is stored in the funciton pointer list
+
+
 ## Challenge brief
 
 Develop an autonomous robot that can navigate a "mine" using a series of instructions coded in coloured cards and return to its starting position.  Your robot must be able to perform the following: 
