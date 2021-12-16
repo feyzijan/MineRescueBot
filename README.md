@@ -9,12 +9,12 @@
 - Once you are ready start set the buggy in the starting position and press ButtonRF2
 - The buggy will now commence the main operating loop
 
-Main Loop:
+### Main Loop:
 - The buggy moves in a straight line until a clicker interrupt is triggered
 - When this happens the buggy stops, records the duration of its just ended journey in memory
 - It takes readings of the RGBC channels with Led On, and Off, normalises the readings to percentage values, and decides which color it has seen
 - It passes this color value to a function that picks and executes the appropriate move, while storing the complement function(explained below) in memory
-- The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or whjen the lost_flag is set
+- The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or when an exception is triggered 
 - When told to go home the buggy goes through its memory of stored movement times and functions and executes them successively to go back home
 
 ## Motor Calibrations
