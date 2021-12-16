@@ -81,8 +81,11 @@ These can intiutively be mapped as follows:
 
 ## Color Functions
 Each card has a move function assocaited with it in CardMoves.c (pink_move, red_move etc)
+
 These functions are called when that color is read and the color value (1-9) is passed to pick_move()
+
 Before that card function is called the complement is stored in the funciton pointer list
+
 Each color function comprises of instruction to TurnLeft/Right n times, and also to go back one square distance for pink and yellow
 
 ## Exceptions
