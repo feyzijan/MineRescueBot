@@ -109,6 +109,9 @@ The timing can be configured by changing the TMR0 prescaler - !! You must change
  
  This overflow can be configured by setting the maximum memory size approriately.
 
+## Meeting Challenge Brief Objective
+We believe we have met all the objectives of the challenge bried outlined below.
+
 ## Challenge brief
 
 Develop an autonomous robot that can navigate a "mine" using a series of instructions coded in coloured cards and return to its starting position.  Your robot must be able to perform the following: 
