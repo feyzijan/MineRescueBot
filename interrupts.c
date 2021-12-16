@@ -1,9 +1,5 @@
 #include <xc.h>
 #include "interrupts.h"
-#include "i2c.h"
-#include "color.h"
-#include "LEDsButtons.h"
-#include "timers.h"
 
 /************************************
  * Function to turn on interrupts and set if priority is used

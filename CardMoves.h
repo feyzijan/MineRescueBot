@@ -3,6 +3,9 @@
 
 #include <xc.h>
 #include "dc_motor.h"
+#include "timers.h"
+#include "interrupts.h"
+
 
 #define _XTAL_FREQ 64000000
 

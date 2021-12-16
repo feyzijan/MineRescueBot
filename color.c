@@ -1,8 +1,6 @@
 #include <xc.h>
 #include "color.h"
-#include "i2c.h"
-#include "LEDsButtons.h"
-#include "interrupts.h"
+
 
 unsigned int int_high = 3250; // Prospective value that tends to work well
 unsigned int int_low = 0;

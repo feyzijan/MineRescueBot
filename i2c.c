@@ -1,8 +1,6 @@
 #include <xc.h>
 #include "i2c.h"
 
-unsigned char check1;
-unsigned char check2;
 
 void I2C_2_Master_Init(void)
 {

@@ -7,13 +7,7 @@
 #define _I2C_CLOCK 100000 //100kHz for I2C
 
 
-/* TODO:
- * 
- */
-
-
 /*************************  Function Prototypes ********************************/
-
 
 /***********
  *  Function to initialise I2C module and pins

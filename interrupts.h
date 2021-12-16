@@ -2,11 +2,15 @@
 #define _interrupts_H
 
 #include <xc.h>
+#include "i2c.h"
+#include "color.h"
+#include "LEDsButtons.h"
+#include "timers.h"
+
 
 #define _XTAL_FREQ 64000000
 
 /* TODO: 
- * 
  */
 
 

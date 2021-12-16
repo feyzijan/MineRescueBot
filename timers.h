@@ -2,17 +2,19 @@
 #define _timers_H
 
 #include <xc.h>
+#include "dc_motor.h"
+#include "CardMoves.h"
+
 
 #define _XTAL_FREQ 64000000
 
 
 /* TODO: 
- * Test removing timer0val declaration from timers.c 
- *
  */
 
 
 /*************************  Variable Prototypes ********************************/
+
 
 
 

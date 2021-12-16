@@ -1,8 +1,5 @@
 #include <xc.h>
 #include "CardMoves.h"
-#include "dc_motor.h"
-#include "timers.h"
-#include "interrupts.h"
 
 /*TODO:
  *  

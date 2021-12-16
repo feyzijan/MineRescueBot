@@ -1,7 +1,6 @@
 #include <xc.h>
 #include "timers.h"
-#include "dc_motor.h"
-#include "CardMoves.h"
+
 
 void Timer0_init() 
 {
