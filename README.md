@@ -22,12 +22,19 @@
 CalibrateTurns function is used to modify the global variable turning_time to achieve accurate turns
 Procedure:
  -Lights flash to indicate start of calibration
+ 
  -The buggy then performs a 180 turn - User has 4 options
+ 
  -Car turns too much -> Hold Button RF2: Decrease turning_time
+ 
  -Car turns too little -> Hold Button RF3: Increase turning_time
+ 
  -Want to see again? -> Hold Button RF2 and RF3 simultaneously
+ 
  -Buttons must be held till respective LED flashes
+ 
  -Hold Button RF2 and RF3 until back lights flash to exit calibration
+ 
  -Lights flash to indicate end of calibration
 
 
