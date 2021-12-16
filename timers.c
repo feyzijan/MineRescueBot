@@ -3,17 +3,12 @@
 #include "dc_motor.h"
 #include "CardMoves.h"
 
-
-extern unsigned int timer0val;
-
-/****** Timer0 Functions *********/
-
 void Timer0_init() 
 {
     T0CON1bits.T0CS=0b010; // Closck Source = Fosc/4 = 16MHz
     T0CON1bits.T0ASYNC=1; 
-    T0CON1bits.T0CKPS=0b1111 ; // Pre-scaler 1:32768
-
+    T0CON1bits.T0CKPS= 0b1110 ; // Pre-scaler 1:16384 - each bit now 1.024ms
+    
     T0CON0bits.T016BIT=1; //16bit mode	  
     TMR0H = 0;
     TMR0L = 0;
@@ -24,11 +19,8 @@ void Timer0_init()
 void getTMR0_in_ms(void){
     unsigned int temp = TMR0L; // Must read Low first
     temp = TMR0H<<8;
-    timer0val = temp * 2  + temp / 21  ; // each bit is 2.048ms
-    add_timing(timer0val);
+    add_timing(temp + temp / 42 ); // each bit is 1.024ms
 }
-
-
 
 void ResetTMR0(void){
     TMR0H = 0; // Must set TMR0H first
@@ -36,20 +28,9 @@ void ResetTMR0(void){
 }
 
 
-/******* Custom Delay Functions *******/
-
-void friction_delay_ms(void){
-    int i;
-    for(i=0;i<friction/2;i++){
-        __delay_ms(2);
-    }
-}
-
-
-void custom_delay_ms(unsigned int delay_time){
-    unsigned int i;
-    for(i=0;i<delay_time/10;i++){
-        __delay_ms(10);
+void custom_delay_ms(int delay_time){
+    for(unsigned int i=0;i<delay_time;i++){
+        __delay_ms(1);
     }
 }
 

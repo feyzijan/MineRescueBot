@@ -7,22 +7,21 @@
 
 
 /* TODO: 
- * 
+ * Test removing timer0val declaration from timers.c 
+ *
  */
 
 
 /*************************  Variable Prototypes ********************************/
-unsigned int timer0val;
 
 
 
 /*************************  Function Prototypes ********************************/
-//******** Timer0 Functions
 
 /***********
  * Function to initialise Timer0
  * Used to time buggy movements
- * Overflows in 134 seconds, 1 bit = 2.048ms
+ * Overflows in ~67.1 seconds, 1 bit = 1.024ms
  ***********/
 void Timer0_init(void);
 
@@ -39,21 +38,10 @@ void getTMR0_in_ms(void);
  ************/
 void ResetTMR0(void);
 
-
-//******** Custom Delay Functions
- 
-
-/***********
- * Function that causes a delay that allows the buggy to complete a 45 degree turn
- * Modify the global friction variable 
- ***********/
-void friction_delay_ms(void);
-
-
 /************
  * Function to generate a delay equal to the inputted number (in ms)
  ************/
-void custom_delay_ms(unsigned int delay_time);
+void custom_delay_ms(int delay_time);
 
 
 

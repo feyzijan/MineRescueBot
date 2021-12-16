@@ -1,14 +1,10 @@
 #include <xc.h>
 #include "color.h"
 #include "i2c.h"
-#include <stdio.h>
-#include "serial.h"
-#include "LEDs.h"
+#include "LEDsButtons.h"
 #include "interrupts.h"
 
-//extern unsigned int int_low, int_high; // Not needed here
-
-unsigned int int_high = 3000;
+unsigned int int_high = 3250; // Prospective value that tends to work well
 unsigned int int_low = 0;
 
 void color_click_init(void) {
@@ -57,30 +53,31 @@ void interrupt_threshold_calibrate(void) {
     
     __delay_ms(500);
     LightOn();
-    int amb_and_LED;
+    unsigned int amb_and_LED;
+    unsigned int black;
     
     while (!ButtonRF3); //Wait for button press)
     LightTest();  // Indicate procedure has started
-    clear = color_read(0x14); // Read clear channel for blue card
-    int_high = clear;
+    int_high = color_read(0x14); // Read clear channel for blue card
     
-    /*
-    while (!ButtonRF3); 
-    LightTest(); 
-    clear = color_read(0x14); // Read clear channel for ambient
-    amb_and_LED = clear;    
     
     while (!ButtonRF3); 
     LightTest(); 
-    clear = color_read(0x14); // Read clear channel for black card
+    amb_and_LED = color_read(0x14); // Read clear channel for ambient
+   
+
+    while (!ButtonRF3); 
+    LightTest(); 
+    black = color_read(0x14); // Read clear channel for black card
     
-    // Assign low threshold to ambient or black reading, whichever lowest
-    if(clear<amb_and_LED){int_low=clear+(clear/20);}
-    else{int_low=0;}
-    */
- 
-    //TEMPORARY CHANGE
-    int_low = 0; 
+    // If black card registers a lower value, set that + 5% tolerance as int_low
+    if(black < amb_and_LED){
+        int_low= black - black/20;
+    } else{int_low=0;}
+    
+    
+    //Uncomment below line to effectvely disable black color recognition
+    //int_low = 0;
 
     while (!ButtonRF3); // Wait for button press to exit calibration   
     LightTest(); // Toggle Light to indicate end of Calibration
@@ -119,86 +116,90 @@ unsigned int color_read(unsigned char address)
     return tmp;
 }
 
-
+/*
 void read_All_Colors(void){
+ *  clear = color_read(0x14); 
     red = color_read(0x16); 
     green = color_read(0x18); 
     blue = color_read(0x1A); 
-    clear = color_read(0x14); 
+    
+}
+*/
+
+void read_All_Colors(unsigned int *writeArray){
+    for(int i=0;i<4;i++){ 
+        *(writeArray+i) = color_read(0x14+2*i); 
+	}
 }
 
 
-//Potential problem with two lists being the same?
 char decide_color(void){
-    
+    // Initialise temporary local variables
     char color_decision;
-    int black_thresh;
+    unsigned int black_threshold;
+    unsigned int LED_and_ambient[4];
+    unsigned int ambient[4];
     
-    //LightOn(); // Turn Led on for first reading
+    // First get readings with LED on
+    LightOn(); 
     __delay_ms(500); // Wait for readings to stabilise   
-    read_All_Colors();
-    __debug_break();
-    // Array of readings: Light from ambient + LED cross talk + LED reflection 
-    int LED_and_amb_read[4] = {red,green,blue,clear};  
-    //black_thresh = clear; // Prospective threshold
+    read_All_Colors(LED_and_ambient);
+    black_threshold = LED_and_ambient[0]; 
     
-    LightOff(); // Turn LED off 
+    // Now get readings with LED off
+    LightOff(); 
     __delay_ms(500);
-    read_All_Colors();
-    // Array of readings: Ambient Only
-    unsigned int ambient[4] = {red,green,blue,clear};
+    read_All_Colors(ambient);
     
-  
     // Correct the readings to remove ambient and LED cross_talk
-    __int24 red_real = LED_and_amb_read[0]-ambient[0]-LED_cross_talk[0];
-    __int24 green_real = LED_and_amb_read[1]-ambient[1]-LED_cross_talk[1];
-    __int24 blue_real = LED_and_amb_read[2]-ambient[2]-LED_cross_talk[2];
-    __int24 clear_real = LED_and_amb_read[3]-ambient[3]-LED_cross_talk[3];
+    // These are __int24 as they need to be multiplied by 100 below for % values
+    __int24 clear_real = LED_and_ambient[0]- ambient[0]- LED_cross_talk[0];
+    __int24 red_real   = LED_and_ambient[1]- ambient[1]- LED_cross_talk[1];
+    __int24 green_real = LED_and_ambient[2]- ambient[2]- LED_cross_talk[2];
+    __int24 blue_real  = LED_and_ambient[3]- ambient[3]- LED_cross_talk[3];    
+    
+    
+    // Calculate RGB values as percentage of clear channel
+    char redPercentage = (100*red_real)/ clear_real;
+    char greenPercentage = (100*green_real) / clear_real;
+    char bluePercentage = (100*blue_real) / clear_real;
 
-    __debug_break();
+    // Implement Decision Procedure
     
-    // Calculate percentage of RGB channel values (as percentage of clear channel)
-    redPercentage = (100*red_real)/ clear_real;
-    greenPercentage = (100*green_real) / clear_real;
-    bluePercentage = (100*blue_real) / clear_real;
-    
-    //Color Decision Procedure based on Percentage composition of readings
-    
-    // Check black first
-    //if (black_thresh <= int_low){
-    //    color_decision=9;
-    //}
-    // Red or Orange  
-    if (redPercentage >= 65){ 
-        if(greenPercentage<11){
-            color_decision = 1;  //RED
-        } else{
+    if (black_threshold <= int_low){
+       color_decision=9; // Black
+    }else if (redPercentage >= 65){ // Red or Orange
+        if(greenPercentage < 11){
+            color_decision = 1;  //Red
+        } else {
             color_decision = 6; // Orange
         } 
-    } // Yellow or Pink
-    else if(redPercentage < 65 && redPercentage >= 52){ 
-        if (greenPercentage>30 && bluePercentage<21){
+    } 
+    else if(redPercentage < 65 && redPercentage >= 52){ // Yellow or Pink
+        if (greenPercentage >=29 && bluePercentage < 21){ //greenPercentage>30
             color_decision = 4; // Yellow
-        }else{
+        } else { 
             color_decision = 5; // Pink
         }
-    } // White or light blue
-    else if(redPercentage < 52 && redPercentage >= 35){ 
-        if (redPercentage>=45){
+    } 
+    else if(redPercentage < 52 && redPercentage >= 35){ // White or light blue
+        if (redPercentage >= 45){
             color_decision = 8; // White
-        } else{
+        } else {
             color_decision = 7; // Light blue
         }
     }
-    else if(redPercentage <35 && redPercentage >= 20){   // Blue or green    
-        if (bluePercentage>=29){
+    else if(redPercentage <35 && redPercentage >= 15){   // Blue or green  //redPercentage >= 20  
+        if (bluePercentage>=30){ //bluePercentage>=29
             color_decision = 3; // Blue
-        }else{
+        } else {
             color_decision = 2; // Green
         }
-    } else{
-        color_decision = 10;
-    }  
+    } else {
+        color_decision=0;
+    }
     LightOn();
     return color_decision; 
 }
+
+
