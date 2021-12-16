@@ -1,11 +1,15 @@
 # Course project - Mine navigation search and rescue
 
 ## Main Operating Procedure
-- Turn on Buggy and go through the Clicker Interrupt threshold, and the two Motor calibrations, to ensure desirable performance in different ambient and surface settings
+- Turn on Buggy and go through the Calibrations for Clicker nterrupt threshold, and the two motor calibrations, to ensure desirable performance in different ambient and surface settings (explained below)
+
 - Check that the interrupt thresholds have been calibrated correctly by moving the buggy near up to different colored cards, and seeing if the interrupt is triggeered ( back lights should light up)
-- Press ButtonRF3 to reset the interrupt and try it out for different cards - if interrupts keep contintually triggering have the buggy even closer to the blue card during calibration
+     - Press ButtonRF3 to reset the interrupt and try it out for different cards - if interrupts keep contintually triggering have the buggy even closer to the blue card during calibration
+
 - Once you are ready start set the buggy in the starting position and press ButtonRF2
 - The buggy will now commence the main operating loop
+
+Main Loop:
 - The buggy moves in a straight line until a clicker interrupt is triggered
 - When this happens the buggy stops, records the duration of its just ended journey in memory
 - It takes readings of the RGBC channels with Led On, and Off, normalises the readings to percentage values, and decides which color it has seen
