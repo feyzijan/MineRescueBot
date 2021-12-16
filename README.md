@@ -174,6 +174,10 @@ The timing can be configured by changing the TMR0 prescaler - !! You must change
 ## Meeting Challenge Brief Objective
 We believe we have met all the objectives of the challenge bried outlined below.
 
+## Performance 
+https://imperiallondon-my.sharepoint.com/:v:/g/personal/fce19_ic_ac_uk/ESVhCReK7ClBoqI6i86UBuMB2svlf2nOec0hTsIo9OmWWQ?e=3URy1B
+Video of Maze3
+
 ## Challenge brief
 
 Develop an autonomous robot that can navigate a "mine" using a series of instructions coded in coloured cards and return to its starting position.  Your robot must be able to perform the following: 
