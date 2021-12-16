@@ -92,6 +92,7 @@ All these scenarious make the buggy react as if it saw a white card
 **1. A black color is detected when the buggy hits a black wall face forward**
  - This means the buggy has hit the wall and will not be able to continue its motion. 
  - This funcitonality can be turned off (say if you are allowed to correct the buggy) by setting the lower interrupt threshold to low, as the black wall is set to only trigger interrupts and register then
+ - This functionality would be very useful if somebody forgot to put in the white card
 
 **2. The lost_flag is set due to TMR0 overflow**
  - When the time spent in forward motion without detecting any card exceeds a predetermined value (~67s with current configurations) the buggy will go back home
