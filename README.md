@@ -14,7 +14,7 @@
 - When this happens the buggy stops, records the duration of its just ended journey in memory
 - It takes readings of the RGBC channels with Led On, and Off, normalises the readings to percentage values, and decides which color it has seen
 - It passes this color value to a function that picks and executes the appropriate move, while storing the complement function(explained below) in memory
-- The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or when an exception is triggered 
+- The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or when an exception is triggered (more below) 
 - When told to go home the buggy goes through its memory of stored movement times and functions and executes them successively to go back home
 
 ## Motor Calibrations
