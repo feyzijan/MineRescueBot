@@ -1,5 +1,24 @@
 # Course project - Mine navigation search and rescue
 
+## Overview of the ".c/.h" files
+
+**main.c**:   Sets up initialisation functions and initialises motor structure, calls calibration procedures before going into main operating loop
+
+**color.c/.h**:   Contains functions to configure the color click module and interrupt, contains further procedures to calbrate color the interrupt threshold and read and decide between colours
+
+**interrupts.c/.h**   Functions to initialise interrupts sources and a high priority interrupt service routine for the color click interrupt and a timer
+
+**i2c.c/.h**   Set up of the I2C serial communication interface in order to RGBC values from the TCS3471 color click module
+
+**timers.c/.h**   Set up of the Timer0 source and a function to read the current value of the timer
+
+**dc_motor.c/.h**   Define motor structure, configuration of dc motor, functions for specific basic moves e.g. turn left 45 and a calibration routine depending on the surface
+
+**CardMoves.c/.h**  Contains functions to execute specfic motor moves depending on the colour of the card, also contains the a function return to the starting point
+
+**LEDs.c/.h**   Configures buttons on the clicker and LEDs on the buggy and clicker board
+
+
 ## Main Operating Procedure
 - Turn on Buggy and go through the Calibrations for Clicker nterrupt threshold, and the two motor calibrations, to ensure desirable performance in different ambient and surface settings (explained below)
 
@@ -16,6 +35,20 @@
 - It passes this color value to a function that picks and executes the appropriate move, while storing the complement function(explained below) in memory
 - The buggy restarts the timer from 0 and keeps repeating this process until it is told to go back home upon reading the white card, or when an exception is triggered (more below) 
 - When told to go home the buggy goes through its memory of stored movement times and functions and executes them successively to go back home
+
+## Interrupt Threshold Calibration
+
+**interrupt_threshold_calibrate** function is used to set the upper and lower interrupt thresholds
+Procedure:
+ - Lights flash to indicate start of calibration
+ 
+- Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
+- press the left button (RF3)
+- Leave blue card in front of buggy for at least a second
+- Remove blue card and press button and wait for at least one second
+- Add black card approximately 7 cm away from the front of the buggy and press the RF3 button again, wait for one second
+- Remove the black card
+- Place buggy at the start point of the tracking course and press RF3 button again to end calibration 
 
 ## Motor Calibrations
 
@@ -59,6 +92,35 @@ Procedure:
  
  - Lights flash to indicate start of calibration
 
+
+## Distinction of Colours
+The **decide_color()** function is responsible for executing the color descision once the buggy is infront of the card
+
+### Reading 1: REFLECTED LIGHT OFF CARD FROM LED + AMBIENT LIGHT + REFLECTED LIGHT OFF CARD FROM AMBIENT LIGHT + CROSS TALK LED LIGHT
+-Read the RGBC values with the RGB LED on (white light) and with ambient light
+
+REFLECTED LIGHT OFF CARD FROM LED + AMBIENT LIGHT + REFLECTED LIGHT OFF CARD FROM AMBIENT LIGHT + CROSS TALK LED LIGHT
+### Reading 2: AMBIENT LIGHT + REFLECTED LIGHT OFF CARD FROM AMBIENT LIGHT 
+-The RGB LED is turned off and the RGB values from the TCS3471 sensor is read again (ambient is still present)
+
+### Corrected Readings: Reading 1 - Reading 2 - CROSS TALK LED LIGHT
+-Correct the readings by removing external light sources
+
+-These corrected readings will give accurate RGBC magnitudes purely on the light that is reflected off the card from the RGB LED
+
+-*Note: the cross talk LED light readings for each channel are predetermined constants stored in 'color.h'*
+### Normalise Readings
+- Take each RGB colour channel corrected reading for the card in front and divide by the corrected clear channel value
+- These will be made into integers in the interest of efficiency (i.e. percentage values)
+- The normalised percentages have been measured and predetermined at home and plotted graphically to see how each color channel percentage differs from others at distances of about 1-5 cm between the buggy and the cards
+
+### Compare and distinguish colours
+
+- A graph is used to distinguish between common colours (see excel file)
+- blue & green, red & orange, pink & yellow, light blue & white are first separted into categories using if statements depending on the range of the normalised red values
+- Then each common color is distinguished based on the other normalised color channels with distinguishable differences
+- A value from 1-9 is returned by the **decide_color()** which corresponds to a specific colour
+
 ## Memory Operations
 The buggy relies on two arrays to return home when needed
  - time_list :  A list of TMR0 readings ( converted from bits to ms)
@@ -81,11 +143,8 @@ These can intiutively be mapped as follows:
 
 ## Color Functions
 Each card has a move function assocaited with it in CardMoves.c (pink_move, red_move etc)
-
 These functions are called when that color is read and the color value (1-9) is passed to pick_move()
-
 Before that card function is called the complement is stored in the funciton pointer list
-
 Each color function comprises of instruction to TurnLeft/Right n times, and also to go back one square distance for pink and yellow
 
 ## Exceptions
@@ -95,7 +154,6 @@ All these scenarious make the buggy react as if it saw a white card
 **1. A black color is detected when the buggy hits a black wall face forward**
  - This means the buggy has hit the wall and will not be able to continue its motion. 
  - This funcitonality can be turned off (say if you are allowed to correct the buggy) by setting the lower interrupt threshold to low, as the black wall is set to only trigger interrupts and register then
- - This functionality would be very useful if somebody forgot to put in the white card
 
 **2. The lost_flag is set due to TMR0 overflow**
  - When the time spent in forward motion without detecting any card exceeds a predetermined value (~67s with current configurations) the buggy will go back home
